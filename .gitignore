@@ -9,6 +9,7 @@ analysis/*
 !*.hlp
 !*.py
 !*.sthlp
+!posteriors.csv
 venv/
 .cache
 *.exe
