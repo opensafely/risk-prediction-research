@@ -4,7 +4,7 @@
 *
 *	Written by:			Fizz
 *
-*	Data used:			posteriors.dta
+*	Data used:			posteriors.csv
 *						infected_coefs_dm.dta (burden of infection over time)
 *
 *	Data created:		infected_coefs_dm.dta (burden of infection over time)
@@ -20,7 +20,6 @@
 
 
 
-shell rename posteriors.do posteriors.csv
 
 * Open a log file
 capture log close
@@ -31,7 +30,6 @@ global lag = 21
 
 * Open dataset 
 import delimited "posteriors.csv", clear 
-*use "posteriors.dta", clear
 
 capture rename R r
 capture rename S s
