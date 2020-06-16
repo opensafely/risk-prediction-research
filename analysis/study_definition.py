@@ -115,7 +115,7 @@ study = StudyDefinition(
     # region - one of NHS England 9 regions
     region=patients.registered_practice_as_of(
         "2020-02-01",
-        returning="nhse_region_name",
+        returning="nuts1_region_name",
         return_expectations={
             "rate": "universal",
             "category": {
