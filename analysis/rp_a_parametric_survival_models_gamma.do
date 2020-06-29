@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_parametric_survival_models_gamma.do
+*	Do-file:		rp_a_parametric_survival_models_gamma.do
 *
 *	Programmed by:	Fizz & Krishnan
 *
@@ -8,7 +8,7 @@
 *
 *	Data created:	abs_risks_gamma.dta (absolute risks by comorbidity)
 *
-*	Other output:	Log file:  an_parametric_survival_models_cpnsdeath.log
+*	Other output:	Log file:  rp_a_parametric_survival_models_gamma.log
 *
 ********************************************************************************
 *
@@ -19,7 +19,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_parametric_survival_models_gamma", text replace
+log using "./output/rp_a_parametric_survival_models_gamma", text replace
 
 use "cr_create_analysis_dataset_STSET_cpnsdeath.dta", clear
 

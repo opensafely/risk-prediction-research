@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_poisson_regression_models.do
+*	Do-file:		rp_b_poisson_regression_models.do
 *
 *	Programmed by:	Fizz & Krishnan
 *
@@ -9,8 +9,8 @@
 *	Data created:	output/abs_risks_poisson.out (table of absolute risks)
 *					output/abs_risks_weibull.out
 *
-*	Other output:	Log file:  rp_poisson_regression_models.log
-*					Model estimates: rp_poisson_regression_models.ster
+*	Other output:	Log file:  rp_b_poisson_regression_models.log
+*					Model estimates: rp_b_poisson_regression_models.ster
 *
 ********************************************************************************
 *
@@ -33,8 +33,8 @@ global sampling_frac `1'
 
 * Open a log file
 capture log close
-log using "./output/rp_poisson_regression_models", text replace
-cap erase ./output/models/rp_poisson_regression_models.ster
+log using "./output/rp_b_poisson_regression_models", text replace
+cap erase ./output/models/rp_b_poisson_regression_models.ster
 
 
 
@@ -198,7 +198,7 @@ timer list 1
 estat ic
 
 estimates
-estimates save ./output/models/rp_poisson_regression_models.ster, replace
+estimates save ./output/models/rp_b_poisson_regression_models.ster, replace
 poisson, irr
  
 

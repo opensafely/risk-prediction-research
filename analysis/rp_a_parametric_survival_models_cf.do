@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_parametric_survival_models_cf.do
+*	Do-file:		rp_a_parametric_survival_models_cf.do
 *
 *	Programmed by:	Fizz & Krishnan
 *
@@ -8,7 +8,7 @@
 *
 *	Data created:	None
 *
-*	Other output:	Log file:  	rp_parametric_survival_models_cf.log
+*	Other output:	Log file:  	rp_a_parametric_survival_models_cf.log
 *					Graph:		output/survival.svg
 *
 ********************************************************************************
@@ -26,7 +26,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_parametric_survival_models_cf", text replace
+log using "./output/rp_a_parametric_survival_models_cf", text replace
 
 use "cr_create_analysis_dataset_STSET_cpnsdeath.dta", clear
 

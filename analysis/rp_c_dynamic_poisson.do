@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			rp_dynamic_poisson.do
+*	Do-file:			rp_c_dynamic_poisson.do
 *
 *	Written by:			Fizz
 *
@@ -9,7 +9,7 @@
 *
 *	Data created:		test.dta  
 *
-*	Other output:		None
+*	Other output:		Log file:  rp_c_dynamic_poisson.log
 *
 ********************************************************************************
 *
@@ -22,7 +22,7 @@
 
 * Open a log file
 capture log close
-log using "output/rp_dynamic_poisson", text replace
+log using "output/rp_c_dynamic_poisson", text replace
 
 
 
