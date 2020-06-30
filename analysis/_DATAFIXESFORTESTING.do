@@ -48,10 +48,39 @@ replace reduced_kidney_function_cat  = 3 if reduced_kidney_function_cat==.
 
 
 
+***************
+*  Split data *
+***************
+set seed 37873
+local splitPropn 0.75 // build model on 75% sample
 
-save cr_create_analysis_dataset, replace
+bysort agegroup onscoviddeath: gen development = uniform() < `splitPropn'
+
+* Check distributions
+foreach v of numlist 0 1 { 
+tab agegroup if development == `v'
+tab onscoviddeath if development == `v'
+}
+
+* Create model development dataset
+preserve
+keep if development == 1 
+drop development
+save "cr_create_development_dataset.dta", replace
+restore
+
+* Create model testing dataset
+preserve
+keep if development == 0
+drop development
+save "cr_create_test_dataset.dta", replace
+restore
+
+save "cr_create_analysis_dataset.dta", replace
 
 
+
+/* 
 * Save a version set on CPNS survival outcome
 stset stime_cpnsdeath, fail(cpnsdeath) 				///
 	id(patient_id) enter(enter_date) origin(enter_date)
@@ -63,4 +92,4 @@ stset stime_onscoviddeath, fail(onscoviddeath) 				///
 	id(patient_id) enter(enter_date) origin(enter_date)
 	
 save "cr_create_analysis_dataset_STSET_onscoviddeath.dta", replace
-	
+	*/

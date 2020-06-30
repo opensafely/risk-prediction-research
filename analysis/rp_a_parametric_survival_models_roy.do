@@ -6,8 +6,10 @@
 *
 *	Data used:		cr_create_analysis_dataset_STSET_CPNS.dta
 *
-*	Data created:	output/abs_risks_roy.out (absolute risks)
-*					output/abs_risks2_roy.out
+*	Data created:	output/abs_risks_roy_development.out (absolute risks)
+*					output/abs_risks2_roy_development.out
+*					output/abs_risks_roy_test.out (absolute risks)
+*					output/abs_risks2_roy_test.out
 *
 *	Other output:	Log file:  rp_a_parametric_survival_models_roy.log
 *
@@ -28,8 +30,27 @@
 capture log close
 log using "./output/rp_a_parametric_survival_models_roy", text replace
 
-use "cr_create_analysis_dataset_STSET_cpnsdeath.dta", clear
+************************************************
+*   Fit on model development and test datasets *
+************************************************
 
+local samples "development test"
+
+foreach x of local samples {
+
+noi di "Using the model `x' datatset" 
+
+use "cr_create_`x'_dataset.dta", clear
+
+
+
+
+*********************************
+*   Set data on ons covid death *
+*********************************
+*
+stset stime_onscoviddeath, fail(onscoviddeath) 				///
+  id(patient_id) enter(enter_date) origin(enter_date)
 
 *************************************************
 *   Use a complete case analysis for ethnicity  *
@@ -131,7 +152,7 @@ stpm2  age1 age2 age3 male 					///
 			spleen 							///
 			ra_sle_psoriasis  				///
 			immunosuppression				///
-			region_*,						///
+			region_* ,						///
 			scale(hazard) df(5) eform
 estat ic
 timer off 1
@@ -191,7 +212,7 @@ centile risk80_royp, c(10 20 30 40 50 60 70 80 90)
 tempname temprf 
 
 postfile `temprf' str30(rf) rfcat sex age risk30 risk60 risk80  ///
-	using output/abs_risks_roy, replace
+	using "output/abs_risks_roy_`x'", replace
 
 	* Binary risk factors
 	foreach var of varlist 						///
@@ -306,9 +327,9 @@ postclose `temprf'
 
 
 preserve
-use "output/abs_risks_roy", clear
-outsheet using "output/abs_risks_roy", replace
-erase "output/abs_risks_roy.dta"
+use "output/abs_risks_roy_`x'", clear
+outsheet using "output/abs_risks_roy_`x'", replace
+erase "output/abs_risks_roy_`x'.dta"
 restore
 
 
@@ -424,11 +445,11 @@ foreach var of varlist cons 				///
 				
 	* Reset that value back to "no"
 	replace `var' = 0
-}
+			}
 
 keep agegroup male pred*
-outsheet using "output/abs_risks2_roy", replace
-
+outsheet using "output/abs_risks2_roy_`x'", replace
+}
 
 
 
