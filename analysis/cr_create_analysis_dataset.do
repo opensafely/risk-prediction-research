@@ -8,10 +8,9 @@
 *
 *	Data used:		Data in memory (from input.csv)
 *
-*	Data created:	cr_create_analysis_dataset.dta  (main analysis dataset)
-*					Same data but already stset (to avoid re-doing):
-*						cr_create_analysis_dataset_STSET_cpnsdeath.dta 
-*						cr_create_analysis_dataset_STSET_onscoviddeath.dta
+*	Data created:   cr_create_analysis_dataset.dta  (full analysis dataset)
+*                   cr_create_development_dataset.dta (model development dataset)
+*                   cr_create_test_dataset.dta (model testing dataset)
 *
 *	Other output:	None
 *
@@ -795,17 +794,43 @@ label data "Analysis dataset for the poor outcomes in Covid project"
 save "cr_create_analysis_dataset.dta", replace
 
 * Save a version set on CPNS survival outcome
-stset stime_cpnsdeath, fail(cpnsdeath) 				///
-	id(patient_id) enter(enter_date) origin(enter_date)
-
-save "cr_create_analysis_dataset_STSET_cpnsdeath.dta", replace
+*stset stime_cpnsdeath, fail(cpnsdeath) 				///
+*	id(patient_id) enter(enter_date) origin(enter_date)
+*save "cr_create_analysis_dataset_STSET_cpnsdeath.dta", replace
 
 * Save a version set on ONS covid death outcome
-stset stime_onscoviddeath, fail(onscoviddeath) 				///
-	id(patient_id) enter(enter_date) origin(enter_date)
+*stset stime_onscoviddeath, fail(onscoviddeath) 				///
+*	id(patient_id) enter(enter_date) origin(enter_date)
 	
-save "cr_create_analysis_dataset_STSET_onscoviddeath.dta", replace
-	
+*save "cr_create_analysis_dataset_STSET_onscoviddeath.dta", replace
+
+***************
+*  Split data *
+***************
+set seed 37873
+local splitPropn 0.75 // build model on 75% sample
+
+bysort agegroup onscoviddeath: gen development = uniform() < `splitPropn'
+
+* Check distributions
+foreach v of numlist 0 1 { 
+tab agegroup if development == `v'
+tab onscoviddeath if development == `v'
+}
+
+* Create model development dataset
+preserve
+keep if development == 1 
+drop development
+save "cr_create_development_dataset.dta", replace
+restore
+
+* Create model testing dataset
+preserve
+keep if development == 0
+drop development
+save "cr_create_test_dataset.dta", replace
+restore
 
 
 log close
