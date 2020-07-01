@@ -47,11 +47,6 @@ replace reduced_kidney_function_cat  = 2 if uniform()<0.5 & reduced_kidney_funct
 replace reduced_kidney_function_cat  = 3 if reduced_kidney_function_cat==.
 
 
-* Increase number of non cases
-gen f = 1 if onscoviddeath == 1 
-replace f = 15 if onscoviddeath == 0 
-expand f 
-
 save "cr_create_analysis_dataset.dta", replace
 
 

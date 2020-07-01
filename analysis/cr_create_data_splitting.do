@@ -63,11 +63,13 @@ save "cr_create_training_dataset.dta", replace
 ********************************************************
 use "cr_create_training_dataset.dta", replace
 
+* Ratio:  1:50 real 1:3 dummy
+local ratio 3
 * Obtain sampling fraction for controls (50 x number covid cases)
 qui count
 local N = r(N)
 qui count if onscoviddeath == 1
-local nCont = r(N)*50
+local nCont = r(N)*`ratio'
 di `nCont'
 	
 * Obtain sampling fraction (1 for cases)
