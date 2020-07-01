@@ -61,22 +61,23 @@ save "cr_create_training_dataset.dta", replace
 ********************************************************
 * Create variable selection and model fitting datasets *
 ********************************************************
+use "cr_create_training_dataset.dta", replace
 
 * Obtain sampling fraction for controls (50 x number covid cases)
 qui count
 local N = r(N)
 qui count if onscoviddeath == 1
 local nCont = r(N)*50
+di `nCont'
 	
 * Obtain sampling fraction (1 for cases)
 qui gen randomOrder = uniform()
 
 * Create variable selection dataset
 preserve
-sort randomOrder 
+sort onscoviddeath randomOrder
 gen sampleFlag = 1 if _n<=`nCont'
-gen sf_weight = 1/(`nCont'/`N') if keepControls == 1
-drop keepControls
+gen sf_weight = 1/(`nCont'/`N') if sampleFlag == 1
 	
 * Also keep all cases 
 replace sampleFlag = 1 if onscoviddeath == 1
@@ -85,16 +86,16 @@ recode sf_weight . = 1
 * Delete everyone not randomly selected and not a case
 keep if sampleFlag == 1
 
+tab onscoviddeath
 * Save variable selection case cohort
 save "cr_create_casecohort_var_select.dta", replace
 restore
 
 * Create model fitting dataset
 replace randomOrder = uniform()
-sort randomOrder 
+sort onscoviddeath randomOrder 
 gen sampleFlag = 1 if _n<=`nCont'
-gen sf_weight = 1/(`nCont'/`N') if keepControls == 1
-drop keepControls
+gen sf_weight = 1/(`nCont'/`N') if sampleFlag == 1
 	
 * Also keep all cases 
 replace sampleFlag = 1 if onscoviddeath == 1
@@ -103,9 +104,9 @@ recode sf_weight . = 1
 * Delete everyone not randomly selected and not a case
 keep if sampleFlag == 1
 
+tab onscoviddeath
 * Save model fitting case cohort
 save "cr_create_casecohort_model_fitting.dta", replace
-
 
 *
 log close
