@@ -6,10 +6,8 @@
 *
 *	Data used:		cr_create_analysis_dataset_STSET_CPNS.dta
 *
-*	Data created:	output/abs_risks_roy_development.out (absolute risks)
+*	Data created:	output/abs_risks_roy_evaluation.out (absolute risks)
 *					output/abs_risks2_roy_development.out
-*					output/abs_risks_roy_test.out (absolute risks)
-*					output/abs_risks2_roy_test.out
 *
 *	Other output:	Log file:  rp_a_parametric_survival_models_roy.log
 *
@@ -31,19 +29,12 @@ capture log close
 log using "./output/rp_a_parametric_survival_models_roy", text replace
 
 ************************************************
-*   Fit on model development and test datasets *
+*   Fit on model development and evaluation datasets *
 ************************************************
 
-local samples "development test"
-
-foreach x of local samples {
-
-noi di "Using the model `x' datatset" 
-
-use "cr_create_`x'_dataset.dta", clear
 
 
-
+use "cr_create_casecohort_model_fitting.dta", replace
 
 *********************************
 *   Set data on ons covid death *
@@ -212,7 +203,7 @@ centile risk80_royp, c(10 20 30 40 50 60 70 80 90)
 tempname temprf 
 
 postfile `temprf' str30(rf) rfcat sex age risk30 risk60 risk80  ///
-	using "output/abs_risks_roy_`x'", replace
+	using "output/abs_risks_roy", replace
 
 	* Binary risk factors
 	foreach var of varlist 						///
@@ -327,9 +318,9 @@ postclose `temprf'
 
 
 preserve
-use "output/abs_risks_roy_`x'", clear
-outsheet using "output/abs_risks_roy_`x'", replace
-erase "output/abs_risks_roy_`x'.dta"
+use "output/abs_risks_roy", clear
+outsheet using "output/abs_risks_roy", replace
+erase "output/abs_risks_roy.dta"
 restore
 
 
@@ -448,8 +439,8 @@ foreach var of varlist cons 				///
 			}
 
 keep agegroup male pred*
-outsheet using "output/abs_risks2_roy_`x'", replace
-}
+outsheet using "output/abs_risks2_roy", replace
+
 
 
 
