@@ -1,3 +1,6 @@
+
+adopath + "`c(pwd)'/analysis/ado"
+
 import delimited "`c(pwd)'/analysis/input.csv"
 
 
