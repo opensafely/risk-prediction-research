@@ -1,4 +1,22 @@
+********************************************************************************
+*
+*	Do-file:		an_model.do
+*
+*	Programmed by:	Fizz & John
+*
+*	Data used:		
 
+*	Data created:
+*
+*
+*	Other output:	
+*
+********************************************************************************
+*
+*	Purpose:		This do-file performs the analysis do-files. To be run 
+*					after model.do.
+*  
+********************************************************************************
 
 
 * Blocks can be done in parallel

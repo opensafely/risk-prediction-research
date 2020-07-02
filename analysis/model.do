@@ -1,11 +1,29 @@
+********************************************************************************
+*
+*	Do-file:		model.do
+*
+*	Programmed by:	Fizz & John
+*
+*	Data used:		
 
-adopath + "`c(pwd)'/analysis/ado"
+*	Data created:
+*
+*
+*	Other output:	
+*
+********************************************************************************
+*
+*	Purpose:		This do-file performs the data creation and preparation 
+*					do-files. 
+*  
+********************************************************************************
 
 import delimited "`c(pwd)'/analysis/input.csv"
 
 
 set more off
 cd  "`c(pwd)'/analysis"
+adopath + "`c(pwd)'/analysis/ado"
 
 
 
