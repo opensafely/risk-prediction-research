@@ -4,7 +4,7 @@
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		cr_create_analysis_dataset.dta
+*	Data used:		cr_create_analysis_dataset.dta (base cohort)
 *
 *	Data created:	output/cr_create_training_dataset.dta (training dataset)
 *					output/cr_create_evaluation_dataset.dta (evaluation dataset)

@@ -47,7 +47,7 @@ replace hba1c_mmol_per_mol_date = "" if hba1c_mmol_per_mol==.
 *rename geographic_area stp
 
 
-* Region
+/* Region
 gen region = "North East" if uniform()<0.1 
 replace region = "North West" if uniform()<0.2 & region==""
 replace region = "Yorkshire and The Humber" if uniform()<0.3 & region==""
@@ -57,4 +57,5 @@ replace region = "East" if uniform()<0.6 & region==""
 replace region = "London" if uniform()<0.7 & region==""
 replace region = "South East" if uniform()<0.8 & region==""
 replace region = "South West" if region==""
+*/
 
