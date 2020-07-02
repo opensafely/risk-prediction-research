@@ -13,3 +13,6 @@ analysis/*
 venv/
 .cache
 *.exe
+output/*
+data/*
+*.dta 
