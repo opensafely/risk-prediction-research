@@ -24,7 +24,7 @@
 
 * Open a log file
 cap log close
-log using ./output/cr_analysis_dataset, replace t
+log using "output/cr_analysis_dataset, replace t
 
 di "STARTING COUNT FROM IMPORT:"
 cou
@@ -167,7 +167,6 @@ label define ethnicity 	1 "White"  					///
 						5 "Other"					///
 						.u "Unknown"
 label values ethnicity ethnicity
-
 
 * Ethnicity (16 category)
 replace ethnicity_16 = .u if ethnicity==.
@@ -783,6 +782,12 @@ keep patient_id imd stp region enter_date  									///
 	creatinine egfr egfr_cat ckd dialysis
 
 
+*************************************************
+*   Use a complete case analysis for ethnicity  *
+*************************************************
+
+drop if ethnicity>=.
+
 
 ***************
 *  Save data  *
@@ -803,7 +808,7 @@ label data "Analysis dataset for the poor outcomes in Covid project"
 *save "cr_create_analysis_dataset_STSET_onscoviddeath.dta", replace
 
 * Save overall dataset
-save "cr_create_analysis_dataset.dta", replace
+save "data/cr_create_analysis_dataset.dta", replace
 
 log close
 

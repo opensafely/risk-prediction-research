@@ -22,9 +22,9 @@
 
 * Open a log file
 cap log close
-log using "./output/cr_create_data_splitting", replace t
+log using "output/cr_create_data_splitting", replace t
 
-use "cr_create_analysis_dataset.dta", replace
+use "data/cr_create_analysis_dataset.dta", replace
 
 ***************************************************
 *  Split base cohort into training and evaluation *
@@ -45,13 +45,13 @@ tab onscoviddeath if training == `v'
 preserve
 keep if training == 0
 drop training
-save "cr_create_evaluation_dataset.dta", replace
+save "data/cr_create_evaluation_dataset.dta", replace
 restore
 
 * Create model training dataset
 keep if training == 1 
 drop training
-save "cr_create_training_dataset.dta", replace
+save "data/cr_create_training_dataset.dta", replace
 
 
 ********************************************
@@ -61,7 +61,7 @@ save "cr_create_training_dataset.dta", replace
 ********************************************************
 * Create variable selection and model fitting datasets *
 ********************************************************
-use "cr_create_training_dataset.dta", replace
+use "data/cr_create_training_dataset.dta", replace
 
 * Ratio:  1:50 real 1:3 dummy
 local ratio 3
@@ -90,7 +90,7 @@ keep if sampleFlag == 1
 
 tab onscoviddeath
 * Save variable selection case cohort
-save "cr_create_casecohort_var_select.dta", replace
+save "data/cr_create_casecohort_var_select.dta", replace
 restore
 
 * Create model fitting dataset
@@ -108,7 +108,7 @@ keep if sampleFlag == 1
 
 tab onscoviddeath
 * Save model fitting case cohort
-save "cr_create_casecohort_model_fitting.dta", replace
+save "data/cr_create_casecohort_model_fitting.dta", replace
 
 *
 log close

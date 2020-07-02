@@ -1,5 +1,5 @@
 
-use cr_create_analysis_dataset, clear
+use data/cr_create_analysis_dataset, clear
 
 replace ituadmission = (uniform()<0.20)
 
@@ -46,8 +46,14 @@ replace reduced_kidney_function_cat  = 1 if uniform()<0.5
 replace reduced_kidney_function_cat  = 2 if uniform()<0.5 & reduced_kidney_function_cat==.
 replace reduced_kidney_function_cat  = 3 if reduced_kidney_function_cat==.
 
+*************************************************
+*   Use a complete case analysis for ethnicity  *
+*************************************************
 
-save "cr_create_analysis_dataset.dta", replace
+drop if ethnicity>=.
+
+
+save "data/r_create_analysis_dataset.dta", replace
 
 
 
