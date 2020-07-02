@@ -4,7 +4,7 @@ model.log
 __pycache__
 .python-version
 analysis/*
-!*analysis/ado/
+!analysis/ado/
 !*.do
 !*.ado
 !*.hlp
