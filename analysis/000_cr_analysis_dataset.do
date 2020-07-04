@@ -24,7 +24,7 @@
 
 * Open a log file
 cap log close
-log using "output/cr_analysis_dataset, replace t
+log using "output/cr_analysis_dataset", replace t
 
 di "STARTING COUNT FROM IMPORT:"
 cou
