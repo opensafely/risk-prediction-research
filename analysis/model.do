@@ -34,7 +34,7 @@ adopath + "`c(pwd)'/analysis/ado"
 *  IF PARALLEL WORKING - THIS MUST BE RUN FIRST   *
 ***************************************************
 
-do "cr_create_analysis_dataset.do"
+do "000_cr_analysis_dataset.do"
 
 
 
