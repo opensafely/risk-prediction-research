@@ -808,7 +808,7 @@ label data "Analysis dataset for the poor outcomes in Covid project"
 *save "cr_create_analysis_dataset_STSET_onscoviddeath.dta", replace
 
 * Save overall dataset
-save "data/cr_create_analysis_dataset.dta", replace
+save "output/cr_create_analysis_dataset.dta", replace
 
 log close
 
