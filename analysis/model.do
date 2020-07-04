@@ -22,7 +22,7 @@ import delimited "`c(pwd)'/analysis/input.csv"
 
 
 set more off
-cd  "`c(pwd)'/analysis"
+cd  "`c(pwd)'"
 adopath + "`c(pwd)'/analysis/ado"
 
 
@@ -34,7 +34,7 @@ adopath + "`c(pwd)'/analysis/ado"
 *  IF PARALLEL WORKING - THIS MUST BE RUN FIRST   *
 ***************************************************
 
-do "000_cr_analysis_dataset.do"
+do "`c(pwd)'/analysis/000_cr_analysis_dataset.do"
 
 
 
