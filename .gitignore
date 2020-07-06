@@ -17,3 +17,4 @@ venv/
 output/*
 data/*
 *.dta 
+.DS_Store
