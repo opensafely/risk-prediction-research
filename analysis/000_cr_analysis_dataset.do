@@ -1,10 +1,8 @@
 ********************************************************************************
 *
-*	Do-file:		cr_create_analysis_dataset.do
+*	Do-file:		000_cr_analysis_dataset.do
 *
-*	Project:		Risk factors for poor outcomes in Covid-19
-*
-*	Programmed by:	Fizz & Krishnan
+*	Programmed by:	Fizz & Krishnan & John
 *
 *	Data used:		Data in memory (from input.csv)
 *
@@ -24,7 +22,7 @@
 
 * Open a log file
 cap log close
-log using "output/cr_analysis_dataset", replace t
+log using "output/000_cr_analysis_dataset", replace t
 
 di "STARTING COUNT FROM IMPORT:"
 cou
@@ -632,13 +630,18 @@ gen ituadmission 	= (itu_date 			< .)
 
 
 /*  Create survival times  */
+* Set _t0 = 1  // 1 march (included as in been in for a day if event on 1 march)
+* set _t = 
 
-* For looping later, name must be stime_binary_outcome_name
 
 * Survival time = last followup date (first: end study, death, or that outcome)
 gen stime_ituadmission 	= min(ituadmissioncensor_date, 	itu_date, 		died_date_ons)
 gen stime_cpnsdeath  	= min(cpnsdeathcensor_date, 	died_date_cpns, died_date_ons)
 gen stime_onscoviddeath = min(onscoviddeathcensor_date, 				died_date_ons)
+
+* days since last day of feb 
+* 29feb2020
+replace stime_onscoviddeath = stime_onscoviddeath - td(29feb2020) 
 
 * If outcome was after censoring occurred, set to zero
 replace ituadmission 	= 0 if (itu_date			> ituadmissioncensor_date) 
@@ -764,8 +767,8 @@ label var  stime_onscoviddeath 			"Survival time (date); outcome ONS covid death
 ***************
 *  Tidy data  *
 ***************
-
 * REDUCE DATASET SIZE TO VARIABLES NEEDED
+
 keep patient_id imd stp region enter_date  									///
 	ituadmission itu_date ituadmissioncensor_date stime_ituadmission		///
 	cpnsdeath died_date_cpns cpnsdeathcensor_date stime_cpnsdeath			///
@@ -808,7 +811,7 @@ label data "Analysis dataset for the poor outcomes in Covid project"
 *save "cr_create_analysis_dataset_STSET_onscoviddeath.dta", replace
 
 * Save overall dataset
-save "output/cr_create_analysis_dataset.dta", replace
+save "data/cr_analysis_dataset.dta", replace
 
 log close
 

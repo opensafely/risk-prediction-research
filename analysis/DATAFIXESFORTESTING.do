@@ -1,5 +1,5 @@
 
-use data/cr_create_analysis_dataset, clear
+use data/cr_analysis_dataset, clear
 
 replace ituadmission = (uniform()<0.20)
 
@@ -53,7 +53,7 @@ replace reduced_kidney_function_cat  = 3 if reduced_kidney_function_cat==.
 drop if ethnicity>=.
 
 
-save "data/r_create_analysis_dataset.dta", replace
+save "data/cr_analysis_dataset.dta", replace
 
 
 
