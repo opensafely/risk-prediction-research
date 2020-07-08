@@ -1,10 +1,8 @@
 
-use data/cr_analysis_dataset, clear
+use data/cr_base_cohort, clear
 
-replace ituadmission = (uniform()<0.20)
-
-*give death outcomes realistic dates, and lots of events
-foreach outcome of any cpnsdeath onscoviddeath{
+* Give death outcomes realistic dates, and lots of events
+foreach outcome of any onscoviddeath onsotherdeath {
 	if "`outcome'" == "cpnsdeath" local outcomeshort "cpns"
 	else if "`outcome'" == "onscoviddeath" local outcomeshort "onscovid"
 
