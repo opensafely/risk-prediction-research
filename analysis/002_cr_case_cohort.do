@@ -15,73 +15,124 @@
 *
 ********************************************************************************
 *
-*	Purpose:		This do-file creates case cohorts
+*	Purpose:		This do-file creates two case cohort datasets to perform
+*					model fitting in for the risk prediction models.
+*
+*					The first is for variable selection.
+*
+*					The second is for model fitting.
+*
+*	NOTE: 			Both cohorts remove people with missing ethnicity information.
 *  
 ********************************************************************************* 
+
 * Open a log file
 cap log close
 log using "output/002_cr_case_cohort", replace t
 
 
-************************
-*  Create case cohorts *
-************************
-local samplingFrac 0.03 // represents 3%
+*************************
+*  Create case cohorts  *
+*************************
 
+* Age-group-stratified sampling fractions
+local sf1 = 0.01
+local sf2 = 0.02
+local sf3 = 0.02
+local sf4 = 0.025
+local sf5 = 0.05
+local sf6 = 0.13
+
+
+* Set random seed for replicability
 set seed 37873
 
-* Create training case cohorts
+
+* Create training case-cohorts
 forvalues i = 1/2 {
 
+	* Open underlying base cohort (4/5 of original TPP cohort)
 	use "data/cr_training_dataset.dta", replace
 
-	* Calculate subcohort size
-	count 
-	local subcohort = ceil(r(N)*`samplingFrac')
-
-	* Generate random orders
-	qui gen randomOrder = uniform()
-	sort randomOrder
+	* Keep ethnicity complete cases
+	drop if ethnicity>=.
+	
 
 	* Identify random subcohort
-	gen subcohort = 1 if _n <= `subcohort'
-
+	gen subcohort = 0
+	forvalues j = 1 (1) 6 {
+		replace subcohort = 1 if uniform() < `sf`j''
+	}
+	label var subcohort "Subcohort"
+	
 	* Keep random subcohort and all cases
+	tab subcohort onscoviddeath 
 	keep if subcohort == 1 | onscoviddeath == 1 
-	replace subcohort = 0  if subcohort == . 
-
 	tab subcohort onscoviddeath 
 
-	********************
-	* Barlow Weighting *
-	********************
+	
+	
+	**********************
+	*  Barlow Weighting  *
+	**********************
 
 	* Expand dataset for cases in subcohort 2 lines for cases in subcohort
-	expand 2 if subcohort == 1 & onscoviddeath ==1 
+	expand 2 if subcohort == 1 & onscoviddeath == 1 
 
 	* Apply weighting scheme
-	
 	bysort patient_id: gen row = _n
-	* Noncase in subcohort
-	gen sf_wts = 1/`samplingFrac' if onscoviddeath == 0 & subcohort == 1 
-	* case in subcohort before event
-	replace sf_wts = 1/`samplingFrac' if onscoviddeath == 1 & subcohort == 1 & row == 1
-	* case in subcohort at event
-	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
-	* case outside subcohort at event 
-	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
-
+	
+	gen sf_wts = .	
+	forvalues j = 1 (1) 6 {
+		* Noncase in subcohort
+		replace sf_wts = 1/`sf`j'' if onscoviddeath == 0 & subcohort == 1 
+		* case in subcohort before event
+		replace sf_wts = 1/`sf`j'' if onscoviddeath == 1 & subcohort == 1 & row == 1
+		* case in subcohort at event
+		replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
+		* case outside subcohort at event 
+		replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
+	}
+	label var sf_wts "Sampling fraction weights (Barlow)"
+	
+	
+	* Start and stop dates for follow-up
+	gen 	dayin  = 0
+	gen  	dayout = stime
+	replace dayout = 1.5 if dayout==1
+	
+	replace dayout = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 1
+	replace dayin  = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 2
+	
+	replace onscoviddeath = 0 if onscoviddeath == 1 & subcohort == 1 & row == 1
 	drop row
+	
+	label var dayin  "Day (this row of data) enters risk set (case-cohort)"
+	label var dayout "Day (this row of data) exits risk set (case-cohort)"
+	
+	* Declare as survival data (with Barlow weights)
+	stset dayout [pweight=sf_wts],	///
+		fail(onscoviddeath) enter(dayin) id(patient_id)  
+	
 
+	
+	*******************
+	*  Save datasets  *
+	*******************
+	
+	
 	if `i' == 1 {
+	label data "Training data case-cohort (complete case ethnicity) for variable selection"
 	save "data/cr_casecohort_var_select.dta", replace
 			}
 	else { 
+	label data "Training data case-cohort (complete case ethnicity) for model fitting"
 	save "data/cr_casecohort_models.dta", replace
 		 }
 
 }
 			
 
-
+* Close log file
 log close
+
