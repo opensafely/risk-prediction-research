@@ -23,6 +23,25 @@ capture log close
 log using "output/100_pr_variable_selection", text replace
 
 
+
+***********************************
+*  Candidate predictor variables  *
+***********************************
+
+***************************            UPDATE            **************************************
+* Covariate list needs updating when we add covariates  
+***************************            UPDATE            **************************************
+
+global pred_cts = "age1 age2 age3"
+
+global pred_bin = "male respiratory cardiac hypertension stroke dementia neuro  dialysis liver transplant spleen autoimmune hiv suppression"
+
+global pred_cat = "ethnicity_8 obese4cat smoke_nomiss diabetes bpcat_nomiss asthma cancerExhaem cancerHaem kidneyfn"
+
+
+
+
+
 ******************************************
 *  Select random sample for exploration  *
 ******************************************
@@ -36,15 +55,17 @@ use "data/cr_casecohort_var_select.dta", clear
 
 * Binary variables
 * Change other value codes for presentation purposes
-for var male htdiag_or_highbp chronic_respiratory_disease 	///	
-		chronic_cardiac_disease chronic_liver_disease 		///
-		stroke_dementia other_neuro organ_transplant spleen ///
-		ra_sle_psoriasis other_immunosuppression: replace X = X+1
+for var male respiratory 	///	
+		cardiac liver 		///
+		stroke dementia neuro transplant spleen ///
+		autoimmune suppression: replace X = X+1
 
 * Agegroup
 * Make agegroup 3 (50-70) the "baseline", i.e. value 1
 recode agegroup 1=18 2=40 3=1 4=60 5=70 6=80
 label values agegroup
+
+
 
 ************************
 *  Variable Selection  *
@@ -56,13 +77,19 @@ label values agegroup
 * (Performed during pre-shielding period) 						*
 *****************************************************************
 
-set seed 123478	
-keep if _d==1| uniform()<0.003
-stsplit timeband, at(30 60)
 
+* Create binary shielding indicator
+stsplit shield, at(32)
+recode shield 32=0
+label define shield 0 "Pre-shielding" 1 "Shielding"
+label values shiled shield
+label var shield "Binary shielding (period) indicator"
+
+
+* Create outcome for Poisson model and exposure variable
 gen diedcovforpoisson  = _d
 gen exposureforpoisson = _t-_t0
-						
+			
 
 timer clear 1
 timer on 1
@@ -129,7 +156,8 @@ lasso poisson diedcovforpoisson  (i.(agegroup 						///
 							ra_sle_psoriasis  						///
 							other_immunosuppression 				///
 							timeband) 								///
-							, exp(exposureforpoisson) selection(plugin) 
+							if shield==1,							///
+							exp(exposureforpoisson) selection(plugin) 
 lassocoef, display(coef, postselection eform)
 timer off 1
 timer list 1		   
