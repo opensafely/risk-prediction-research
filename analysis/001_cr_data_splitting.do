@@ -31,7 +31,7 @@ log using "output/001_cr_data_splitting", replace t
 
 * Last date at which participants are at risk
 local cohort_first_date = d(1/03/2020)
-local cohort_last_date  = d(10/05/2020)
+local cohort_last_date  = d(9/05/2020)
 
 
 

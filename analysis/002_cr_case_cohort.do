@@ -21,6 +21,8 @@
 *					The first is for variable selection.
 *
 *					The second is for model fitting.
+*
+*	NOTE: 			Both cohorts remove people with missing ethnicity information.
 *  
 ********************************************************************************* 
 
@@ -51,6 +53,10 @@ forvalues i = 1/2 {
 
 	* Open underlying base cohort (4/5 of original TPP cohort)
 	use "data/cr_training_dataset.dta", replace
+
+	* Keep ethnicity complete cases
+	drop if ethnicity>=.
+	
 
 	* Identify random subcohort
 	gen subcohort = 0
@@ -89,15 +95,25 @@ forvalues i = 1/2 {
 	}
 	label var sf_wts "Sampling fraction weights (Barlow)"
 	
-	* Declare as survival data
-	stset stime, fail(onscoviddeath) id(patient_id)  
 	
-	* Modify survival times and outcomes for cases in subcohort
-	replace _d = 0    if onscoviddeath == 1 & subcohort == 1 & row == 1
-	replace _t = _t-1 if onscoviddeath == 1 & subcohort == 1 & row == 1
+	* Start and stop dates for follow-up
+	gen 	dayin  = 0
+	gen  	dayout = stime
+	replace dayout = 1.5 if dayout==1
 	
-	replace _t0 = _t-1 if onscoviddeath == 1 & subcohort == 1 & row == 2
+	replace dayout = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 1
+	replace dayin  = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 2
+	
+	replace onscoviddeath = 0 if onscoviddeath == 1 & subcohort == 1 & row == 1
 	drop row
+	
+	label var dayin  "Day (this row of data) enters risk set (case-cohort)"
+	label var dayout "Day (this row of data) exits risk set (case-cohort)"
+	
+	* Declare as survival data (with Barlow weights)
+	stset dayout [pweight=sf_wts],	///
+		fail(onscoviddeath) enter(dayin) id(patient_id)  
+	
 
 	
 	*******************
@@ -106,9 +122,11 @@ forvalues i = 1/2 {
 	
 	
 	if `i' == 1 {
+	label data "Training data case-cohort (complete case ethnicity) for variable selection"
 	save "data/cr_casecohort_var_select.dta", replace
 			}
 	else { 
+	label data "Training data case-cohort (complete case ethnicity) for model fitting"
 	save "data/cr_casecohort_models.dta", replace
 		 }
 

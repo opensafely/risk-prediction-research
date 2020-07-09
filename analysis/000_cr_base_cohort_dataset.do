@@ -766,6 +766,17 @@ drop died_ons_covid_flag_any died_ons_covid_flag_underlying
 
 
 
+/*  Do some checks  */
+
+count if died_date_onscovid<`cohort_first_date'
+count if died_date_onscovid==`cohort_first_date'
+
+count if died_date_onsother<`cohort_first_date'
+count if died_date_onsother==`cohort_first_date'
+
+
+
+
 **********************
 *  Rename variables  *
 **********************
