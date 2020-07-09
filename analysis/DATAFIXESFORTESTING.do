@@ -26,5 +26,19 @@ replace ethnicity = 3 if uniform()<0.6 & ethnicity>=.
 replace ethnicity = 4 if uniform()<0.8 & ethnicity>=.
 replace ethnicity = 5 if uniform()<0.9 & ethnicity>=.
 
+* Ethnicity - too much missingness
+replace ethnicity = 1 if uniform()<0.2 & ethnicity<.
+replace ethnicity = 2 if uniform()<0.3 & ethnicity<.
+replace ethnicity = 3 if uniform()<0.4 & ethnicity<.
+replace ethnicity = 4 if uniform()<0.5 & ethnicity<.
+replace ethnicity = 5 if uniform()<0.6 & ethnicity<.
+replace ethnicity = 6 if uniform()<0.7 & ethnicity<.
+replace ethnicity = 7 if uniform()<0.8 & ethnicity<.
+replace ethnicity = 8 if uniform()<1   & ethnicity<.
+
+* Asthma - should not have missingness
+recode asthma .=0
+
+
 save "data/cr_base_cohort.dta", replace
 

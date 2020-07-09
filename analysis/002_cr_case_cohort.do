@@ -110,25 +110,29 @@ forvalues i = 1/2 {
 	label var dayin  "Day (this row of data) enters risk set (case-cohort)"
 	label var dayout "Day (this row of data) exits risk set (case-cohort)"
 	
-	* Declare as survival data (with Barlow weights)
-	stset dayout [pweight=sf_wts],	///
-		fail(onscoviddeath) enter(dayin) id(patient_id)  
-	
+
 
 	
 	*******************
 	*  Save datasets  *
 	*******************
 	
-	
+
 	if `i' == 1 {
-	label data "Training data case-cohort (complete case ethnicity) for variable selection"
-	save "data/cr_casecohort_var_select.dta", replace
-			}
+		label data "Training data case-cohort (complete case ethnicity) for variable selection"
+		save "data/cr_casecohort_var_select.dta", replace
+	}
 	else { 
-	label data "Training data case-cohort (complete case ethnicity) for model fitting"
-	save "data/cr_casecohort_models.dta", replace
-		 }
+		* Declare as survival data (with Barlow weights)
+		sort patient_id dayin
+		gen newid = _n
+		label var newid "Row ID"
+		stset dayout [pweight=sf_wts], fail(onscoviddeath) enter(dayin) id(newid)  
+
+		label data "Training data case-cohort (complete case ethnicity) for model fitting"
+		note: Stset treats rows as if from different people; SEs will be incorrect
+		save "data/cr_casecohort_models.dta", replace
+	 }
 
 }
 			
