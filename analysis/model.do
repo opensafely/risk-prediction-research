@@ -34,7 +34,12 @@ adopath + "`c(pwd)'/analysis/ado"
 *  IF PARALLEL WORKING - THIS MUST BE RUN FIRST   *
 ***************************************************
 
-do "`c(pwd)'/analysis/000_cr_analysis_dataset.do"
+do "`c(pwd)'/analysis/PRE_DATAFIXESFORTESTING.do"
+do "`c(pwd)'/analysis/000_cr_base_cohort_dataset.do"
+do "`c(pwd)'/analysis/DATAFIXESFORTESTING.do"
+
+do "`c(pwd)'/analysis/001_cr_data_splitting.do"
+do "`c(pwd)'/analysis/002_cr_case_cohort.do"
 
 
 
