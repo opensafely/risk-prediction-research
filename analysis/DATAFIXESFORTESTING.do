@@ -27,14 +27,14 @@ replace ethnicity = 4 if uniform()<0.8 & ethnicity>=.
 replace ethnicity = 5 if uniform()<0.9 & ethnicity>=.
 
 * Ethnicity - too much missingness
-replace ethnicity = 1 if uniform()<0.2 & ethnicity<.
-replace ethnicity = 2 if uniform()<0.3 & ethnicity<.
-replace ethnicity = 3 if uniform()<0.4 & ethnicity<.
-replace ethnicity = 4 if uniform()<0.5 & ethnicity<.
-replace ethnicity = 5 if uniform()<0.6 & ethnicity<.
-replace ethnicity = 6 if uniform()<0.7 & ethnicity<.
-replace ethnicity = 7 if uniform()<0.8 & ethnicity<.
-replace ethnicity = 8 if uniform()<1   & ethnicity<.
+replace ethnicity_8 = 1 if uniform()<0.2 & ethnicity<.
+replace ethnicity_8 = 2 if uniform()<0.3 & ethnicity<. & ethnicity_8>=.
+replace ethnicity_8 = 3 if uniform()<0.4 & ethnicity<. & ethnicity_8>=.
+replace ethnicity_8 = 4 if uniform()<0.5 & ethnicity<. & ethnicity_8>=.
+replace ethnicity_8 = 5 if uniform()<0.6 & ethnicity<. & ethnicity_8>=.
+replace ethnicity_8 = 6 if uniform()<0.7 & ethnicity<. & ethnicity_8>=.
+replace ethnicity_8 = 7 if uniform()<0.8 & ethnicity<. & ethnicity_8>=.
+replace ethnicity_8 = 8 if uniform()<1   & ethnicity<. & ethnicity_8>=.
 
 * Asthma - should not have missingness
 recode asthma .=0
