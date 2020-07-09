@@ -1,15 +1,14 @@
 ********************************************************************************
 *
-*	Do-file:		rp_a_parametric_survival_models_roy.do
+*	Do-file:		201_rp_a_roy.do
 *
-*	Programmed by:	Fizz & Krishnan
+*	Programmed by:	Fizz & John
 *
-*	Data used:		cr_create_analysis_dataset_STSET_CPNS.dta
+*	Data used:		data/cr_casecohort_models.dta
 *
-*	Data created:	output/abs_risks_roy_evaluation.out (absolute risks)
-*					output/abs_risks2_roy_development.out
+*	Data created:	
 *
-*	Other output:	Log file:  rp_a_parametric_survival_models_roy.log
+*	Other output:	Log file:  201_rp_a_roy.log
 *
 ********************************************************************************
 *
@@ -22,7 +21,17 @@
 *
 ********************************************************************************
 
+*The following statistical models will be fitted, with time since 1st March  
+*In each case the model will be fitted without taking shielding into consideration, and then splitting time at 31st March/1st April and including shielding period and any interactions identified by the lasso in the models.  
+* robust std errs
 
+replace enter_date = td(29feb2020)
+replace  _t0 = 0
+gen _t = 100 // difference between 29Feb and 7Jun
+replace  _t = ceil(rnormal(35, 8)) if onscoviddeath == 1 
+replace _t = 100 if onscoviddeath ==0
+replace _d = 1 if onscoviddeath == 1
+replace _d = 0 if onscoviddeath == 0
 
 * Open a log file
 capture log close
@@ -32,16 +41,14 @@ log using "./output/rp_a_parametric_survival_models_roy", text replace
 *   Fit on model development and evaluation datasets *
 ************************************************
 
-
-
-use "cr_create_casecohort_model_fitting.dta", replace
+use "data/cr_casecohort_models.dta", replace
 
 *********************************
 *   Set data on ons covid death *
 *********************************
 *
 stset stime_onscoviddeath, fail(onscoviddeath) 				///
-  id(patient_id) enter(enter_date) origin(enter_date)
+  id(patient_id) enter(enter_date) origin(enter_date) // adds need to be added here
 
 *************************************************
 *   Use a complete case analysis for ethnicity  *
@@ -54,8 +61,6 @@ drop if ethnicity>=.
 encode region, gen(region_new)
 drop region
 rename region_new region
-
-
 
 
 
@@ -91,7 +96,6 @@ timer on 1
 stpm2  age1 age2 age3 male 					///
 			obese4cat_*						///
 			smoke_nomiss_*					///
-			imd_* 							///
 			htdiag_or_highbp				///
 			respiratory_disease			 	///
 			asthmacat_*						///
