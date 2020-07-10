@@ -34,7 +34,7 @@ log using "output/000_cr_analysis_dataset", replace t
 confirm string variable died_date_ons
 gen temp = date(died_date_ons, "YMD")
 drop if temp < d(1/03/2020)
-
+drop temp
 
 
 * Remove from cohort extract (& then code below):

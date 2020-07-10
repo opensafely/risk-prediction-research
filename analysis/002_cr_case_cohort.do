@@ -83,15 +83,19 @@ forvalues i = 1/2 {
 	bysort patient_id: gen row = _n
 	
 	gen sf_wts = .	
+	* Case in subcohort at event
+	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
+	* Case outside subcohort at event 
+	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
+
+	* Subcohort
 	forvalues j = 1 (1) 6 {
 		* Noncase in subcohort
-		replace sf_wts = 1/`sf`j'' if onscoviddeath == 0 & subcohort == 1 
+		replace sf_wts = 1/`sf`j'' if agegroup==`j' ///
+				& onscoviddeath == 0 & subcohort == 1 
 		* case in subcohort before event
-		replace sf_wts = 1/`sf`j'' if onscoviddeath == 1 & subcohort == 1 & row == 1
-		* case in subcohort at event
-		replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
-		* case outside subcohort at event 
-		replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
+		replace sf_wts = 1/`sf`j'' if agegroup==`j' /// 
+				& onscoviddeath == 1 & subcohort == 1 & row == 1
 	}
 	label var sf_wts "Sampling fraction weights (Barlow)"
 	
@@ -100,7 +104,9 @@ forvalues i = 1/2 {
 	gen 	dayin  = 0
 	gen  	dayout = stime
 	replace dayout = 1.5 if dayout==1
-	
+
+	replace dayin  = dayout-1 if onscoviddeath == 1 & subcohort == 0 
+
 	replace dayout = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 1
 	replace dayin  = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 2
 	
