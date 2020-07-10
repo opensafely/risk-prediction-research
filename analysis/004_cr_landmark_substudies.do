@@ -48,29 +48,48 @@ local sf6 = 0.13
 set seed 37873
 
 
-* Create training case-cohorts
-forvalues i = 1/2 {
+* Create separate landmark substudies
+forvalues i = 1 (1) 43 {
 
-	* Open underlying base cohort (4/5 of original TPP cohort)
+
+	* Open underlying base training cohort (4/5 of original TPP cohort)
 	use "data/cr_training_dataset.dta", replace
 
 	* Keep ethnicity complete cases
 	drop if ethnicity>=.
+		
+	* Drop people who have died prior to day i 
+	qui drop if days_until_coviddeath < `i' 
+	qui drop if days_until_otherdeath < `i' 
 	
-
-	* Identify random subcohort
-	gen subcohort = 0
+	
+	*********************************
+	*  Select substudy case-cohort  *
+	*********************************
+	
+	* Mark people who have an event in the relevant 28 day period
+	qui replace onscoviddeath = 0 if onscoviddeath==1 &  ///
+		days_until_coviddeath > `i' + 27
+	qui replace days_until_coviddeath = . if onscoviddeath == 0
+	qui drop days_until_otherdeath
+	
+	* Survival time (must be between 1 and 28)
+	qui drop stime
+	qui gen stime = days_until_coviddeath - `i' + 1
+	qui replace stime =  28 if onscoviddeath==0
+	noi bysort onscoviddeath: summ stime
+	
+	* Keep all cases and a random sample of controls
+	qui gen subcohort = 0
 	forvalues j = 1 (1) 6 {
-		replace subcohort = 1 if uniform() < `sf`j''
+		qui replace subcohort = 1 if uniform()<=`sf`j'' & agegroup==`j'
 	}
-	label var subcohort "Subcohort"
-	
-	* Keep random subcohort and all cases
+	label var subcohort "Random subcohort"
 	tab subcohort onscoviddeath 
-	keep if subcohort == 1 | onscoviddeath == 1 
+	qui keep if subcohort==1 | onscoviddeath==1
 	tab subcohort onscoviddeath 
 
-	
+
 	
 	**********************
 	*  Barlow Weighting  *
@@ -83,18 +102,22 @@ forvalues i = 1/2 {
 	bysort patient_id: gen row = _n
 	
 	gen sf_wts = .	
-	forvalues j = 1 (1) 6 {
-		* Noncase in subcohort
-		replace sf_wts = 1/`sf`j'' if onscoviddeath == 0 & subcohort == 1 
-		* case in subcohort before event
-		replace sf_wts = 1/`sf`j'' if onscoviddeath == 1 & subcohort == 1 & row == 1
-		* case in subcohort at event
-		replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
-		* case outside subcohort at event 
-		replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
-	}
+	* Case in subcohort at event
+	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
+	* Case outside subcohort at event 
+	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
 	label var sf_wts "Sampling fraction weights (Barlow)"
 	
+	* Subcohort weights
+	forvalues j = 1 (1) 6 {
+		* Non-case in subcohort
+		replace sf_wts = 1/`sf`j'' if agegroup==`j' ///
+					& onscoviddeath == 0 & subcohort == 1  
+		* Case in subcohort before event
+		replace sf_wts = 1/`sf`j'' if agegroup==`j' ///
+					& onscoviddeath == 1 & subcohort == 1 & row == 1
+	}
+
 	
 	* Start and stop dates for follow-up
 	gen 	dayin  = 0
@@ -110,32 +133,86 @@ forvalues i = 1/2 {
 	label var dayin  "Day (this row of data) enters risk set (case-cohort)"
 	label var dayout "Day (this row of data) exits risk set (case-cohort)"
 	
-
-
-	
-	*******************
-	*  Save datasets  *
-	*******************
-	
-
-	if `i' == 1 {
-		label data "Training data case-cohort (complete case ethnicity) for variable selection"
-		save "data/cr_casecohort_var_select.dta", replace
-	}
-	else { 
-		* Declare as survival data (with Barlow weights)
-		sort patient_id dayin
-		gen newid = _n
-		label var newid "Row ID"
-		stset dayout [pweight=sf_wts], fail(onscoviddeath) enter(dayin) id(newid)  
-
-		label data "Training data case-cohort (complete case ethnicity) for model fitting"
-		note: Stset treats rows as if from different people; SEs will be incorrect
-		save "data/cr_casecohort_models.dta", replace
-	 }
-
+	* Tidy and save dataset
+	qui gen time = `i'
+	qui label var time "First day of landmark substudy"
+	qui drop stime
+	qui save time_`i', replace
 }
-			
+	
+
+
+
+**********************
+*  Stack substudies  *
+**********************
+
+* Stack datasets
+qui use time_1.dta, clear
+forvalues i = 2 (1) 43 {
+	qui append using time_`i'
+}
+
+* Delete unneeded datasets
+forvalues i = 1 (1) 43 {
+	qui erase time_`i'.dta
+}
+
+
+
+
+
+***********************************************
+*  Split pre-shielding and shielding periods  *
+***********************************************
+
+
+gen day_since1mar_in  = time + dayin
+gen day_since1mar_out = time + dayout
+
+gen datein  = td(1mar2020) + day_since1mar_in  - 1
+gen dateout = td(1mar2020) + day_since1mar_out - 1
+format datein dateout %td
+
+* Create binary shielding indicator
+gen newid = _n
+stset day_since1mar_out, fail(onscoviddeath) enter(day_since1mar_in) id(newid)
+stsplit shield, at(32)
+recode shield 32=1
+label define shield 0 "Pre-shielding" 1 "Shielding"
+label values shield shield
+label var shield "Binary shielding (period) indicator"
+recode onscoviddeath .=0
+
+replace dayin = _t0 - time
+replace dayout = _t - time
+drop datein dateout day_since1mar_in day_since1mar_out newid _*
+sort time patient_id dayin 
+
+
+
+
+****************************************
+*  Add in time-varying infection data  *
+****************************************
+
+
+* Merge in the summary infection prevalence data
+*merge m:1 time using infected_coefs, assert(match using) keep(match) nogen 
+
+* Merge in the infection and immunity data prevalence data
+*merge m:1 time using infect_immune, assert(match using) keep(match) nogen ///
+*	keepusing(susc infect)
+
+
+
+
+******************
+*  Save dataset  *
+******************
+
+label data "Training data 28-day landmark substudies (complete case ethnicity) for model fitting"
+save "data/cr_tr_landmark_models.dta", replace
 
 * Close log file
 log close
