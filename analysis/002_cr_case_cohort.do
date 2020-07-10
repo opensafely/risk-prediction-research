@@ -61,7 +61,7 @@ forvalues i = 1/2 {
 	* Identify random subcohort
 	gen subcohort = 0
 	forvalues j = 1 (1) 6 {
-		replace subcohort = 1 if uniform() < `sf`j''
+		replace subcohort = 1 if uniform() < `sf`j'' & agegroup==`j'
 	}
 	label var subcohort "Subcohort"
 	
