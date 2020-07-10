@@ -1,39 +1,39 @@
 ********************************************************************************
 *
-*	Do-file:		002_cr_case_cohort.do
+*	Do-file:		004_cr_landmark_substudies.do
 *
 *	Programmed by:	Fizz & John
 *
 *	Data used:		output/cr_training.dta (training dataset)
 *
 *	Data created:	
-*					output/cr_tr_casecohort_var_select.dta (training variable selection)
-*					output/cr_tr_casecohort_models.dta (training modelling fitting) 
+*					output/cr_tr_landmark_models.dta (training modelling fitting) 
 *
 *
-*	Other output:	Log file:  cr_case_cohort.log
+*	Other output:	Log file:  cr_landmark.log
 *
 ********************************************************************************
 *
-*	Purpose:		This do-file creates two case cohort datasets to perform
-*					model fitting in for the risk prediction models.
+*	Purpose:		This do-file creates a dataset containing stacked landmark
+*					substudies, each of 28 days, to perform model fitting in
+*					for the risk prediction models.
 *
-*					The first is for variable selection.
-*
-*					The second is for model fitting.
-*
-*	NOTE: 			Both cohorts remove people with missing ethnicity information.
+*	NOTE: 			These landmark substudies remove people with missing 
+*					ethnicity information.
 *  
 ********************************************************************************* 
 
+
+
 * Open a log file
 cap log close
-log using "output/002_cr_case_cohort", replace t
+log using "output/002_cr_landmark", replace t
 
 
-*************************
-*  Create case cohorts  *
-*************************
+
+***********************
+*  Create substudies  *
+***********************
 
 * Age-group-stratified sampling fractions
 local sf1 = 0.01
@@ -61,7 +61,7 @@ forvalues i = 1/2 {
 	* Identify random subcohort
 	gen subcohort = 0
 	forvalues j = 1 (1) 6 {
-		replace subcohort = 1 if uniform() < `sf`j'' & agegroup==`j'
+		replace subcohort = 1 if uniform() < `sf`j''
 	}
 	label var subcohort "Subcohort"
 	

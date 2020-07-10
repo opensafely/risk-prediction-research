@@ -31,7 +31,6 @@ log using "output/000_cr_analysis_dataset", replace t
 ***************************            UPDATE            **************************************
 
 * Events that happen before our start date (won't be there for new data extract)
-drop if died_date_onscovid
 confirm string variable died_date_ons
 gen temp = date(died_date_ons, "YMD")
 drop if temp < d(1/03/2020)
@@ -312,34 +311,34 @@ assert inlist(region_string, 								///
 					"South East", 							///
 					"South West",							///
 					"West Midlands", 						///
-					"Yorkshire and the Humber")
+					"Yorkshire and The Humber")
 * Nine regions
 gen     region_9 = 1 if region_string=="East Midlands"
-replace region_9 = 2 if region_string=="East of England"
+replace region_9 = 2 if region_string=="East"
 replace region_9 = 3 if region_string=="London"
 replace region_9 = 4 if region_string=="North East"
 replace region_9 = 5 if region_string=="North West"
 replace region_9 = 6 if region_string=="South East"
 replace region_9 = 7 if region_string=="South West"
 replace region_9 = 8 if region_string=="West Midlands"
-replace region_9 = 9 if region_string=="Yorkshire and the Humber"
+replace region_9 = 9 if region_string=="Yorkshire and The Humber"
 
 label define region_9 	1 "East Midlands" 					///
-						2 "East of England"  				///
+						2 "East"  							///
 						3 "London" 							///
 						4 "North East" 						///
 						5 "North West" 						///
 						6 "South East" 						///
 						7 "South West"						///
 						8 "West Midlands" 					///
-						9 "Yorkshire and the Humber"
+						9 "Yorkshire and The Humber"
 label values region_9 region_9
 label var region_9 "Region of England (9 regions)"
 
 * Seven regions
 recode region_9 2=1 3=2 1 8=3 4 9=4 5=5 6=6 7=7, gen(region_7)
 
-label define region_7 	1 "East of England"					///
+label define region_7 	1 "East"							///
 						2 "London" 							///
 						3 "Midlands"						///
 						4 "North East and Yorkshire"		///
