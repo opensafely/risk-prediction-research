@@ -31,7 +31,6 @@ log using "output/000_cr_analysis_dataset", replace t
 ***************************            UPDATE            **************************************
 
 * Events that happen before our start date (won't be there for new data extract)
-drop if died_date_onscovid
 confirm string variable died_date_ons
 gen temp = date(died_date_ons, "YMD")
 drop if temp < d(1/03/2020)
