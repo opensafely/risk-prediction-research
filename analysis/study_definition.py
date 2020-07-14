@@ -273,7 +273,7 @@ study = StudyDefinition(
              ),
          ),
      # Time-updated: Smoking status as of 11 May 2020
-     smoking_status_2=patients.categorised_as(
+     smoking_status_4=patients.categorised_as(
              {
                  "S": "most_recent_smoking_code = 'S' OR smoked_last_18_months",
                  "E": """
