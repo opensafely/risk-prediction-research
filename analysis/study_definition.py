@@ -179,7 +179,7 @@ study = StudyDefinition(
     ),
     # SMOKING STATUS
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/6
-    smoking_status=patients.categorised_as(
+    smoking_status_1=patients.categorised_as(
         {
             "S": "most_recent_smoking_code = 'S' OR smoked_last_18_months",
             "E": """
@@ -307,7 +307,7 @@ study = StudyDefinition(
 
     # BMI
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/10
-    bmi=patients.most_recent_bmi(
+    bmi_1=patients.most_recent_bmi(
         on_or_before="2010-03-01",
         minimum_age_at_measurement=16,
         include_measurement_date=False,
@@ -351,7 +351,7 @@ study = StudyDefinition(
     # Chronic kidney disease
     # Most recent creatinine within 2 years (not inc. last fortnight)
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/17
-    creatinine=patients.with_these_clinical_events(
+    creatinine_1=patients.with_these_clinical_events(
         creatinine_codes,
         find_last_match_in_period=True,
         between=["2018-03-01", "2020-02-16"],
@@ -427,7 +427,7 @@ study = StudyDefinition(
         },
     ),
     # Hba1c - most recent measurement within 15 months - mmol/mol or %
-    hba1c_mmol_per_mol=patients.with_these_clinical_events(
+    hba1c_mmol_per_mol_1=patients.with_these_clinical_events(
         hba1c_new_codes,
         find_last_match_in_period=True,
         between=["2018-12-01", "2020-03-01"],
@@ -438,7 +438,7 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-    hba1c_percentage=patients.with_these_clinical_events(
+    hba1c_percentage_1=patients.with_these_clinical_events(
         hba1c_old_codes,
         find_last_match_in_period=True,
         between=["2018-12-01", "2020-03-01"],
@@ -521,7 +521,7 @@ study = StudyDefinition(
 
     # ASTHMA
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/55
-    asthma_severity=patients.categorised_as(
+    asthma_severity_1=patients.categorised_as(
         {
             "0": "DEFAULT",
             "1": """
@@ -849,13 +849,13 @@ study = StudyDefinition(
 
     # Aplastic anaemia and temporary immunosuppression
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/36
-    aplastic_anaemia=patients.with_these_clinical_events(
+    aplastic_anaemia_1=patients.with_these_clinical_events(
         aplastic_codes,
         return_last_date_in_period=True,
         between=["2019-03-01", "2020-03-01"],
         include_month=True,
     ),
-    temporary_immunodeficiency=patients.with_these_clinical_events(
+    temporary_immunodeficiency_1=patients.with_these_clinical_events(
         temp_immune_codes,
         return_last_date_in_period=True,
         between=["2019-03-01", "2020-03-01"],
@@ -901,7 +901,7 @@ study = StudyDefinition(
         include_month=True,
     ),
     # Fragility fracture in last year
-    fracture=patients.with_these_clinical_events(
+    fracture_1=patients.with_these_clinical_events(
         fracture_codes,
         return_last_date_in_period=True,
         between=["2019-03-01", "2020-03-01"],
@@ -932,13 +932,13 @@ study = StudyDefinition(
 
     #  KIDNEY TRANSPLANT AND DIALYSIS (most recent)
     #  https://github.com/ebmdatalab/tpp-sql-notebook/issues/31
-    transplant_kidney=patients.with_these_clinical_events(
+    transplant_kidney_1=patients.with_these_clinical_events(
         transplant_kidney_codes,
         return_last_date_in_period=True,
         on_or_before="2020-03-01",
         include_month=True,
     ),
-    dialysis=patients.with_these_clinical_events(
+    dialysis_1=patients.with_these_clinical_events(
         dialysis_codes,
         return_first_date_in_period=True,
         on_or_before="2020-03-01",

@@ -59,27 +59,26 @@ forvalues i = 1 (1) 43 {
 	drop if ethnicity>=.
 		
 	* Drop people who have died prior to day i 
-	qui drop if days_until_coviddeath < `i' 
-	qui drop if days_until_otherdeath < `i' 
+	qui drop if (died_date_onscovid - d(1/03/2020) + 1) < `i' 
+	qui drop if (died_date_onsother - d(1/03/2020) + 1) < `i' 
 	
 	
 	*********************************
 	*  Select substudy case-cohort  *
 	*********************************
 	
+	* Survival time (must be between 1 and 28)
+	qui capture drop stime
+	qui gen stime = (died_date_onscovid - `cohort_first_date' + 1) ///
+			- `i' + 1 if died_date_onscovid < .
+	
 	* Mark people who have an event in the relevant 28 day period
 	qui replace onscoviddeath = 0 if onscoviddeath==1 &  ///
-		days_until_coviddeath > `i' + 27
-	qui replace days_until_coviddeath = . if onscoviddeath == 0
-	qui drop days_until_otherdeath
-	
-	* Survival time (must be between 1 and 28)
-	qui drop stime
-	qui gen stime = days_until_coviddeath - `i' + 1
-	qui replace stime =  28 if onscoviddeath==0
+		stime>28
+	qui replace stime = 28 if onscoviddeath==0
 	noi bysort onscoviddeath: summ stime
 	
-	* Keep all cases and a random sample of controls
+	* Keep all cases and a random sample of controls (by agegroup)
 	qui gen subcohort = 0
 	forvalues j = 1 (1) 6 {
 		qui replace subcohort = 1 if uniform()<=`sf`j'' & agegroup==`j'
@@ -143,6 +142,24 @@ forvalues i = 1 (1) 43 {
 
 
 
+****************************************
+*  Define covariates in each substudy  *
+****************************************
+
+forvalues i = 1 (1) 43 {
+	qui use time_`i'.dta, clear
+	qui summ time
+	local study_first_date = d(1/03/2020) + r(mean) - 1
+
+	* Define covariates as of 1st March 2020
+	qui define_covs, dateno(`study_first_date')
+	qui save time_`i', replace
+}
+
+
+
+
+
 **********************
 *  Stack substudies  *
 **********************
@@ -157,7 +174,6 @@ forvalues i = 2 (1) 43 {
 forvalues i = 1 (1) 43 {
 	qui erase time_`i'.dta
 }
-
 
 
 

@@ -118,7 +118,15 @@ forvalues i = 1/2 {
 	
 
 
-	
+
+	*********************************
+	*  Extract relevant covariates  *
+	*********************************
+
+	* Define covariates as of 1st March 2020
+	define_covs, date(1/03/2020)
+
+
 	*******************
 	*  Save datasets  *
 	*******************

@@ -5,17 +5,13 @@ use "data/cr_base_cohort", clear
 * ONS death
 gen onscoviddeath = (uniform()<0.20)
 replace died_date_onscovid = d(1/3/2020)+floor(69*uniform()) if onscoviddeath==1
-replace days_until_coviddeath = died_date_onscovid - d(1/3/2020) + 1 if onscoviddeath==1
 replace died_date_onscovid = . if onscoviddeath!=1
-replace days_until_coviddeath = . if onscoviddeath!=1
 drop onscoviddeath
 
 * Other death
 gen onsotherdeath = (uniform()<0.20)
 replace died_date_onsother = d(1/3/2020)+floor(69*uniform()) if onsotherdeath==1
-replace days_until_otherdeath = died_date_onsother - d(1/3/2020) + 1  if onsotherdeath==1
 replace died_date_onsother = . if onsotherdeath!=1
-replace days_until_otherdeath = . if onsotherdeath!=1
 drop onsotherdeath
 
 
@@ -37,7 +33,10 @@ replace ethnicity_8 = 7 if uniform()<0.8 & ethnicity<. & ethnicity_8>=.
 replace ethnicity_8 = 8 if uniform()<1   & ethnicity<. & ethnicity_8>=.
 
 * Asthma - should not have missingness
-recode asthma .=0
+recode asthmacat_1 .=0
+recode asthmacat_2 .=0
+recode asthmacat_3 .=0
+recode asthmacat_4 .=0
 
 
 save "data/cr_base_cohort.dta", replace

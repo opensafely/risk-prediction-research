@@ -6,7 +6,3 @@ import delimited "output/input.csv", clear
 set more off
 
 
-* Region (coding does not match server)
-replace region= "East" if region=="East of England"
-replace region = "Yorkshire and The Humber" if ///
-	region == "Yorkshire and the Humber"
