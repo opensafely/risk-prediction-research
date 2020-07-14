@@ -213,30 +213,30 @@ study = StudyDefinition(
     # Time-updated: Smoking status as of 1 April 2020
     smoking_status_2=patients.categorised_as(
             {
-                "S": "most_recent_smoking_code = 'S' OR smoked_last_18_months",
+                "S": "most_recent_smoking_code_2 = 'S' OR smoked_last_18_months_2",
                 "E": """
-                     (most_recent_smoking_code = 'E' OR (
-                       most_recent_smoking_code = 'N' AND ever_smoked
+                     (most_recent_smoking_code_2 = 'E' OR (
+                       most_recent_smoking_code_2 = 'N' AND ever_smoked_2
                        )
-                     ) AND NOT smoked_last_18_months
+                     ) AND NOT smoked_last_18_months_2
                 """,
-                "N": "most_recent_smoking_code = 'N' AND NOT ever_smoked",
+                "N": "most_recent_smoking_code_2 = 'N' AND NOT ever_smoked_2",
                 "M": "DEFAULT",
             },
             return_expectations={
                 "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
             },
-            most_recent_smoking_code=patients.with_these_clinical_events(
+            most_recent_smoking_code_2=patients.with_these_clinical_events(
                 clear_smoking_codes,
                 find_last_match_in_period=True,
                 on_or_before="2020-04-01",
                 returning="category",
             ),
-            ever_smoked=patients.with_these_clinical_events(
+            ever_smoked_2=patients.with_these_clinical_events(
                 filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
                 on_or_before="2020-04-01",
             ),
-            smoked_last_18_months=patients.with_these_clinical_events(
+            smoked_last_18_months_2=patients.with_these_clinical_events(
                 filter_codes_by_category(clear_smoking_codes, include=["S"]),
                 between=["2018-10-01", "2020-04-01"],
             ),
@@ -244,30 +244,30 @@ study = StudyDefinition(
     # Time-updated: Smoking status as of 12 April 2020
      smoking_status_3=patients.categorised_as(
              {
-                 "S": "most_recent_smoking_code = 'S' OR smoked_last_18_months",
+                 "S": "most_recent_smoking_code_3 = 'S' OR smoked_last_18_months_3",
                  "E": """
-                      (most_recent_smoking_code = 'E' OR (
-                        most_recent_smoking_code = 'N' AND ever_smoked
+                      (most_recent_smoking_code_3 = 'E' OR (
+                        most_recent_smoking_code_3 = 'N' AND ever_smoked_3
                         )
-                      ) AND NOT smoked_last_18_months
+                      ) AND NOT smoked_last_18_months_3
                  """,
-                 "N": "most_recent_smoking_code = 'N' AND NOT ever_smoked",
+                 "N": "most_recent_smoking_code_3 = 'N' AND NOT ever_smoked_3",
                  "M": "DEFAULT",
              },
              return_expectations={
                  "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
              },
-             most_recent_smoking_code=patients.with_these_clinical_events(
+             most_recent_smoking_code_3=patients.with_these_clinical_events(
                  clear_smoking_codes,
                  find_last_match_in_period=True,
                  on_or_before="2020-04-12",
                  returning="category",
              ),
-             ever_smoked=patients.with_these_clinical_events(
+             ever_smoked_3=patients.with_these_clinical_events(
                  filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
                  on_or_before="2020-04-12",
              ),
-             smoked_last_18_months=patients.with_these_clinical_events(
+             smoked_last_18_months_3=patients.with_these_clinical_events(
                  filter_codes_by_category(clear_smoking_codes, include=["S"]),
                  between=["2018-10-12", "2020-04-12"],
              ),
@@ -275,30 +275,30 @@ study = StudyDefinition(
      # Time-updated: Smoking status as of 11 May 2020
      smoking_status_4=patients.categorised_as(
              {
-                 "S": "most_recent_smoking_code = 'S' OR smoked_last_18_months",
+                 "S": "most_recent_smoking_code_4 = 'S' OR smoked_last_18_months_4",
                  "E": """
-                      (most_recent_smoking_code = 'E' OR (
-                        most_recent_smoking_code = 'N' AND ever_smoked
+                      (most_recent_smoking_code_4 = 'E' OR (
+                        most_recent_smoking_code_4 = 'N' AND ever_smoked_4
                         )
-                      ) AND NOT smoked_last_18_months
+                      ) AND NOT smoked_last_18_months_4
                  """,
-                 "N": "most_recent_smoking_code = 'N' AND NOT ever_smoked",
+                 "N": "most_recent_smoking_code_4 = 'N' AND NOT ever_smoked_4",
                  "M": "DEFAULT",
              },
              return_expectations={
                  "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
              },
-             most_recent_smoking_code=patients.with_these_clinical_events(
+             most_recent_smoking_code_4=patients.with_these_clinical_events(
                  clear_smoking_codes,
                  find_last_match_in_period=True,
                  on_or_before="2020-05-11",
                  returning="category",
              ),
-             ever_smoked=patients.with_these_clinical_events(
+             ever_smoked_4=patients.with_these_clinical_events(
                  filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
                  on_or_before="2020-05-11",
              ),
-             smoked_last_18_months=patients.with_these_clinical_events(
+             smoked_last_18_months_4=patients.with_these_clinical_events(
                  filter_codes_by_category(clear_smoking_codes, include=["S"]),
                  between=["2018-11-11", "2020-05-11"],
              ),
