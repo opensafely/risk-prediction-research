@@ -567,34 +567,34 @@ study = StudyDefinition(
             "0": "DEFAULT",
             "1": """
                 (
-                  recent_asthma_code OR (
-                    asthma_code_ever AND NOT
-                    copd_code_ever
+                  recent_asthma_code_2 OR (
+                    asthma_code_ever_2 AND NOT
+                    copd_code_ever_2
                   )
                 ) AND (
-                  prednisolone_last_year < 2
+                  prednisolone_last_year_2 < 2
                 )
             """,
             "2": """
                 (
-                  recent_asthma_code OR (
-                    asthma_code_ever AND NOT
-                    copd_code_ever
+                  recent_asthma_code_2 OR (
+                    asthma_code_ever_2 AND NOT
+                    copd_code_ever_2
                   )
                 ) AND
-                prednisolone_last_year >= 2
+                prednisolone_last_year_2 >= 2
 
             """,
         },
         return_expectations={"category": {"ratios": {"0": 0.8, "1": 0.1, "2": 0.1}},},
-        recent_asthma_code=patients.with_these_clinical_events(
+        recent_asthma_code_2=patients.with_these_clinical_events(
             asthma_codes, between=["2017-04-01", "2020-04-01"],
         ),
-        asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
-        copd_code_ever=patients.with_these_clinical_events(
+        asthma_code_ever_2=patients.with_these_clinical_events(asthma_codes),
+        copd_code_ever_2=patients.with_these_clinical_events(
             chronic_respiratory_disease_codes
         ),
-        prednisolone_last_year=patients.with_these_medications(
+        prednisolone_last_year_2=patients.with_these_medications(
             pred_codes,
             between=["2019-04-01", "2020-04-01"],
             returning="number_of_matches_in_period",
@@ -607,34 +607,34 @@ study = StudyDefinition(
             "0": "DEFAULT",
             "1": """
                 (
-                  recent_asthma_code OR (
-                    asthma_code_ever AND NOT
-                    copd_code_ever
+                  recent_asthma_code_3 OR (
+                    asthma_code_ever_3 AND NOT
+                    copd_code_ever_3
                   )
                 ) AND (
-                  prednisolone_last_year < 2
+                  prednisolone_last_year_3 < 2
                 )
             """,
             "2": """
                 (
-                  recent_asthma_code OR (
-                    asthma_code_ever AND NOT
-                    copd_code_ever
+                  recent_asthma_code_3 OR (
+                    asthma_code_ever_3 AND NOT
+                    copd_code_ever_3
                   )
                 ) AND
-                prednisolone_last_year >= 2
+                prednisolone_last_year_3 >= 2
 
             """,
         },
         return_expectations={"category": {"ratios": {"0": 0.8, "1": 0.1, "2": 0.1}},},
-        recent_asthma_code=patients.with_these_clinical_events(
+        recent_asthma_code_3=patients.with_these_clinical_events(
             asthma_codes, between=["2017-04-12", "2020-04-12"],
         ),
-        asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
-        copd_code_ever=patients.with_these_clinical_events(
+        asthma_code_ever_3=patients.with_these_clinical_events(asthma_codes),
+        copd_code_ever_3=patients.with_these_clinical_events(
             chronic_respiratory_disease_codes
         ),
-        prednisolone_last_year=patients.with_these_medications(
+        prednisolone_last_year_3=patients.with_these_medications(
             pred_codes,
             between=["2019-04-12", "2020-04-12"],
             returning="number_of_matches_in_period",
@@ -647,34 +647,34 @@ study = StudyDefinition(
             "0": "DEFAULT",
             "1": """
                 (
-                  recent_asthma_code OR (
-                    asthma_code_ever AND NOT
-                    copd_code_ever
+                  recent_asthma_code_4 OR (
+                    asthma_code_ever_4 AND NOT
+                    copd_code_ever_4
                   )
                 ) AND (
-                  prednisolone_last_year < 2
+                  prednisolone_last_year_4 < 2
                 )
             """,
             "2": """
                 (
-                  recent_asthma_code OR (
-                    asthma_code_ever AND NOT
-                    copd_code_ever
+                  recent_asthma_code_4 OR (
+                    asthma_code_ever_4 AND NOT
+                    copd_code_ever_4
                   )
                 ) AND
-                prednisolone_last_year >= 2
+                prednisolone_last_year_4 >= 2
 
             """,
         },
         return_expectations={"category": {"ratios": {"0": 0.8, "1": 0.1, "2": 0.1}},},
-        recent_asthma_code=patients.with_these_clinical_events(
+        recent_asthma_code_4=patients.with_these_clinical_events(
             asthma_codes, between=["2017-05-11", "2020-05-11"],
         ),
-        asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
-        copd_code_ever=patients.with_these_clinical_events(
+        asthma_code_ever_4=patients.with_these_clinical_events(asthma_codes),
+        copd_code_ever_4=patients.with_these_clinical_events(
             chronic_respiratory_disease_codes
         ),
-        prednisolone_last_year=patients.with_these_medications(
+        prednisolone_last_year_4=patients.with_these_medications(
             pred_codes,
             between=["2019-05-11", "2020-05-11"],
             returning="number_of_matches_in_period",
