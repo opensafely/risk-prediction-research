@@ -780,13 +780,6 @@ study = StudyDefinition(
         on_or_before="2020-06-07",
         include_month=True,
     ),
-    # https://github.com/ebmdatalab/tpp-sql-notebook/issues/31
-    transplant_notkidney=patients.with_these_clinical_events(
-        transplant_notkidney_codes,
-        return_first_date_in_period=True,
-        on_or_before="2020-06-07",
-        include_month=True,
-    ),
     # SPLEEN PROBLEMS, HIV, IMMUNODEFICIENCY
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/13
     dysplenia=patients.with_these_clinical_events(
@@ -932,6 +925,7 @@ study = StudyDefinition(
 
 
     #  KIDNEY TRANSPLANT AND DIALYSIS (most recent)
+    #  https://github.com/ebmdatalab/tpp-sql-notebook/issues/31
     transplant_notkidney=patients.with_these_clinical_events(
         transplant_kidney_codes,
         return_last_date_in_period=True,
