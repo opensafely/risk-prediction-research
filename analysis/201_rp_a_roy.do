@@ -25,13 +25,6 @@
 *In each case the model will be fitted without taking shielding into consideration, and then splitting time at 31st March/1st April and including shielding period and any interactions identified by the lasso in the models.  
 * robust std errs
 
-replace enter_date = td(29feb2020)
-replace  _t0 = 0
-gen _t = 100 // difference between 29Feb and 7Jun
-replace  _t = ceil(rnormal(35, 8)) if onscoviddeath == 1 
-replace _t = 100 if onscoviddeath ==0
-replace _d = 1 if onscoviddeath == 1
-replace _d = 0 if onscoviddeath == 0
 
 * Open a log file
 capture log close
@@ -94,24 +87,7 @@ foreach var of varlist obese4cat smoke_nomiss imd  		///
 timer clear 1
 timer on 1
 stpm2  age1 age2 age3 male 					///
-			obese4cat_*						///
-			smoke_nomiss_*					///
-			htdiag_or_highbp				///
-			respiratory_disease			 	///
-			asthmacat_*						///
-			cardiac_disease 				///
-			diabcat_*						///
-			cancer_exhaem_cat_*	 			///
-			cancer_haem_cat_*  				///
-			chronic_liver_disease 			///
-			stroke_dementia		 			///
-			other_neuro						///
-			red_kidney_cat_*				///
-			organ_transplant 				///
-			spleen 							///
-			ra_sle_psoriasis  				///
-			immunosuppression				///
-			region_* ,						///
+			 ,						///
 			scale(hazard) df(5) eform
 estat ic
 timer off 1
@@ -119,8 +95,12 @@ timer list 1
 
 
 
+gen time1 = 28 
+predict s_time, survival timevar(time1) 
+hist s_time
 
-
+gen time2= 70
+predict s_time1 , survival timevar(time2)
 *****************************************************
 *   Survival predictions from Royston-Parmar model  *
 *****************************************************

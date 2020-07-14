@@ -22,7 +22,8 @@
 ********************************************************************************
 
 
-
+use "output\rp_a_weibull_output.dta", replace
+* Read in output from each model
 
 * Open a log file
 capture log close
