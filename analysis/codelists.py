@@ -9,9 +9,7 @@ aplastic_codes = codelist_from_csv(
     "codelists/opensafely-aplastic-anaemia.csv", system="ctv3", column="CTV3ID"
 )
 
-hiv_codes = codelist_from_csv(
-    "codelists/opensafely-hiv.csv", system="ctv3", column="CTV3ID"
-)
+
 
 permanent_immune_codes = codelist_from_csv(
     "codelists/opensafely-permanent-immunosuppresion.csv",
@@ -115,22 +113,11 @@ other_cancer_codes = codelist_from_csv(
     column="CTV3ID",
 )
 
-bone_marrow_transplant_codes = codelist_from_csv(
-    "codelists/opensafely-bone-marrow-transplant.csv", system="ctv3", column="CTV3ID"
-)
-
-chemo_radio_therapy_codes = codelist_from_csv(
-    "codelists/opensafely-chemotherapy-or-radiotherapy-updated.csv",
-    system="ctv3",
-    column="CTV3ID",
-)
 
 chronic_liver_disease_codes = codelist_from_csv(
     "codelists/opensafely-chronic-liver-disease.csv", system="ctv3", column="CTV3ID"
 )
-gi_bleed_and_ulcer_codes = codelist_from_csv(
-    "codelists/opensafely-gi-bleed-or-ulcer.csv", system="ctv3", column="CTV3ID"
-)
+
 inflammatory_bowel_disease_codes = codelist_from_csv(
     "codelists/opensafely-inflammatory-bowel-disease.csv",
     system="ctv3",
@@ -142,16 +129,6 @@ creatinine_codes = codelist(["XE2q5"], system="ctv3")
 hba1c_new_codes = codelist(["XaPbt", "Xaeze", "Xaezd"], system="ctv3")
 hba1c_old_codes = codelist(["X772q", "XaERo", "XaERp"], system="ctv3")
 
-
-dialysis_codes = codelist_from_csv(
-    "codelists/opensafely-chronic-kidney-disease.csv", system="ctv3", column="CTV3ID"
-)
-
-organ_transplant_codes = codelist_from_csv(
-    "codelists/opensafely-solid-organ-transplantation.csv",
-    system="ctv3",
-    column="CTV3ID",
-)
 
 spleen_codes = codelist_from_csv(
     "codelists/opensafely-asplenia.csv", system="ctv3", column="CTV3ID"
@@ -170,4 +147,33 @@ diastolic_blood_pressure_codes = codelist(["246A."], system="ctv3")
 
 hypertension_codes = codelist_from_csv(
     "codelists/opensafely-hypertension.csv", system="ctv3", column="CTV3ID"
+)
+
+### NEW CODELISTS THAT WILL NEED UPDATING
+smi_codes = codelist_from_csv(
+    "local_codelists/opensafely_smi_UPDATE.csv", system="ctv3", column="CTV3ID"
+)
+hiv_codes = codelist_from_csv(
+    "local_codelists/hiv_corrected.csv", system="ctv3", column="CTV3ID"
+)
+transplant_kidney_codes = codelist_from_csv(
+    "local_codelists/kidney transplant_CMinEW.csv", system="ctv3", column="CTV3ID"
+)
+transplant_notkidney_codes = codelist_from_csv(
+    "local_codelists/organ transplant_not kidney_CMinEW.csv", system="ctv3", column="CTV3ID"
+)
+dialysis_codes = codelist_from_csv(
+    "local_codelists/dialysis_CMinEW.csv", system="ctv3", column="CTV3ID"
+)
+af_codes = codelist_from_csv(
+    "local_codelists/OpenSAFELY_eFI_Codes_AF.csv", system="ctv3", column="CTV3ID"
+)
+pvd_codes = codelist_from_csv(
+    "local_codelists/OpenSAFELY_eFI_Codes_PVD.csv", system="ctv3", column="CTV3ID"
+)
+fracture_codes = codelist_from_csv(
+    "local_codelists/OpenSAFELY_eFI_Codes_Fragility.csv", system="ctv3", column="CTV3ID"
+)
+osteo_codes = codelist_from_csv(
+    "local_codelists/OpenSAFELY_eFI_Codes_Osteoporosis.csv", system="ctv3", column="CTV3ID"
 )
