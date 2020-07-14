@@ -1,6 +1,6 @@
 *~
 model.log
-*/input.csv
+*/input*.csv
 __pycache__
 .python-version
 analysis/*

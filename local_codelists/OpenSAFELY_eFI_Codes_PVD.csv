@@ -1,0 +1,31 @@
+CTV3ID,CTV3_Description,CodeType
+24E9.,O/E - R.dorsalis pedis absent,Non_Numeric_Code
+24F9.,O/E - L.dorsalis pedis absent,Non_Numeric_Code
+C107.,Diabetes mellitus with: [gangrene] or [periph circul disord],Non_Numeric_Code
+C1086,Type I diabetes mellitus with gangrene,Non_Numeric_Code
+G670.,Atherosclerosis: [precerebral] or [cerebral],Non_Numeric_Code
+G73..,(Peri vasc dis (& [isch][oth])) or (isch leg) or (peri isch),Non_Numeric_Code
+G73z.,Peripheral vascular disease NOS,Non_Numeric_Code
+M2710,Ischaemic ulcer diabetic foot,Non_Numeric_Code
+X203K,Abdominal aortic atherosclerosis,Non_Numeric_Code
+X203M,Arterial ischaemia,Non_Numeric_Code
+X203Q,Peripheral ischaemia,Non_Numeric_Code
+X203R,Upper limb ischaemia,Non_Numeric_Code
+X203S,Critical upper limb ischaemia,Non_Numeric_Code
+X203T,Lower limb ischaemia,Non_Numeric_Code
+X203U,Critical lower limb ischaemia,Non_Numeric_Code
+XE10I,Diabetes mellitus with peripheral circulatory disorder,Non_Numeric_Code
+XM1Qx,Diabetes mellitus with gangrene,Non_Numeric_Code
+Xa0lV,Peripheral vascular disease,Non_Numeric_Code
+Xa7lT,Ischaemia of feet,Non_Numeric_Code
+XaBL8,O/E - Absent right foot pulses,Non_Numeric_Code
+XaE3G,Critical ischaemia of foot,Non_Numeric_Code
+XaFn7,Type II diabetes mellitus with peripheral angiopathy,Non_Numeric_Code
+XaJD3,O/E - Right dorsalis pedis abnormal,Non_Numeric_Code
+XaVyB,History of peripheral vascular disease,Non_Numeric_Code
+XaIup,ABPI - Ankle brachial pressure index,Numeric_Code
+Y1258,ABPI - Left,Numeric_Code
+Y1259,ABPI - Right,Numeric_Code
+XaIup,ABPI - Ankle brachial pressure index,Numeric_Value
+Y1258,ABPI - Left,Numeric_Value
+Y1259,ABPI - Right,Numeric_Value
