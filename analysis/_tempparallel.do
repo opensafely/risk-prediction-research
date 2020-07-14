@@ -1,4 +1,4 @@
-import delimited `c(pwd)'/analysis/input.csv
+import delimited `c(pwd)'/output/input.csv
 
 set more off
 cd  `c(pwd)'/analysis
