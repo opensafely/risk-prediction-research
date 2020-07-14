@@ -117,7 +117,7 @@ study = StudyDefinition(
     ### HOUSEHOLD INFORMATION
     # HOUSEHOLD ID
     household_id=patients.household_as_of(
-        "2020-03-01",
+        "2020-02-01",
         returning="pseudo_id",
         return_expectations={
             "int": {"distribution": "normal", "mean": 1000, "stddev": 200},
@@ -126,7 +126,7 @@ study = StudyDefinition(
     ),
     # HOUSEHOLD SIZE
     household_size=patients.household_as_of(
-        "2020-03-01",
+        "2020-02-01",
         returning="household_size",
         return_expectations={
             "int": {"distribution": "normal", "mean": 3, "stddev": 1},
