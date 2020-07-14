@@ -134,7 +134,6 @@ study = StudyDefinition(
         },
     ),
 
-
     # DEMOGRAPHIC COVARIATES
 
     # AGE
