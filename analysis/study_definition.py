@@ -780,6 +780,13 @@ study = StudyDefinition(
         on_or_before="2020-06-07",
         include_month=True,
     ),
+    transplant_notkidney=patients.with_these_clinical_events(
+        transplant_notkidney_codes,
+        return_first_date_in_period=True,
+        on_or_before="2020-06-07",
+        include_month=True,
+    ),
+
     # SPLEEN PROBLEMS, HIV, IMMUNODEFICIENCY
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/13
     dysplenia=patients.with_these_clinical_events(
@@ -926,7 +933,7 @@ study = StudyDefinition(
 
     #  KIDNEY TRANSPLANT AND DIALYSIS (most recent)
     #  https://github.com/ebmdatalab/tpp-sql-notebook/issues/31
-    transplant_notkidney=patients.with_these_clinical_events(
+    transplant_kidney=patients.with_these_clinical_events(
         transplant_kidney_codes,
         return_last_date_in_period=True,
         on_or_before="2020-03-01",
@@ -939,7 +946,7 @@ study = StudyDefinition(
         include_month=True,
     ),
     # Time-update: Most recent kidney transplant and dialysis as of 1 April
-    transplant_notkidney_2=patients.with_these_clinical_events(
+    transplant_kidney_2=patients.with_these_clinical_events(
         transplant_kidney_codes,
         return_last_date_in_period=True,
         on_or_before="2020-04-01",
@@ -952,7 +959,7 @@ study = StudyDefinition(
         include_month=True,
     ),
     # Time-update: Most recent kidney transplant and dialysis as of 12 April
-    transplant_notkidney_3=patients.with_these_clinical_events(
+    transplant_kidney_3=patients.with_these_clinical_events(
         transplant_kidney_codes,
         return_last_date_in_period=True,
         on_or_before="2020-04-12",
@@ -965,7 +972,7 @@ study = StudyDefinition(
         include_month=True,
     ),
     # Time-update: Most recent kidney transplant and dialysis as of 11 May
-    transplant_notkidney_4=patients.with_these_clinical_events(
+    transplant_kidney_4=patients.with_these_clinical_events(
         transplant_kidney_codes,
         return_last_date_in_period=True,
         on_or_before="2020-05-11",
