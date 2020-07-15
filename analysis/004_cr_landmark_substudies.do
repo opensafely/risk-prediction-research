@@ -5,6 +5,7 @@
 *	Programmed by:	Fizz & John
 *
 *	Data used:		output/cr_training.dta (training dataset)
+*					data/foi_coefs.dta (force of infection data)
 *
 *	Data created:	
 *					output/cr_tr_landmark_models.dta (training modelling fitting) 
@@ -51,7 +52,6 @@ set seed 37873
 * Create separate landmark substudies
 forvalues i = 1 (1) 43 {
 
-
 	* Open underlying base training cohort (4/5 of original TPP cohort)
 	use "data/cr_training_dataset.dta", replace
 
@@ -67,13 +67,16 @@ forvalues i = 1 (1) 43 {
 	*  Select substudy case-cohort  *
 	*********************************
 	
+	* Date this landmark started: d(1/03/2020) + `i' - 1
+	* Days until death:  died_date_onscovid - {d(1/03/2020) + `i' - 1} + 1
+	
 	* Survival time (must be between 1 and 28)
 	qui capture drop stime
-	qui gen stime = (died_date_onscovid - `cohort_first_date' + 1) ///
-			- `i' + 1 if died_date_onscovid < .
+	qui gen stime = (died_date_onscovid - (d(1/03/2020) + `i' - 1) + 1) ///
+			if died_date_onscovid < .
 	
 	* Mark people who have an event in the relevant 28 day period
-	qui replace onscoviddeath = 0 if onscoviddeath==1 &  ///
+	qui replace onscoviddeath = 0 if onscoviddeath==1 &  	///
 		stime>28
 	qui replace stime = 28 if onscoviddeath==0
 	noi bysort onscoviddeath: summ stime
@@ -212,10 +215,26 @@ sort time patient_id dayin
 *  Add in time-varying infection data  *
 ****************************************
 
+gen 	agegroupfoi = 1  if age<25
+recode 	agegroupfoi .=2  if age<30
+recode 	agegroupfoi .=3  if age<35
+recode 	agegroupfoi .=4  if age<40
+recode 	agegroupfoi .=5  if age<45
+recode 	agegroupfoi .=6  if age<50
+recode 	agegroupfoi .=7  if age<55
+recode 	agegroupfoi .=8  if age<60
+recode 	agegroupfoi .=9  if age<65
+recode 	agegroupfoi .=10 if age<70
+recode 	agegroupfoi .=11 if age<75
+recode 	agegroupfoi .=12 if age<.
+
 
 * Merge in the summary infection prevalence data
-*merge m:1 time using infected_coefs, assert(match using) keep(match) nogen 
+merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
+	assert(match using) keep(match) nogen 
+drop agegroupfoi
 
+	
 * Merge in the infection and immunity data prevalence data
 *merge m:1 time using infect_immune, assert(match using) keep(match) nogen ///
 *	keepusing(susc infect)
@@ -226,6 +245,9 @@ sort time patient_id dayin
 ******************
 *  Save dataset  *
 ******************
+
+order time patient_id
+sort time patient_id
 
 label data "Training data 28-day landmark substudies (complete case ethnicity) for model fitting"
 save "data/cr_tr_landmark_models.dta", replace
