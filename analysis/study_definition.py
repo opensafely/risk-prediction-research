@@ -25,13 +25,16 @@ study = StudyDefinition(
         "incidence": 0.2,
     },
 
-
+################################################################################################################
     # STUDY POPULATION
     population=patients.satisfying(
         """ (age >=18 AND age <= 105) AND (household_size <= 10)
         """,
     ),
-
+    population=patients.registered_with_one_practice_between(
+        "2020-02-29", "2020-03-01"
+    ),
+    ################################################################################################################
     # OUTCOMES
     died_ons_covid_flag_any=patients.with_these_codes_on_death_certificate(
         covid_codelist,
