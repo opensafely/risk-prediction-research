@@ -986,6 +986,6 @@ study = StudyDefinition(
         return_first_date_in_period=True,
         on_or_before="2020-05-11",
         include_month=True,
-    )
+    ),
 
 )
