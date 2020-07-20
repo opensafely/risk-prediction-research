@@ -731,6 +731,14 @@ gen hh_children = (hh_num_child>0)
 order hh_children, after(hh_num_child)
 
 
+***************************
+*  Drop large households  *
+***************************
+
+noi di "DROPPING HOUSEHOLDS > 10 people"
+drop if hh_num >=10
+
+
 
 **********************
 *  Rename variables  *
