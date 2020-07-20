@@ -1,0 +1,142 @@
+CTV3ID,CTV3_Description,CodeType
+7K1D0,Pr op rd & fx #NOF & vars: [scrw]/ [nail]/ [plt]/ [mult pin],Non_Numeric_Code
+7K1D6,Prmy open red+int fxn prox femoral #+screw/nail device alone,Non_Numeric_Code
+7K1H6,Revsn to opn red+int fxtn prox fem #+screw/nail device alone,Non_Numeric_Code
+7K1H8,Rvsn to opn red+int fxtn prox fem #+ scrw/nail+plate device,Non_Numeric_Code
+7K1J0,Cl red and int fix prox fem # with screw/nail (& named vars),Non_Numeric_Code
+7K1J6,Primary int fxn(no red) prox fem #+scrw/nail+intramed device,Non_Numeric_Code
+7K1J8,Revisn to int fxn(no red) prox fem #+screw/nail device alone,Non_Numeric_Code
+7K1JB,Primary cls red+int fxn prox fem #+screw/nail device alone,Non_Numeric_Code
+7K1JD,Primary cls red+int fxn prox fem #+screw/nail+plate device,Non_Numeric_Code
+7K1L4,Closed reduction of fracture of hip,Non_Numeric_Code
+7K1LL,Closed reduction of fracture of radius and or ulna,Non_Numeric_Code
+N1y1.,Fatigue fracture of vertebra,Non_Numeric_Code
+N331.,(Fract: [path][spon]) or (collapse: [spine NOS][vertebra &]),Non_Numeric_Code
+N331A,Osteoporosis with pathological fracture cervical vertebrae,Non_Numeric_Code
+NyuB0,[X]Other osteoporosis with pathological fracture,Non_Numeric_Code
+S1000,Closed fracture of unspecified cervical vertebra,Non_Numeric_Code
+S100H,"Closed fracture cervical vertebra, wedge",Non_Numeric_Code
+S100K,"Closed fracture cervical vertebra, spinous process",Non_Numeric_Code
+S102.,Closed fracture thoracic vertebra,Non_Numeric_Code
+S1020,"Closed fracture thoracic vertebra, burst",Non_Numeric_Code
+S1021,"Closed fracture thoracic vertebra, wedge",Non_Numeric_Code
+S102y,Other specified closed fracture thoracic vertebra,Non_Numeric_Code
+S102z,Closed fracture thoracic vertebra not otherwise specified,Non_Numeric_Code
+S1031,"Open fracture thoracic vertebra, wedge",Non_Numeric_Code
+S104.,Closed fracture lumbar vertebra,Non_Numeric_Code
+S1040,"Closed fracture lumbar vertebra, burst",Non_Numeric_Code
+S1041,"Closed fracture lumbar vertebra, wedge",Non_Numeric_Code
+S1042,"Closed fracture lumbar vertebra, spondylolysis",Non_Numeric_Code
+S10A0,Fracture of first cervical vertebra,Non_Numeric_Code
+S10B.,Fracture of lumbar spine and pelvis,Non_Numeric_Code
+S10B6,Multiple fractures of lumbar spine and pelvis,Non_Numeric_Code
+S112.,Closed fracture of thoracic spine with spinal cord lesion,Non_Numeric_Code
+S114.,Closed fracture of lumbar spine with spinal cord lesion,Non_Numeric_Code
+S1145,Closed spinal fracture with cauda equina lesion,Non_Numeric_Code
+S150.,Multiple fractures of thoracic spine,Non_Numeric_Code
+S23..,Fracture of radius &/or ulna,Non_Numeric_Code
+S234.,"Closed fracture of: [radius and ulna, lower end] or [wrist])",Non_Numeric_Code
+S2341,Closed fracture: [Colles'] or [Smith's],Non_Numeric_Code
+S2346,"Closed fracture radius and ulna, distal",Non_Numeric_Code
+S2351,Open fracture: [Colles'] or [Smith's],Non_Numeric_Code
+S23x1,"Fracture of radius: [closed (alone), unspecified] or [NOS]",Non_Numeric_Code
+S23y.,"Open fracture of radius and ulna, unspecified part",Non_Numeric_Code
+S30..,Fracture: [neck of femur] or [hip],Non_Numeric_Code
+S300.,"Closed fracture proximal femur, transcervical",Non_Numeric_Code
+S3000,"Cls # prox femur, intracapsular section, unspecified",Non_Numeric_Code
+S3001,"Closed fracture proximal femur, transepiphyseal",Non_Numeric_Code
+S3004,Closed fracture head of femur,Non_Numeric_Code
+S3005,"Cls # prox femur, subcapital, Garden grade unspec.",Non_Numeric_Code
+S3006,"Closed fracture proximal femur, subcapital, Garden grade I",Non_Numeric_Code
+S3007,"Closed fracture proximal femur, subcapital, Garden grade II",Non_Numeric_Code
+S3009,"Closed fracture proximal femur, subcapital, Garden grade IV",Non_Numeric_Code
+S300y,"Closed fract femur: [proximal, oth transcerv] or [subcapit]",Non_Numeric_Code
+S300z,"Closed fracture proximal femur, transcervical, NOS",Non_Numeric_Code
+S3010,"Opn # proximal femur, intracapsular section, unspecified",Non_Numeric_Code
+S3015,"Open fracture proximal femur,subcapital, Garden grade unspec",Non_Numeric_Code
+S302.,"Closed fracture of proximal femur, pertrochanteric",Non_Numeric_Code
+S3020,"Clos frac fem:[prox,troch sect,uns][great troch][less troch]",Non_Numeric_Code
+S3021,"Closed fracture proximal femur, intertrochanteric, two part",Non_Numeric_Code
+S3022,"Closed fracture proximal femur, subtrochanteric",Non_Numeric_Code
+S3023,"Cls # proximal femur, intertrochanteric, comminuted",Non_Numeric_Code
+S302z,"Cls # of proximal femur, pertrochanteric section, NOS",Non_Numeric_Code
+S303.,"Open fracture of proximal femur, pertrochanteric",Non_Numeric_Code
+S3032,"Open fracture proximal femur, subtrochanteric",Non_Numeric_Code
+S304.,Pertrochanteric fracture,Non_Numeric_Code
+S30y.,(Closed fracture of neck of femur) or (hip fracture NOS),Non_Numeric_Code
+S30z.,Open fracture of neck of femur NOS,Non_Numeric_Code
+S31z.,"Fracture of femur, NOS",Non_Numeric_Code
+S4500,"Closed traumatic dislocation of hip, unspecified",Non_Numeric_Code
+S4E..,Fracture dislocation or subluxation hip,Non_Numeric_Code
+S4E0.,"Closed fracture dislocation, hip joint",Non_Numeric_Code
+S4E1.,"Open fracture dislocation, hip joint",Non_Numeric_Code
+S4E2.,"Closed fracture subluxation, hip joint",Non_Numeric_Code
+X601I,Prim op red # nck femur & op fix - Deyerle multiple hip pin,Non_Numeric_Code
+X601L,Prim op red # nck femur & op fix- Charnley compression screw,Non_Numeric_Code
+X601M,Dynamic hip screw primary fixation of neck of femur,Non_Numeric_Code
+X601N,Prim open reduct # neck femur & op fix - Richards screw,Non_Numeric_Code
+X601P,Cls red+int fxn prox femoral #+Richard's cannulat hip screw,Non_Numeric_Code
+X601S,Cl red intracaps fract neck femur fix - Smith-Petersen nail,Non_Numeric_Code
+X601T,Prim open reduct # neck femur & op fix - Holt nail,Non_Numeric_Code
+X601U,Prim open reduct # neck femur & op fix - Ross Brown nail,Non_Numeric_Code
+XA0ED,Fracture dislocation of hip joint,Non_Numeric_Code
+XA0G8,Fracture of vertebra,Non_Numeric_Code
+XA0GI,C6 vertebra closed fracture without spinal cord lesion,Non_Numeric_Code
+XA0GM,Fracture of thoracic spine,Non_Numeric_Code
+XA0GN,Fracture of lumbar spine,Non_Numeric_Code
+XA0GV,Fracture of radius,Non_Numeric_Code
+XA0GW,Fracture of radius NOS,Non_Numeric_Code
+XA0Gb,Fracture of distal end of radius,Non_Numeric_Code
+XA0Gc,Colles' fracture,Non_Numeric_Code
+XA0Gn,Fracture of distal end of radius and ulna,Non_Numeric_Code
+XA0HE,Fracture of proximal end of femur,Non_Numeric_Code
+XA0HF,Subcapital fracture of neck of femur,Non_Numeric_Code
+XA0HG,Midcervical fracture of neck of femur,Non_Numeric_Code
+XA0HH,Basicervical fracture of neck of femur,Non_Numeric_Code
+XA0HI,Intertrochanteric fracture of femur,Non_Numeric_Code
+XA0HJ,Subtrochanteric fracture of femur,Non_Numeric_Code
+XA0HK,Hip fracture NOS,Non_Numeric_Code
+XE08J,Prmy open red+int fxn prox femoral #+screw/nail+plate device,Non_Numeric_Code
+XE08S,Cls red+int fxn proximal femoral #+screw/nail device alone,Non_Numeric_Code
+XE1kW,Fracture of vertebra without spinal cord lesion,Non_Numeric_Code
+XE1kc,Closed fracture of fifth cervical vertebra,Non_Numeric_Code
+XE1kd,Closed fracture of sixth cervical vertebra,Non_Numeric_Code
+XE1ke,Closed fracture of seventh cervical vertebra,Non_Numeric_Code
+XE1ks,Fracture of radius and ulna,Non_Numeric_Code
+XE1kt,"Closed fracture of radius and ulna, lower end",Non_Numeric_Code
+XE1ku,Closed Colles' fracture,Non_Numeric_Code
+XE1kx,Open Colles' fracture,Non_Numeric_Code
+XE1l3,Fracture of neck of femur,Non_Numeric_Code
+XE1l7,"Cls # proximal femur, trochanteric section, unspecified",Non_Numeric_Code
+XE1l9,Closed fracture of neck of femur NOS,Non_Numeric_Code
+XE2Qf,Pathological fracture of lumbar vertebra,Non_Numeric_Code
+XM0vO,Fracture of lumbar spine - no cord lesion,Non_Numeric_Code
+XM1Ne,"Closed fracture of femur, subcapital",Non_Numeric_Code
+XM1Ng,"Closed fracture of femur, greater trochanter",Non_Numeric_Code
+XM1Nj,"Open fracture of femur, greater trochanter",Non_Numeric_Code
+Xa1vR,Wedge fracture of cervical vertebra,Non_Numeric_Code
+Xa1vS,Crush fracture of cervical vertebra,Non_Numeric_Code
+Xa1vb,Wedge fracture of thoracic vertebra,Non_Numeric_Code
+Xa1vc,Crush fracture of thoracic vertebra,Non_Numeric_Code
+Xa1vd,Burst fracture of thoracic vertebra,Non_Numeric_Code
+Xa1vl,Wedge fracture of lumbar vertebra,Non_Numeric_Code
+Xa1vm,Crush fracture of lumbar vertebra,Non_Numeric_Code
+Xa7nz,Fracture of greater trochanter,Non_Numeric_Code
+Xa8AO,Fracture subluxation of hip joint,Non_Numeric_Code
+XaAzf,Anterior wedge fracture of vertebra,Non_Numeric_Code
+XaBDT,"Open fracture of femur, intertrochanteric",Non_Numeric_Code
+XaBDU,"Closed fracture of femur, intertrochanteric",Non_Numeric_Code
+XaD2s,Collapse of cervical vertebra due to osteoporosis,Non_Numeric_Code
+XaD30,Closed multiple fractures of thoracic spine,Non_Numeric_Code
+XaD4I,Collapse of lumbar vertebra due to osteoporosis,Non_Numeric_Code
+XaD4J,Collapse of thoracic vertebra due to osteoporosis,Non_Numeric_Code
+XaD4K,Collapse of vertebra due to osteoporosis NOS,Non_Numeric_Code
+XaEJD,Closed reduction of intracapsular # NOF internal fixat DHS,Non_Numeric_Code
+XaFCy,Burst fracture of vertebra,Non_Numeric_Code
+XaFCz,Wedge fracture of vertebra,Non_Numeric_Code
+XaIIp,Fragility fracture due to unspecified osteoporosis,Non_Numeric_Code
+XaIUA,H/O: fragility fracture,Non_Numeric_Code
+XaIUB,H/O: hip fracture,Non_Numeric_Code
+XaIUC,H/O: vertebral fracture,Non_Numeric_Code
+XaNSP,Fragility fracture,Non_Numeric_Code
+XaPtb,Remanip intracap fract neck fem and fix using nail or screw,Non_Numeric_Code

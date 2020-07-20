@@ -1,6 +1,6 @@
 *~
 model.log
-*/input.csv
+*/input*.csv
 __pycache__
 .python-version
 analysis/*
@@ -11,6 +11,7 @@ analysis/*
 !*.py
 !*.sthlp
 !posteriors.csv
+!foi-2020-07-10.csv
 venv/
 .cache
 *.exe

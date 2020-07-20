@@ -43,19 +43,17 @@ local cohort_last_date  = d(9/05/2020)
 use "data/cr_base_cohort.dta", replace
 
 * For training and time-internal evaluation: 
-*   Outcome = COVID-19 death until 10 May (inclusive)
+*   Outcome = COVID-19 death until 9 May (inclusive)
 gen onscoviddeath = (died_date_onscovid) <= `cohort_last_date'
-label var onscoviddeath "COVID-19 death (1 March - 10 May)"
-drop died_date_onscovid
+label var onscoviddeath "COVID-19 death (1 March - 9 May)"
 
 * Survival time
-gen 	stime = days_until_coviddeath if onscoviddeath==1
+gen 	stime = (died_date_onscovid - `cohort_first_date' + 1) ///
+	if onscoviddeath==1
 replace stime = (`cohort_last_date' - `cohort_first_date' + 1) ///
 	if onscoviddeath==0
-label var stime "Survival time (days from 1 March; end 10 May) for COVID-19 death"
+label var stime "Survival time (days from 1 March; end 9 May) for COVID-19 death"
 
-* Death from other causes is not needed for case-cohort analyses
-drop died_date_onsother days_until_otherdeath
 
 
 

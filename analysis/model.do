@@ -4,12 +4,11 @@
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		
+*	Data used:		output/input.csv
 
-*	Data created:
+*	Data created:	a number of analysis datasets
 *
-*
-*	Other output:	
+*	Other output:	-
 *
 ********************************************************************************
 *
@@ -18,7 +17,9 @@
 *  
 ********************************************************************************
 
-import delimited "`c(pwd)'/analysis/input.csv"
+
+
+import delimited "`c(pwd)'/output/input.csv"
 
 
 set more off
@@ -30,27 +31,23 @@ adopath + "`c(pwd)'/analysis/ado"
 
 /*  Pre-analysis data manipulation  */
 
-***************************************************
-*  IF PARALLEL WORKING - THIS MUST BE RUN FIRST   *
-***************************************************
 
-do "`c(pwd)'/analysis/PRE_DATAFIXESFORTESTING.do"
+* Program to extract covariates
+do "`c(pwd)'/analysis/0000_cr_define_covariates.do"
+
+* Define base cohort
 do "`c(pwd)'/analysis/000_cr_base_cohort_dataset.do"
-do "`c(pwd)'/analysis/DATAFIXESFORTESTING.do"
 
+* Program to define covariates
+do "`c(pwd)'/analysis/0000_cr_define_covariates.do"
+
+* Split into training and evaluation
 do "`c(pwd)'/analysis/001_cr_data_splitting.do"
+
+* Create case-cohort samples for model fitting and variable selection
 do "`c(pwd)'/analysis/002_cr_case_cohort.do"
 
 
 
 
-/*  Run analyses  */
-
-************************************************************************
-*  IF PARALLEL WORKING - FOLLOWING CAN BE RUN IN ANY ORDER/IN PARALLEL *
-*       PROVIDING THE ABOVE CR_ FILE HAS BEEN RUN FIRST				   *
-************************************************************************
-
-
-* Cluster analyses
 

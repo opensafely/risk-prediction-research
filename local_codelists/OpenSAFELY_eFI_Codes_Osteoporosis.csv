@@ -1,0 +1,60 @@
+CTV3ID,CTV3_Description,CodeType
+N330.,Osteoporosis,Non_Numeric_Code
+N3300,"Osteoporosis, unspecified",Non_Numeric_Code
+N3301,Senile osteoporosis,Non_Numeric_Code
+N3302,Postmenopausal osteoporosis,Non_Numeric_Code
+N3303,Idiopathic generalised osteoporosis,Non_Numeric_Code
+N3304,Disuse osteoporosis,Non_Numeric_Code
+N3305,Drug-induced osteoporosis,Non_Numeric_Code
+N3306,Postoophorectomy osteoporosis,Non_Numeric_Code
+N3307,Post-surgical malabsorption osteoporosis,Non_Numeric_Code
+N3308,Localised osteoporosis - Lequesne,Non_Numeric_Code
+N330A,Osteoporosis in endocrine disorders,Non_Numeric_Code
+N330B,Vertebral osteoporosis,Non_Numeric_Code
+N330z,Osteoporosis NOS,Non_Numeric_Code
+N3312,Postoophorectomy osteoporosis with pathological fracture,Non_Numeric_Code
+N3315,Drug-induced osteoporosis with pathological fracture,Non_Numeric_Code
+N3316,Idiopathic osteoporosis with pathological fracture,Non_Numeric_Code
+N3318,Osteoporosis with pathological fracture of lumbar vertebrae,Non_Numeric_Code
+N3319,Osteoporosis with pathological fracture thoracic vertebrae,Non_Numeric_Code
+N331B,Postmenopausal osteoporosis with pathological fracture,Non_Numeric_Code
+NyuB0,[X]Other osteoporosis with pathological fracture,Non_Numeric_Code
+NyuB1,[X]Other osteoporosis,Non_Numeric_Code
+NyuB8,[X]Unspecified osteoporosis with pathological fracture,Non_Numeric_Code
+X7038,Idiopathic osteoarthritis,Non_Numeric_Code
+X70At,Adult idiopathic generalised osteoporosis,Non_Numeric_Code
+X70Av,Secondary generalised osteoporosis,Non_Numeric_Code
+X70Ax,Transient osteoporosis of hip,Non_Numeric_Code
+X70B0,Secondary localised osteoporosis,Non_Numeric_Code
+Xa0AZ,Primary osteoporosis,Non_Numeric_Code
+Xa1k0,Regional osteoporosis,Non_Numeric_Code
+XaC12,Osteoporosis localised to spine,Non_Numeric_Code
+XaCDT,Bone densimetry abnormal,Non_Numeric_Code
+XaD4K,Collapse of vertebra due to osteoporosis NOS,Non_Numeric_Code
+XaE5D,Osteopenia,Non_Numeric_Code
+XaIP4,Osteoporosis due to corticosteroids,Non_Numeric_Code
+XaISQ,Attends osteoporosis monitoring,Non_Numeric_Code
+XaISS,Osteoporosis monitoring default,Non_Numeric_Code
+XaISd,Osteoporosis monitoring,Non_Numeric_Code
+XaISg,Osteoporosis treatment started,Non_Numeric_Code
+XaISh,Osteoporosis treatment stopped,Non_Numeric_Code
+XaISi,Osteoporosis treatment changed,Non_Numeric_Code
+XaISj,Osteoporosis - no treatment,Non_Numeric_Code
+XaISk,Osteoporosis - dietary advice,Non_Numeric_Code
+XaISl,Osteoporosis - dietary assessment,Non_Numeric_Code
+XaISm,Osteoporosis - exercise advice,Non_Numeric_Code
+XaISn,Osteoporosis - falls prevention,Non_Numeric_Code
+XaISo,Osteoporosis - treatment response,Non_Numeric_Code
+XaISt,Refer to osteoporosis specialist,Non_Numeric_Code
+XaISx,Seen in osteoporosis clinic,Non_Numeric_Code
+XaIT0,At risk of osteoporotic fracture,Non_Numeric_Code
+XaITc,Lumbar DXA scan result osteopenic,Non_Numeric_Code
+XaJdn,Referral to osteoporosis clinic,Non_Numeric_Code
+XaQRT,Bone sparing drug treatment offered for osteoporosis,Non_Numeric_Code
+XaQgT,History of osteoporosis,Non_Numeric_Code
+XaX3U,Excepted osteoporosis quality indicators: patient unsuitable,Non_Numeric_Code
+XaX3W,Excepted osteoporosis quality indicators: informed dissent,Non_Numeric_Code
+XE2e7,Serum vitamin D level,Numeric_Code
+XaITU,Hip DXA scan T score,Numeric_Code
+XE2e7,Serum vitamin D level,Numeric_Value
+XaITU,Hip DXA scan T score,Numeric_Value

@@ -17,10 +17,19 @@
 *						data (all cases, random sample of controls) to variable
 *						select from all possible pairwise interactions.
 *
+*	Note:				This do-file uses Barlow weights (incorporated as an
+*						offset in the Poisson model) to account for the case-
+*						cohort design.
+*
 ********************************************************************************
+
+
+
+
 * Open a log file
 capture log close
 log using "output/100_pr_variable_selection", text replace
+
 
 
 
@@ -32,26 +41,50 @@ log using "output/100_pr_variable_selection", text replace
 * Covariate list needs updating when we add covariates  
 ***************************            UPDATE            **************************************
 
-global pred_cts = "age1 age2 age3"
 
-global pred_bin = "male respiratory cardiac hypertension stroke dementia neuro  dialysis liver transplant spleen autoimmune hiv suppression"
+/*  List to be forced in  */
 
-global pred_cat = "ethnicity_8 obese4cat smoke_nomiss diabetes bpcat_nomiss asthma cancerExhaem cancerHaem kidneyfn"
+global pred_cts_f = "age1 age2 age3"
+
+global pred_bin_f = "male respiratory cardiac stroke dementia neuro dialysis liver transplant autoimmune hiv suppression"
+
+global pred_cat_f = "ethnicity_8 obese4cat imd smoke_nomiss diabetes bpcat_nomiss asthma cancerExhaem cancerHaem kidneyfn"
+
+
+
+
+/*  List to be additionally considered  */
+
+
+global pred_cts_c = " "
+
+global pred_bin_c = "hypertension spleen"
+
+global pred_cat_c = "bpcat_nomiss"
 
 
 
 
 
-******************************************
-*  Select random sample for exploration  *
-******************************************
+
+*************************************************
+*  Open data to be used for variable selection  *
+*************************************************
 
 use "data/cr_casecohort_var_select.dta", clear
 
 
-***********************************************
-*  Recode variables for consistent baselines  *
-***********************************************
+* Standardise continous variables
+foreach var of varlist $pred_cts_f $pred_cts_c {
+	qui summ `var'
+	qui replace `var' = (`var' - r(mean))/r(sd)
+}
+
+
+
+/*
+
+: Good idea - maybe not? 
 
 * Binary variables
 * Change other value codes for presentation purposes
@@ -66,6 +99,11 @@ recode agegroup 1=18 2=40 3=1 4=60 5=70 6=80
 label values agegroup
 
 
+ */
+ 
+
+ 
+
 
 ************************
 *  Variable Selection  *
@@ -79,88 +117,51 @@ label values agegroup
 
 
 * Create binary shielding indicator
+stset dayout, fail(onscoviddeath) enter(dayin) id(patient_id)  
 stsplit shield, at(32)
-recode shield 32=0
+recode shield 32=1
 label define shield 0 "Pre-shielding" 1 "Shielding"
-label values shiled shield
+label values shield shield
 label var shield "Binary shielding (period) indicator"
-
+recode onscoviddeath .=0
 
 * Create outcome for Poisson model and exposure variable
 gen diedcovforpoisson  = _d
 gen exposureforpoisson = _t-_t0
-			
+gen offset = log(exposureforpoisson) + log(sf_wts)
 
 timer clear 1
 timer on 1
-lasso poisson diedcovforpoisson  (i.(agegroup 						///
-							ethnicity 								///
-							male 									///
-							obese4cat								///
-							smoke_nomiss							///
-							imd										///
-							htdiag_or_highbp						///
-							chronic_respiratory_disease 			///
-							asthmacat 								///
-							chronic_cardiac_disease 				///
-							diabcat 								///
-							cancer_exhaem_cat 						///
-							cancer_haem_cat	  						///
-							chronic_liver_disease 					///
-							stroke_dementia		 					///
-							other_neuro								///
-							reduced_kidney_function_cat				///
-							organ_transplant 						///
-							spleen 									///
-							ra_sle_psoriasis  						///
-							other_immunosuppression timeband))		///
-							i.(agegroup 							///
-							ethnicity 								///
-							male 									///
-							obese4cat								///
-							smoke_nomiss							///
-							imd										///
-							htdiag_or_highbp						///
-							chronic_respiratory_disease 			///
-							asthmacat 								///
-							chronic_cardiac_disease 				///
-							diabcat 								///
-							cancer_exhaem_cat 						///
-							cancer_haem_cat	  						///
-							chronic_liver_disease 					///
-							stroke_dementia		 					///
-							other_neuro								///
-							reduced_kidney_function_cat				///
-							organ_transplant 						///
-							spleen 									///
-							ra_sle_psoriasis  						///
-							other_immunosuppression 				///
-							timeband)##i.(agegroup 					///
-							male 									///
-							obese4cat								///
-							smoke_nomiss							///
-							imd										///
-							htdiag_or_highbp						///
-							chronic_respiratory_disease 			///
-							asthmacat 								///
-							chronic_cardiac_disease 				///
-							diabcat 								///
-							cancer_exhaem_cat 						///
-							cancer_haem_cat	  						///
-							chronic_liver_disease 					///
-							stroke_dementia		 					///
-							other_neuro								///
-							reduced_kidney_function_cat				///
-							organ_transplant 						///
-							spleen 									///
-							ra_sle_psoriasis  						///
-							other_immunosuppression 				///
-							timeband) 								///
-							if shield==1,							///
-							exp(exposureforpoisson) selection(plugin) 
+lasso poisson diedcovforpoisson 									///
+			(c.(${pred_cts_f}) i.(${pred_bin_f}) i.(${pred_cat_f}))	///
+																	///
+			c.(${pred_cts_c}) i.(${pred_bin_c}) i.(${pred_cat_c})	///
+																	///
+			c.(${pred_cts_f})##c.(${pred_cts_f})					///
+			i.(${pred_bin_f})##c.(${pred_cts_f})					///
+			i.(${pred_cat_f})##c.(${pred_cts_f})					///
+			i.(${pred_bin_f})##c.(${pred_cat_f})					///
+																	///
+			c.(${pred_cts_f})##c.(${pred_cts_c})					///
+			c.(${pred_cts_f})##i.(${pred_bin_c})					///
+			c.(${pred_cts_f})##i.(${pred_cat_c})					///
+			i.(${pred_bin_f})##c.(${pred_cts_c})					///
+			i.(${pred_bin_f})##i.(${pred_bin_c})					///
+			i.(${pred_bin_f})##i.(${pred_cat_c})					///
+			i.(${pred_cat_f})##c.(${pred_cts_c})					///
+			i.(${pred_cat_f})##i.(${pred_bin_c})					///
+			i.(${pred_cat_f})##i.(${pred_cat_c})					///
+																	///
+			c.(${pred_cts_c})##c.(${pred_cts_c})					///
+			i.(${pred_bin_c})##c.(${pred_cts_c})					///	
+			i.(${pred_cat_c})##c.(${pred_cts_c})					///
+			i.(${pred_bin_c})##c.(${pred_cat_c})					///
+																	///
+			if shield==0,											///
+			offset(offset) selection(plugin) 
 lassocoef, display(coef, postselection eform)
 timer off 1
-timer list 1		   
+timer list 1
 
 
 * Matrix of coefs from selected model 
@@ -168,6 +169,45 @@ mat defin A = r(coef)
 
 * Selected covariates						
 local preShieldSelectedVars = e(allvars_sel)
+noi di "`preShieldSelectedVars'"
+
+
+**** TIDY THIS UP ****
+
+local preShieldSelectedVars2 = " " + "`preShieldSelectedVars'"
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " c", " c.c", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " a", " c.a", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " b", " c.b", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " d", " c.d", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " e", " c.e", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " f", " c.f", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " g", " c.g", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " h", " c.h", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " i", " c.i", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " j", " c.j", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " k", " c.k", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " l", " c.l", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " m", " c.m", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " n", " c.n", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " o", " c.o", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " p", " c.p", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " q", " c.q", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " r", " c.r", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " s", " c.s", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " t", " c.t", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " u", " c.u", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " v", " c.v", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " w", " c.w", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " x", " c.x", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " y", " c.y", .)
+local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " z", " c.z", .)
+
+
+noi di "`preShieldSelectedVars'"
+noi di "`preShieldSelectedVars2'"
+
+
+
 
 * Create postfile
 tempname coefs
@@ -179,11 +219,13 @@ foreach v of local preShieldSelectedVars {
 	
 	local coef = A[`i',1]
 	
+
 	post `coefs' ("`v'") (`coef')
     local ++i
 }
 
 postclose `coefs'
+
 
 
 ***************************************************************** 
@@ -193,81 +235,12 @@ postclose `coefs'
 *  at the 1st April) 											*
 *****************************************************************
 
-set seed 123478	
-keep if _d==1| uniform()<0.003
-stsplit timeband, at(30 60)
-
-gen diedcovforpoisson  = _d
-gen exposureforpoisson = _t-_t0
-						
 
 timer clear 1
 timer on 1
-lasso poisson diedcovforpoisson `preShieldSelectedVars'
-						(i.(agegroup 						///
-							ethnicity 								///
-							male 									///
-							obese4cat								///
-							smoke_nomiss							///
-							imd										///
-							htdiag_or_highbp						///
-							chronic_respiratory_disease 			///
-							asthmacat 								///
-							chronic_cardiac_disease 				///
-							diabcat 								///
-							cancer_exhaem_cat 						///
-							cancer_haem_cat	  						///
-							chronic_liver_disease 					///
-							stroke_dementia		 					///
-							other_neuro								///
-							reduced_kidney_function_cat				///
-							organ_transplant 						///
-							spleen 									///
-							ra_sle_psoriasis  						///
-							other_immunosuppression timeband))		///
-							i.(agegroup 							///
-							ethnicity 								///
-							male 									///
-							obese4cat								///
-							smoke_nomiss							///
-							imd										///
-							htdiag_or_highbp						///
-							chronic_respiratory_disease 			///
-							asthmacat 								///
-							chronic_cardiac_disease 				///
-							diabcat 								///
-							cancer_exhaem_cat 						///
-							cancer_haem_cat	  						///
-							chronic_liver_disease 					///
-							stroke_dementia		 					///
-							other_neuro								///
-							reduced_kidney_function_cat				///
-							organ_transplant 						///
-							spleen 									///
-							ra_sle_psoriasis  						///
-							other_immunosuppression 				///
-							timeband)##i.(agegroup 					///
-							male 									///
-							obese4cat								///
-							smoke_nomiss							///
-							imd										///
-							htdiag_or_highbp						///
-							chronic_respiratory_disease 			///
-							asthmacat 								///
-							chronic_cardiac_disease 				///
-							diabcat 								///
-							cancer_exhaem_cat 						///
-							cancer_haem_cat	  						///
-							chronic_liver_disease 					///
-							stroke_dementia		 					///
-							other_neuro								///
-							reduced_kidney_function_cat				///
-							organ_transplant 						///
-							spleen 									///
-							ra_sle_psoriasis  						///
-							other_immunosuppression 				///
-							timeband) 								///
-							, exp(exposureforpoisson) selection(plugin) 
+lasso poisson diedcovforpoisson (`preShieldSelectedVars2' )			///
+						 (`preShieldSelectedVars2')##i.shield		///
+							, offset(offset) selection(plugin) 
 lassocoef, display(coef, postselection eform)
 timer off 1
 timer list 1		   
@@ -278,6 +251,7 @@ mat defin B = r(coef)
 
 * Selected covariates						
 local postShieldSelectedVars = e(allvars_sel)
+noi di "`postShieldSelectedVars'"
 
 * Create postfile
 tempname coefs
