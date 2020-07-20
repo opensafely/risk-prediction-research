@@ -712,6 +712,18 @@ drop died_ons_covid_flag_any
 
 
 
+/*  Binary outcome and survival time  */
+
+
+* For training and internal evaluation: 
+*   Outcome = COVID-19 death between cohort first and last date
+gen onscoviddeath = died_date_onscovid <= d(8/06/2020)
+
+* Survival time
+gen 	stime = (died_date_onscovid - d(1/03/2020) + 1) if onscoviddeath==1
+replace stime = (d(8/06/2020)       - d(1/03/2020) + 1)	if onscoviddeath==0
+
+
 
 
 *********************************
@@ -845,6 +857,11 @@ forvalues j = 1 (1) 3 {
 * Outcomes 
 label var  died_date_onscovid	"Date of ONS COVID-19 death"
 label var  died_date_onsother 	"Date of ONS non-COVID-19 death"
+		
+label var onscoviddeath 		"COVID-19 death (1 March - 8 June)"
+label var stime					"Survival time (days from 1 March; end 8 June) for COVID-19 death"
+
+
 
 
 
@@ -865,7 +882,7 @@ order 	patient_id stp region_9 region_7 imd hh* 					///
 		kidneyfn* dialysis* liver* transplant* 						///
 		spleen* autoimmune* hiv* perm_immuno_date temp1yr*	ibd*	///
 		smi* osteo* fracture*										///
-		died_date_onscovid died_date_onsother 	
+		died_date_onscovid died_date_onsother onscoviddeath	stime
 
 
 

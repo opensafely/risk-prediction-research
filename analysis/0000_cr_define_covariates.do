@@ -33,6 +33,9 @@ program define define_covs
 	}
 	else {
 		local first_date = `dateno'
+		local date =  string(day(`dateno'))+"/"		///
+					+ string(month(`dateno'))+"/"	///
+					+ string(year(`dateno'))
 	}
 	
 	* Time lags required for variable definintion (cancer)
@@ -119,15 +122,13 @@ program define define_covs
 	if `first_date' <= d(1/03/2020) {
 		local j = 1  
 	} 
-	else if `first_date'  <= d(1/04/2020) {
+	else if `first_date'  <= d(6/04/2020) {
 		local j = 2
 	}
-	else if `first_date'  <= d(12/04/2020) {
+	else if `first_date'  <= d(12/05/2020) {
 		local j = 3
 	}	
-	else if `first_date'  <= d(11/05/2020) {
-		local j = 4
-	}
+
 	
 
 	

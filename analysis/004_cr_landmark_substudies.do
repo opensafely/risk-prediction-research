@@ -34,14 +34,22 @@ log using "output/002_cr_landmark", replace t
 ***********************
 *  Create substudies  *
 ***********************
-
-* Age-group-stratified sampling fractions
-local sf1 = 0.01
-local sf2 = 0.02
-local sf3 = 0.02
-local sf4 = 0.025
-local sf5 = 0.05
-local sf6 = 0.13
+***********************************  MUST UPDATE *********************************
+* True sampling fractions below. Don't work in dummy data
+* Age-group-stratified sampling fractions 
+*local sf1 = 0.01/70
+*local sf2 = 0.02/70
+*local sf3 = 0.02/70
+*local sf4 = 0.025/70
+*local sf5 = 0.05/70
+*local sf6 = 0.13/70
+local sf1 = 0.2
+local sf2 = 0.2
+local sf3 = 0.2
+local sf4 = 0.2
+local sf5 = 0.2
+local sf6 = 0.2
+***********************************  MUST UPDATE *********************************
 
 
 * Set random seed for replicability
@@ -49,7 +57,7 @@ set seed 37873
 
 
 * Create separate landmark substudies
-forvalues i = 1 (1) 43 {
+forvalues i = 1 (1) 73 {
 
 
 	* Open underlying base training cohort (4/5 of original TPP cohort)
@@ -69,14 +77,15 @@ forvalues i = 1 (1) 43 {
 	
 	* Survival time (must be between 1 and 28)
 	qui capture drop stime
-	qui gen stime = (died_date_onscovid - `cohort_first_date' + 1) ///
-			- `i' + 1 if died_date_onscovid < .
+	qui gen stime_overall = (died_date_onscovid - (d(1/03/2020) + `i' - 1) + 1) 
+	qui gen stime28 = stime_overall - `i' + 1
+	assert stime28 >= . if died_date_onscovid >= .
+	qui drop stime_overall
 	
 	* Mark people who have an event in the relevant 28 day period
-	qui replace onscoviddeath = 0 if onscoviddeath==1 &  ///
-		stime>28
-	qui replace stime = 28 if onscoviddeath==0
-	noi bysort onscoviddeath: summ stime
+	qui replace onscoviddeath = 0 if onscoviddeath==1 &  stime>28
+	qui replace stime28 = 28 if onscoviddeath==0
+	noi bysort onscoviddeath: summ stime28
 	
 	* Keep all cases and a random sample of controls (by agegroup)
 	qui gen subcohort = 0
@@ -120,7 +129,7 @@ forvalues i = 1 (1) 43 {
 	
 	* Start and stop dates for follow-up
 	gen 	dayin  = 0
-	gen  	dayout = stime
+	gen  	dayout = stime28
 	replace dayout = 1.5 if dayout==1
 	
 	replace dayout = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 1
@@ -135,7 +144,7 @@ forvalues i = 1 (1) 43 {
 	* Tidy and save dataset
 	qui gen time = `i'
 	qui label var time "First day of landmark substudy"
-	qui drop stime
+	qui drop stime28
 	qui save time_`i', replace
 }
 	
@@ -146,7 +155,7 @@ forvalues i = 1 (1) 43 {
 *  Define covariates in each substudy  *
 ****************************************
 
-forvalues i = 1 (1) 43 {
+forvalues i = 1 (1) 73 {
 	qui use time_`i'.dta, clear
 	qui summ time
 	local study_first_date = d(1/03/2020) + r(mean) - 1
@@ -166,12 +175,12 @@ forvalues i = 1 (1) 43 {
 
 * Stack datasets
 qui use time_1.dta, clear
-forvalues i = 2 (1) 43 {
+forvalues i = 2 (1) 73 {
 	qui append using time_`i'
 }
 
 * Delete unneeded datasets
-forvalues i = 1 (1) 43 {
+forvalues i = 1 (1) 73 {
 	qui erase time_`i'.dta
 }
 

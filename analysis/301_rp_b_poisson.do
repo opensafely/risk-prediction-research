@@ -57,9 +57,9 @@ timer list 1
 estat ic
 
 * Save estimates
-estimates
-estimates save ./output/models/rp_b_poisson_regression_models.ster, replace
-poisson, irr
+*estimates
+*estimates save ./output/models/rp_b_poisson_regression_models.ster, replace
+*poisson, irr
  
  
 

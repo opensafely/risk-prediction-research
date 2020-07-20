@@ -4,7 +4,11 @@
 *
 *	Programmed by:	Fizz & John
 *
+<<<<<<< Updated upstream:analysis/002_cr_case_cohort.do
 *	Data used:		output/cr_training.dta (training dataset)
+=======
+*	Data used:		data/cr_base_cohort.dta (base cohort)
+>>>>>>> Stashed changes:analysis/001_cr_case_cohort.do
 *
 *	Data created:	
 *					output/cr_tr_casecohort_var_select.dta (training variable selection)
@@ -18,17 +22,31 @@
 *	Purpose:		This do-file creates two case cohort datasets to perform
 *					model fitting in for the risk prediction models.
 *
-*					The first is for variable selection.
+*						- The first is for variable selection.
 *
-*					The second is for model fitting.
+*						- The second is for model fitting.
 *
 *	NOTE: 			Both cohorts remove people with missing ethnicity information.
+<<<<<<< Updated upstream:analysis/002_cr_case_cohort.do
 *  
 ********************************************************************************* 
+=======
+*
+********************************************************************************
+
+>>>>>>> Stashed changes:analysis/001_cr_case_cohort.do
+
 
 * Open a log file
 cap log close
+<<<<<<< Updated upstream:analysis/002_cr_case_cohort.do
 log using "output/002_cr_case_cohort", replace t
+=======
+log using "output/001_cr_data_splitting", replace t
+
+
+
+>>>>>>> Stashed changes:analysis/001_cr_case_cohort.do
 
 
 *************************
@@ -133,10 +151,13 @@ forvalues i = 1/2 {
 	
 
 	if `i' == 1 {
+		* Dataset for variable selection
+		* Do not apply Barlow weights
 		label data "Training data case-cohort (complete case ethnicity) for variable selection"
 		save "data/cr_casecohort_var_select.dta", replace
 	}
 	else { 
+		* Dataset for model fitting 
 		* Declare as survival data (with Barlow weights)
 		sort patient_id dayin
 		gen newid = _n
