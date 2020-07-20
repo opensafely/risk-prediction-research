@@ -1,21 +1,13 @@
 CTV3ID,CTV3PreferredTermDesc,CTV3Source
 23E5.,O/E - fibrosis of lung present,High_Level_SNOMED
 663K.,Airways obstructn irreversible,CTV3Map_Code_And_Term
-7450.,Lung transplant,CTV3Map_Code_And_Term
+7450,Lung transplant,CTV3Map_Code_And_Term
 7450y,Other specified transplantation of lung,CTV3Map_Code_And_Term
 7450z,Transplantation of lung NOS,CTV3Map_Code_And_Term
 A114.,Tuberculous fibrosis of lung,High_Level_SNOMED
 A115.,Tuberculous bronchiectasis,CTV3Map_Code_And_Term
 A7899,HIV disease resulting in lymphoid interstitial pneumonitis,CTV3_Children
 AD52.,Sarcoidosis of lung with sarcoidosis of lymph nodes,CTV3Map_Code_And_Term
-C370.,Cystic fibrosis,CTV3Map_Code_And_Term
-C370.,Cystic fibrosis,CTV3Map_Code_Only
-C3700,Cystic fibrosis with no meconium ileus,CTV3Map_Code_And_Term
-C3701,Meconium ileus in cystic fibrosis,CTV3Map_Code_And_Term
-C3701,Meconium ileus in cystic fibrosis,CTV3Map_Code_Only
-C3702,Cystic fibrosis with pulmonary manifestations,CTV3Map_Code_And_Term
-C3703,Cystic fibrosis with intestinal manifestations,CTV3Map_Code_And_Term
-C370z,Cystic fibrosis NOS,CTV3Map_Code_And_Term
 H0614,Obliterating fibrous bronchiolitis,QOF
 H3...,Chronic obstructive lung disease,CTV3Map_Code_And_Term
 H3...,Chronic obstructive lung disease,CTV3Map_Code_Only
@@ -166,7 +158,6 @@ N0421,Rheumatoid lung,CTV3Map_Code_Only
 N04y0,(Rheum lung) or (Caplan synd) or (fibr alveolit assoc arthr),High_Level_SNOMED
 P851.,Pulmonary hypoplasia,CTV3_Children
 P861.,Congenital bronchiectasis,CTV3Map_Code_And_Term
-PK35.,Kartageners syndrome,High_Level_SNOMED
 Q317.,Neonatal chronic respiratory disease,CTV3Map_Code_And_Term
 Q3170,Bronchopulmonary dysplasia,CTV3Map_Code_And_Term
 Q3171,Prematurity with interstitial pulmonary fibrosis,CTV3Map_Code_And_Term
@@ -190,13 +181,6 @@ X100r,Bronchiectasis due to toxic inhalation,CTV3_Children
 X100t,Post-lung transplantation bronchiectasis,CTV3_Children
 X101U,Asbestos-induced pleural plaque,CTV3Map_Code_And_Term
 X101U,Asbestos-induced pleural plaque,CTV3Map_Code_Only
-X101X,Inherited mucociliary clearance defect,High_Level_SNOMED
-X101Z,Primary ciliary dyskinesia,High_Level_SNOMED
-X101a,Primary ciliary dyskinesia - transposn ciliary microtubules,High_Level_SNOMED
-X101b,Immotile cilia syndrome due to defective radial spokes,High_Level_SNOMED
-X101c,Immotile cilia syndrome due to excessively long cilia,High_Level_SNOMED
-X101d,Young's syndrome,QOF
-X101e,Rutland ciliary disorientation syndrome,High_Level_SNOMED
 X101i,"Chron obstruct pulmonary dis wth acute exacerbation, unspec",CTV3Map_Code_And_Term
 X101j,Occupational chronic bronchitis,CTV3_Children
 X101k,Byssinosis grade 3,CTV3_Children
@@ -276,7 +260,6 @@ X1048,Necrotising sarcoid granulomatosis,CTV3_Children
 X1049,Sarcoid pulmonary calcification,CTV3_Children
 X104B,Grain fever,High_Level_SNOMED
 X104C,Humidifier fever,High_Level_SNOMED
-X309R,Cystic fibrosis of pancreas,High_Level_SNOMED
 X701k,Fibrosing alveolitis associated with rheumatoid arthritis,CTV3Map_Code_And_Term
 X701k,Fibrosing alveolitis associated with rheumatoid arthritis,CTV3Map_Code_Only
 X70Eg,Pneumonitis due to fetal aspiration,High_Level_SNOMED
@@ -314,8 +297,6 @@ Xa35l,Acute infective exacerbation chronic obstruct airway disease,CTV3_Children
 Xa9Bw,Pneumoconiosis,CTV3Map_Code_And_Term
 Xa9Bw,Pneumoconiosis,CTV3Map_Code_Only
 Xa9Bx,Radiation pneumonitis,High_Level_SNOMED
-XaBDb,Cystic fibrosis with other manifestations,CTV3Map_Code_And_Term
-XaBDb,Cystic fibrosis with other manifestations,CTV3Map_Code_Only
 XaEIV,Mild chronic obstructive pulmonary disease,CTV3Map_Code_And_Term
 XaEIW,Moderate chronic obstructive pulmonary disease,CTV3Map_Code_And_Term
 XaEIY,Severe chronic obstructive pulmonary disease,CTV3Map_Code_And_Term
@@ -351,7 +332,6 @@ XaKzy,Multiple COPD emergency hospital admissions,CTV3Map_Code_And_Term
 XaL2O,"Pneumonitis, unspecified",High_Level_SNOMED
 XaLcH,Single lobe lung transplant,CTV3_Children
 XaLqj,Health education - chronic obstructive pulmonary disease,CTV3Map_Code_And_Term
-XaMzI,Cystic fibrosis related diabetes mellitus,QOF
 XaN4a,Very severe chronic obstructive pulmonary disease,CTV3Map_Code_And_Term
 XaO5l,Chronic type 1 respiratory failure,CTV3Map_Code_And_Term
 XaO5m,Chronic type 2 respiratory failure,CTV3Map_Code_And_Term
@@ -363,17 +343,11 @@ XaPls,Referred for COPD structured smoking assessment,CTV3Map_Code_Only
 XaPlu,COPD structured smoking assessment declined,CTV3Map_Code_And_Term
 XaPlu,COPD structured smoking assessment declined,CTV3Map_Code_Only
 XaPzu,At risk of chronic obstructive pulmonary diseas exacerbation,CTV3Map_Code_And_Term
-XaQvd,Cystic fibrosis annual review,CTV3Map_Code_And_Term
 XaRCG,Step down change in COPD management plan,CTV3_Children
 XaRCH,Step up change in COPD management plan,CTV3_Children
-XaREX,Arthropathy in cystic fibrosis,CTV3Map_Code_And_Term
-XaREZ,Cystic fibrosis with distal intestinal obstruction syndrome,CTV3Map_Code_And_Term
-XaREa,Liver disease due to cystic fibrosis,CTV3Map_Code_And_Term
-XaREd,Fibrosing colonopathy,CTV3Map_Code_And_Term
 XaW9D,Issue of chronic obstructive pulmonary disease rescue pack,CTV3Map_Code_And_Term
 XaXCa,Chronic obstructive pulmonary disease 3 monthly review,CTV3Map_Code_And_Term
 XaXCb,Chronic obstructive pulmonary disease 6 monthly review,CTV3Map_Code_And_Term
-XaXi9,Cystic fibrosis related cirrhosis,CTV3Map_Code_And_Term
 XaXlE,Respiratory bronchiolitis associated interstitial lung dis,High_Level_SNOMED
 XaXlF,Interstitial lung disease due to collagen vascular disease,CTV3Map_Code_And_Term
 XaXlJ,Interstitial lung disease due to connective tissue disease,CTV3Map_Code_And_Term
@@ -394,7 +368,6 @@ XaZee,Chronic obstructive pulmonary disease care pathway,CTV3Map_Code_And_Term
 XaZoz,Seen in chronic obstructive pulmonary disease clinic,CTV3Map_Code_And_Term
 XaZp7,Chronic obstructive pulmonary disease rescue pack declined,CTV3Map_Code_And_Term
 XaZp8,Chronic obstructive pulmon dis wr self managem plan declined,CTV3Map_Code_And_Term
-XaZr7,Exacerbation of cystic fibrosis,CTV3Map_Code_And_Term
 Xaa7C,Eosinophilic bronchitis,QOF
 Xaam4,Chronic obstruct pulmonary disease management plan declined,CTV3Map_Code_And_Term
 XaavA,Shared care chronic obstructive pulmonary disease monitoring,CTV3_Children
@@ -409,5 +382,3 @@ Xafiu,COPD monitoring SMS text message third invitation,QOF
 Y1f1b,Chronic obstructive pulmonary disease monitoring invitation,QOF
 Y1f94,Quality and Outcomes Framework chronic obstructive pulmonary disease quality indicator-related care invitation (procedure),QOF
 Y1f95,Excepted from chronic obstructive pulmonary disease quality indicators - service unavailable (finding),QOF
-Y2708,Cystic fibrosis screening test,CTV3_Children
-Y2710,Cystic fibrosis positive,CTV3_Children

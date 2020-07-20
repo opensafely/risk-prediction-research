@@ -34,14 +34,12 @@ adopath + "`c(pwd)'/analysis/ado"
 
 * Program to extract covariates
 do "`c(pwd)'/analysis/0000_cr_define_covariates.do"
+
 * Define base cohort
 do "`c(pwd)'/analysis/000_cr_base_cohort_dataset.do"
-count
-noi di r(N)
-if r(N)<65000 {
-    noi di "Do some post-fixes to data (assumed to be the dummy)"
-	do "`c(pwd)'/analysis/DATAFIXESFORTESTING.do"
-}
+
+* Program to define covariates
+do "`c(pwd)'/analysis/0000_cr_define_covariates.do"
 
 * Split into training and evaluation
 do "`c(pwd)'/analysis/001_cr_data_splitting.do"

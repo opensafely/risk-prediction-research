@@ -1,6 +1,6 @@
 
 use "data/cr_base_cohort", clear
-
+/*
 
 * ONS death
 gen onscoviddeath = (uniform()<0.20)
@@ -38,6 +38,7 @@ recode asthmacat_2 .=0
 recode asthmacat_3 .=0
 recode asthmacat_4 .=0
 
+*/
 
 save "data/cr_base_cohort.dta", replace
 
