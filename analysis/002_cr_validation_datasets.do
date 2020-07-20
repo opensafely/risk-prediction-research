@@ -66,6 +66,11 @@ forvalues i = 1/3 {
 	use "data/cr_base_cohort.dta", replace
 
 	
+	/* Complete case for ethnicity   */ 
+	
+	drop if ethnicity >= .
+	
+	
 	/* Apply eligibility criteria for validation period i  */ 
 
 	*  To be at risk of 28-day Covid-19 death you must be alive at start date 	

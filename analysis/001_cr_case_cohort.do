@@ -6,8 +6,8 @@
 *
 *	Data used:		data/cr_base_cohort.dta (base cohort)
 *
-*	Data created:	output/cr_tr_casecohort_var_select.dta (training variable selection)
-*					output/cr_tr_casecohort_models.dta (training modelling fitting) 
+*	Data created:	output/cr_casecohort_var_select.dta (case-cohort: variable selection)
+*					output/cr_casecohort_models.dta (case-cohort: modelling fitting) 
 *
 *	Other output:	Log file:  cr_case_cohort.log
 *
@@ -50,11 +50,11 @@ local sf6 = 0.13
 set seed 37873
 
 
-* Create training case-cohorts
+* Create case-cohorts samples to perform variable selection and model fitting on
 forvalues i = 1/2 {
 
-	* Open underlying base cohort (4/5 of original TPP cohort)
-	use "data/cr_training_dataset.dta", replace
+	* Open underlying base cohort 
+	use "data/cr_base_cohort.dta", replace
 
 	* Keep ethnicity complete cases
 	drop if ethnicity>=.
@@ -137,7 +137,7 @@ forvalues i = 1/2 {
 	if `i' == 1 {
 		* Dataset for variable selection
 		* Do not apply Barlow weights
-		label data "Training data case-cohort (complete case ethnicity) for variable selection"
+		label data "Case-cohort sample (complete case ethnicity) for variable selection"
 		save "data/cr_casecohort_var_select.dta", replace
 	}
 	else { 
@@ -148,7 +148,7 @@ forvalues i = 1/2 {
 		label var newid "Row ID"
 		stset dayout [pweight=sf_wts], fail(onscoviddeath) enter(dayin) id(newid)  
 
-		label data "Training data case-cohort (complete case ethnicity) for model fitting"
+		label data "Case-cohort sample (complete case ethnicity) for model fitting"
 		note: Stset treats rows as if from different people; SEs will be incorrect
 		save "data/cr_casecohort_models.dta", replace
 	 }
