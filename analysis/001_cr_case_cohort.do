@@ -1,19 +1,13 @@
 ********************************************************************************
 *
-*	Do-file:		002_cr_case_cohort.do
+*	Do-file:		001_cr_case_cohort.do
 *
 *	Programmed by:	Fizz & John
 *
-<<<<<<< Updated upstream:analysis/002_cr_case_cohort.do
-*	Data used:		output/cr_training.dta (training dataset)
-=======
 *	Data used:		data/cr_base_cohort.dta (base cohort)
->>>>>>> Stashed changes:analysis/001_cr_case_cohort.do
 *
-*	Data created:	
-*					output/cr_tr_casecohort_var_select.dta (training variable selection)
+*	Data created:	output/cr_tr_casecohort_var_select.dta (training variable selection)
 *					output/cr_tr_casecohort_models.dta (training modelling fitting) 
-*
 *
 *	Other output:	Log file:  cr_case_cohort.log
 *
@@ -27,26 +21,16 @@
 *						- The second is for model fitting.
 *
 *	NOTE: 			Both cohorts remove people with missing ethnicity information.
-<<<<<<< Updated upstream:analysis/002_cr_case_cohort.do
 *  
 ********************************************************************************* 
-=======
-*
-********************************************************************************
 
->>>>>>> Stashed changes:analysis/001_cr_case_cohort.do
 
 
 * Open a log file
 cap log close
-<<<<<<< Updated upstream:analysis/002_cr_case_cohort.do
-log using "output/002_cr_case_cohort", replace t
-=======
-log using "output/001_cr_data_splitting", replace t
+log using "output/001_cr_case_cohort", replace t
 
 
-
->>>>>>> Stashed changes:analysis/001_cr_case_cohort.do
 
 
 *************************
