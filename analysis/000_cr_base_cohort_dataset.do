@@ -727,6 +727,9 @@ drop household_size
 rename household_id hh_id
 order hh_id, before(hh_num)
 
+gen hh_children = (hh_num_child>0)
+order hh_children, after(hh_num_child)
+
 
 
 **********************
@@ -775,7 +778,8 @@ label var region_7 				"Geographical region (7 England regions)"
 label var rural_urban 			"Rural/urban classification"
 label var hh_id 				"Household ID"
 label var hh_num 				"Number of adults in household"
-label var hh_num_child			"Presence of children (<=12)"
+label var hh_num_child			"Number of children (<=12)"
+label var hh_childre			"Presence of children (<=12)"
 
 
 forvalues j = 1 (1) 3 {
