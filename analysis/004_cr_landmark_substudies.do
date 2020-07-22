@@ -4,10 +4,9 @@
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		output/cr_training.dta (training dataset)
+*	Data used:		data/cr_base_cohort.dta 
 *
-*	Data created:	
-*					output/cr_tr_landmark_models.dta (training modelling fitting) 
+*	Data created:	data/cr_landmark.dta (data for fitting landmark models) 
 *
 *
 *	Other output:	Log file:  cr_landmark.log
@@ -15,7 +14,7 @@
 ********************************************************************************
 *
 *	Purpose:		This do-file creates a dataset containing stacked landmark
-*					substudies, each of 28 days, to perform model fitting in
+*					substudies, each of 28 days, to perform model fitting in,
 *					for the risk prediction models.
 *
 *	NOTE: 			These landmark substudies remove people with missing 
@@ -27,7 +26,7 @@
 
 * Open a log file
 cap log close
-log using "output/002_cr_landmark", replace t
+log using "output/004_cr_landmark", replace t
 
 
 
@@ -59,17 +58,20 @@ set seed 37873
 * Create separate landmark substudies
 forvalues i = 1 (1) 73 {
 
-
-	* Open underlying base training cohort (4/5 of original TPP cohort)
-	use "data/cr_training_dataset.dta", replace
+	* Open underlying base cohort
+	use "data/cr_base_cohort.dta", replace
 
 	* Keep ethnicity complete cases
 	drop if ethnicity>=.
-		
-	* Drop people who have died prior to day i 
-	qui drop if (died_date_onscovid - d(1/03/2020) + 1) < `i' 
-	qui drop if (died_date_onsother - d(1/03/2020) + 1) < `i' 
 	
+	* Date landmark substudy i starts
+	local date_in = d(1/03/2020) + `i' - 1
+			
+	* Drop people who have died prior to day i 
+	qui drop if died_date_onscovid < `date_in'
+	qui drop if died_date_onsother < `date_in'
+
+
 	
 	*********************************
 	*  Select substudy case-cohort  *
@@ -77,13 +79,11 @@ forvalues i = 1 (1) 73 {
 	
 	* Survival time (must be between 1 and 28)
 	qui capture drop stime
-	qui gen stime_overall = (died_date_onscovid - (d(1/03/2020) + `i' - 1) + 1) 
-	qui gen stime28 = stime_overall - `i' + 1
-	assert stime28 >= . if died_date_onscovid >= .
-	qui drop stime_overall
+	qui gen stime28 = died_date_onscovid - `date_in' + 1 
+	assert stime28 >= . if died_date_onscovid >= .	
 	
 	* Mark people who have an event in the relevant 28 day period
-	qui replace onscoviddeath = 0 if onscoviddeath==1 &  stime>28
+	qui replace onscoviddeath = 0 if onscoviddeath==1 & stime>28
 	qui replace stime28 = 28 if onscoviddeath==0
 	noi bysort onscoviddeath: summ stime28
 	
@@ -109,12 +109,14 @@ forvalues i = 1 (1) 73 {
 	* Apply weighting scheme
 	bysort patient_id: gen row = _n
 	
+	* Create variable containing Barlow weights (~sampling weights)
 	gen sf_wts = .	
+	label var sf_wts "Sampling fraction weights (Barlow)"
+
 	* Case in subcohort at event
 	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
 	* Case outside subcohort at event 
 	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
-	label var sf_wts "Sampling fraction weights (Barlow)"
 	
 	* Subcohort weights
 	forvalues j = 1 (1) 6 {
@@ -237,7 +239,7 @@ sort time patient_id dayin
 ******************
 
 label data "Training data 28-day landmark substudies (complete case ethnicity) for model fitting"
-save "data/cr_tr_landmark_models.dta", replace
+save "data/cr_landmark.dta", replace
 
 * Close log file
 log close

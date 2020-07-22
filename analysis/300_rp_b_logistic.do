@@ -4,7 +4,7 @@
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
-*	Data used:		data/cr_tr_landmark_models.dta
+*	Data used:		data/cr_landmark.dta
 *
 *	Data created:	 
 *
@@ -27,7 +27,7 @@ cap erase ./output/models/rp_b_logistic.ster
 
 
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors"
+noi di "$predictors_preshield"
 
 
 ***************
@@ -35,14 +35,22 @@ noi di "$predictors"
 ***************
 
 
-use "data/cr_tr_landmark_models.dta", clear
+use "data/cr_landmark.dta", clear
 
 * For cases - only keep row in which the case occurs
 bysort time patient_id (onscoviddeath): keep if _n==_N
 isid time patient_id
 
+* Multiple rows
+* Shielding - two rows pre and post
+* Cases in subchoort - 
+* row one first (not case), weight=1/sf
+* row 2 (case), weight=1
 
+* We want to use sampling frations:
+*  1/sf - non-cases; 1 cases
 
+* So...
 
 
 **************************
