@@ -140,7 +140,7 @@ get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
 * Measure of force of infection on the previous day
 timer clear 1
 timer on 1
-logistic onscoviddeath $predictors_preshield		///
+logistic onscoviddeath $predictors		///
 	foi, 											///
 	robust cluster(patient_id) offset(offset)
 timer off 1
@@ -151,7 +151,7 @@ estat ic
 * Measure of force of infection - quadratic model of last 3 weeks
 timer clear 1
 timer on 1
-logistic onscoviddeath $predictors_preshield		///
+logistic onscoviddeath $predictors		///
 	foi_q_cons foi_q_day foi_q_daysq,				///
 	robust cluster(patient_id) offset(offset)
 timer off 1
@@ -163,7 +163,7 @@ gen logfoi = log(foi)
 * Measure of force of infection on the previous day
 timer clear 1
 timer on 1
-logistic onscoviddeath $predictors_preshield		///
+logistic onscoviddeath $predictors		///
 	logfoi, 											///
 	robust cluster(patient_id) offset(offset)
 timer off 1
@@ -178,7 +178,7 @@ gen logfoi_q_daysq 	= log(foi_q_daysq)
 * Measure of force of infection - quadratic model of last 3 weeks
 timer clear 1
 timer on 1
-logistic onscoviddeath $predictors_preshield		///
+logistic onscoviddeath $predictors		///
 	logfoi_q_cons logfoi_q_day logfoi_q_daysq,		///
 	robust cluster(patient_id) offset(offset)
 timer off 1
