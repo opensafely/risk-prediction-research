@@ -48,7 +48,7 @@ global pred_cts_f = "age1 age2 age3"
 
 global pred_bin_f = "male respiratory cardiac stroke dementia neuro dialysis liver transplant autoimmune hiv suppression"
 
-global pred_cat_f = "ethnicity_8 obese4cat imd smoke_nomiss diabetes bpcat_nomiss asthma cancerExhaem cancerHaem kidneyfn"
+global pred_cat_f = "ethnicity_8 obese4cat imd smoke_nomiss diabetes bpcat_nomiss asthma cancerExhaem cancerHaem kidneyfn region_9"
 
 
 

@@ -62,7 +62,8 @@ forvalues i = 1 (1) 73 {
 	use "data/cr_base_cohort.dta", replace
 
 	* Keep ethnicity complete cases
-	drop if ethnicity>=.
+	drop ethnicity_5 ethnicity_16
+	drop if ethnicity_8>=.
 	
 	* Date landmark substudy i starts
 	local date_in = d(1/03/2020) + `i' - 1
@@ -140,8 +141,8 @@ forvalues i = 1 (1) 73 {
 	replace onscoviddeath = 0 if onscoviddeath == 1 & subcohort == 1 & row == 1
 	drop row
 	
-	label var dayin  "Day (this row of data) enters risk set (case-cohort)"
-	label var dayout "Day (this row of data) exits risk set (case-cohort)"
+	label var dayin  "Day (this row of data) enters risk set (landmark case-cohort)"
+	label var dayout "Day (this row of data) exits risk set (landmark case-cohort)"
 	
 	* Tidy and save dataset
 	qui gen time = `i'
@@ -208,13 +209,12 @@ stsplit shield, at(32)
 recode shield 32=1
 label define shield 0 "Pre-shielding" 1 "Shielding"
 label values shield shield
-label var shield "Binary shielding (period) indicator"
+label var shield "Binary shielding indicator (pre-post 1 April)"
 recode onscoviddeath .=0
 
 replace dayin = _t0 - time
 replace dayout = _t - time
 drop datein dateout day_since1mar_in day_since1mar_out newid _*
-sort time patient_id dayin 
 
 
 
@@ -238,7 +238,9 @@ sort time patient_id dayin
 *  Save dataset  *
 ******************
 
-label data "Training data 28-day landmark substudies (complete case ethnicity) for model fitting"
+order time patient_id
+sort time patient_id dayin
+label data "28-day landmark substudies (complete case ethnicity) for model fitting"
 save "data/cr_landmark.dta", replace
 
 * Close log file

@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		301_rp_b_poisson.do
+*	Do-file:		rp_b_poisson.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
@@ -21,6 +21,10 @@
 
 
 
+**** ALTERNATIVE VERSION OF POISSON USING STREG
+
+
+
 * Open a log file
 capture log close
 log using "./output/rp_b_poisson", text replace
@@ -32,13 +36,9 @@ log using "./output/rp_b_poisson", text replace
 *  Pick up predictor list(s)  *
 *******************************
 
+
 do "analysis/101_pr_variable_selection_output.do" 
-
-* Pre-shielding
 noi di "$predictors_preshield"
-
-* Pre- and Post-shielding
-noi di "$predictors"
 
 
 
@@ -49,40 +49,58 @@ noi di "$predictors"
 
 
 use "data/cr_landmark.dta", clear
+sort patient_id time
+gen newid = _n
 
+stset dayout, fail(onscoviddeath) enter(dayin) id(newid)
 
 * Barlow weights used as an offset, alongside the usual offset (exposure time)
-gen offset = log(dayout - dayin) + log(sf_wts)
+gen offset = log(sf_wts)
 
 
 
 * Model details
 *	Model type: Poisson
 *	Predictors: As selected by lasso etc.
-*	SEs: Robust to account for patients being in multiple sub-studies
+*	SEs: Robust to account for patients being in multiple sub-studies       
 *	Sampling: Offset (log-sampling fraction) to incorporate sampling weights
 
 * Fit model
 timer clear 1
 timer on 1
-poisson onscoviddeath $predictors_preshield,	///
-	robust cluster(patient_id) offset(offset)
+streg $predictors_preshield,	/// 
+	dist(exp) robust cluster(patient_id) offset(offset)
 timer off 1
 timer list 1
 estat ic
 
+
+
+
+/*  Put coefficients and survival in a matrix  */ 
+
 * Pick up coefficient matrix
 matrix b = e(b)
+
+*  Calculate baseline survival 
+global base_surv = exp(-28*exp(_b[_cons]))
+
+* Add baseline survival to matrix (and add a matrix column name)
+matrix b = [$base_surv, b]
+local names: colfullnames b
+local names: subinstr local names "c1" "_t:base_surv"
+mat colnames b = `names'
+
+
 
 /*  Save coefficients to Stata dataset  */
 
 do "analysis/0000_pick_up_coefficients.do"
-get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
-	dataname("data/model_b_poisson_noshield")
+get_coefs, coef_matrix(b) eqname("_t") cons_no ///
+	dataname("data/model_b_poisson2_noshield")
 
 
-
-
+	
 
 
 
@@ -99,26 +117,6 @@ get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
 
 
 /*  Measure of burden of infection:  Force of infection  */
-
-* Fit model
-timer clear 1
-timer on 1
-poisson onscoviddeath $predictors,	///
-	robust cluster(patient_id) offset(offset)
-timer off 1
-timer list 1
-estat ic
-
-* Pick up coefficient matrix
-matrix b = e(b)
-
-/*  Save coefficients to Stata dataset  */
-
-do "analysis/0000_pick_up_coefficients.do"
-get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
-	dataname("data/model_b_poisson_shield_foi")
-
-
 
 
 
