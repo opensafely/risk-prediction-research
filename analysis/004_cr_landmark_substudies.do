@@ -224,12 +224,27 @@ drop datein dateout day_since1mar_in day_since1mar_out newid _*
 ****************************************
 
 
-* Merge in the summary infection prevalence data
-*merge m:1 time using infected_coefs, assert(match using) keep(match) nogen 
+/*  Force of infection data  */ 
 
-* Merge in the infection and immunity data prevalence data
-*merge m:1 time using infect_immune, assert(match using) keep(match) nogen ///
-*	keepusing(susc infect)
+recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
+		50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 	///
+		gen(agegroupfoi)
+
+merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
+	keep(match) assert(match using) nogen
+drop agegroupfoi 
+
+
+
+
+
+/*  Objective measure: A&E data  (???) */ 
+
+
+
+
+
+
 
 
 

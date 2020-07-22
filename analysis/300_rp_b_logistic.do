@@ -137,8 +137,70 @@ get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
 
 /*  Measure of burden of infection:  Force of infection  */
 
+* Measure of force of infection on the previous day
+timer clear 1
+timer on 1
+logistic onscoviddeath $predictors_preshield		///
+	foi, 											///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
 
 
+* Measure of force of infection - quadratic model of last 3 weeks
+timer clear 1
+timer on 1
+logistic onscoviddeath $predictors_preshield		///
+	foi_q_cons foi_q_day foi_q_daysq,				///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+gen logfoi = log(foi)
+
+* Measure of force of infection on the previous day
+timer clear 1
+timer on 1
+logistic onscoviddeath $predictors_preshield		///
+	logfoi, 											///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+gen logfoi_q_cons 	= log(foi_q_cons)
+gen logfoi_q_day  	= log(foi_q_day)
+gen logfoi_q_daysq 	= log(foi_q_daysq)
+
+
+* Measure of force of infection - quadratic model of last 3 weeks
+timer clear 1
+timer on 1
+logistic onscoviddeath $predictors_preshield		///
+	logfoi_q_cons logfoi_q_day logfoi_q_daysq,		///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+
+/*
+* Pick up coefficient matrix
+matrix b = e(b)
+
+
+/*  Save coefficients to Stata dataset  */
+
+do "analysis/0000_pick_up_coefficients.do"
+get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
+	dataname("data/model_b_logistic_noshield")
+
+*/
+	
+	
+	
 
 /*  Measure of burden of infection:  (?????)  */
 
