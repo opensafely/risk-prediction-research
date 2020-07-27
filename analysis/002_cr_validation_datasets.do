@@ -68,7 +68,8 @@ forvalues i = 1/3 {
 	
 	/* Complete case for ethnicity   */ 
 	
-	drop if ethnicity >= .
+	drop ethnicity_5 ethnicity_16
+	drop if ethnicity_8>=.
 	
 	
 	/* Apply eligibility criteria for validation period i  */ 

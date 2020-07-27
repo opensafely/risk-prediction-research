@@ -1,15 +1,16 @@
 ********************************************************************************
 *
-*	Do-file:		rp_b_poisson.do
+*	Do-file:		301_rp_b_poisson.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
-*	Data used:		data/cr_tr_landmark_models.dta
+*	Data used:		data/cr_landmark.dta
 *
-*	Data created:	?????
+*	Data created:	data/model_b_poisson_noshield.dta
+*					data/model_b_poisson_shield_foi.dta
+*					data/model_b_poisson_shield_???.dta
 *
 *	Other output:	Log file:  			rp_b_poisson.log
-*					Model estimates: 	rp_b_poisson.ster
 *
 ********************************************************************************
 *
@@ -23,53 +24,134 @@
 * Open a log file
 capture log close
 log using "./output/rp_b_poisson", text replace
-cap erase ./output/models/rp_b_poisson.ster
 
+
+
+
+*******************************
+*  Pick up predictor list(s)  *
+*******************************
 
 do "analysis/101_pr_variable_selection_output.do" 
+
+* Pre-shielding
+noi di "$predictors_preshield"
+
+* Pre- and Post-shielding
 noi di "$predictors"
 
 
-***************
-*  Open data  *
-***************
 
 
-use "data/cr_tr_landmark_models.dta", clear
+********************************************************
+*   Models not including measures of infection burden  *
+********************************************************
 
 
-
-
-*************************
-*   Poisson regression  *
-*************************
+use "data/cr_landmark.dta", clear
 
 
 * Barlow weights used as an offset, alongside the usual offset (exposure time)
 gen offset = log(dayout - dayin) + log(sf_wts)
 
+
+
+* Model details
+*	Model type: Poisson
+*	Predictors: As selected by lasso etc.
+*	SEs: Robust to account for patients being in multiple sub-studies
+*	Sampling: Offset (log-sampling fraction) to incorporate sampling weights
+
 * Fit model
 timer clear 1
 timer on 1
-poisson onscoviddeath $predictors, robust cluster(patient_id) offset(offset)
+poisson onscoviddeath $predictors_preshield,	///
+	robust cluster(patient_id) offset(offset)
 timer off 1
 timer list 1
 estat ic
 
-* Save estimates
-*estimates
-*estimates save ./output/models/rp_b_poisson_regression_models.ster, replace
-*poisson, irr
- 
- 
+* Pick up coefficient matrix
+matrix b = e(b)
 
- 
+/*  Save coefficients to Stata dataset  */
 
-************************************
-*   Predict 28 day COVID-19 death  *
-************************************
+do "analysis/0000_pick_up_coefficients.do"
+get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
+	dataname("data/model_b_poisson_noshield")
 
 
+
+
+
+
+
+****************************************************
+*   Models including measures of infection burden  *
+****************************************************
+
+* WITH SHIELDING
+* Use 1 April cut-off for shielding 
+* Dataset has 2 lines of data per person already
+* Use post-shielding set of predictors (shielding indicator + any interactions) 
+
+
+
+
+
+/*  Measure of burden of infection:  Force of infection  */
+
+* Measure of force of infection on the previous day
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors		///
+	foi, 											///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+
+* Measure of force of infection - quadratic model of last 3 weeks
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors		///
+	foi_q_cons foi_q_day foi_q_daysq,				///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+gen logfoi = log(foi)
+
+* Measure of force of infection on the previous day
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors		///
+	logfoi, 											///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+gen logfoi_q_cons 	= log(foi_q_cons)
+gen logfoi_q_day  	= log(foi_q_day)
+gen logfoi_q_daysq 	= log(foi_q_daysq)
+
+
+* Measure of force of infection - quadratic model of last 3 weeks
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors_preshield		///
+	logfoi_q_cons logfoi_q_day logfoi_q_daysq,		///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+
+
+/*  Measure of burden of infection:  (?????)  */
 
 
 
@@ -77,4 +159,3 @@ estat ic
 
 * Close log file
 log close
-

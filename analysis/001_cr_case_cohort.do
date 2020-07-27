@@ -57,7 +57,8 @@ forvalues i = 1/2 {
 	use "data/cr_base_cohort.dta", replace
 
 	* Keep ethnicity complete cases
-	drop if ethnicity>=.
+	drop ethnicity_5 ethnicity_16
+	drop if ethnicity_8>=.
 	
 
 	* Identify random subcohort
