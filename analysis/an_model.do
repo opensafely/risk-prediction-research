@@ -26,8 +26,8 @@
 ********************************
 
 * In sequence:
-do "cr_dynamic_modelling_output.do"
-do "rp_dynamic_poisson.do"
+*do "cr_dynamic_modelling_output.do"
+*do "rp_dynamic_poisson.do"
 
 
 
@@ -35,7 +35,7 @@ do "rp_dynamic_poisson.do"
 *  BLOCK 2: CLUSTERING	   *
 ****************************
 
-do "Multimorbidity_cluster_analysis.do"
+*do "Multimorbidity_cluster_analysis.do"
 
 
 
@@ -51,5 +51,23 @@ do "Multimorbidity_cluster_analysis.do"
 
 * Just run half-way if only the first is there
 
-do "Multimorbidity_variable_selection.do"
+*do "Multimorbidity_variable_selection.do"
+
+
+
+
+
+
+*********************************
+*  APPROACH B: LANDMARK MODELS  *
+*********************************
+
+do "`c(pwd)'/analysis/300_rp_b_logistic"
+do "`c(pwd)'/analysis/301_rp_b_poisson"
+do "`c(pwd)'/analysis/301_rp_b_poisson2"
+do "`c(pwd)'/analysis/302_rp_b_weibull"
+do "`c(pwd)'/analysis/303_rp_b_predict_all"
+
+
+
 

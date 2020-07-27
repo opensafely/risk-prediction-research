@@ -4,10 +4,9 @@
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		output/cr_training.dta (training dataset)
+*	Data used:		data/cr_base_cohort.dta 
 *
-*	Data created:	
-*					output/cr_tr_landmark_models.dta (training modelling fitting) 
+*	Data created:	data/cr_landmark.dta (data for fitting landmark models) 
 *
 *
 *	Other output:	Log file:  cr_landmark.log
@@ -15,7 +14,7 @@
 ********************************************************************************
 *
 *	Purpose:		This do-file creates a dataset containing stacked landmark
-*					substudies, each of 28 days, to perform model fitting in
+*					substudies, each of 28 days, to perform model fitting in,
 *					for the risk prediction models.
 *
 *	NOTE: 			These landmark substudies remove people with missing 
@@ -27,21 +26,29 @@
 
 * Open a log file
 cap log close
-log using "output/002_cr_landmark", replace t
+log using "output/004_cr_landmark", replace t
 
 
 
 ***********************
 *  Create substudies  *
 ***********************
-
-* Age-group-stratified sampling fractions
-local sf1 = 0.01
-local sf2 = 0.02
-local sf3 = 0.02
-local sf4 = 0.025
-local sf5 = 0.05
-local sf6 = 0.13
+***********************************  MUST UPDATE *********************************
+* True sampling fractions below. Don't work in dummy data
+* Age-group-stratified sampling fractions 
+*local sf1 = 0.01/70
+*local sf2 = 0.02/70
+*local sf3 = 0.02/70
+*local sf4 = 0.025/70
+*local sf5 = 0.05/70
+*local sf6 = 0.13/70
+local sf1 = 0.2
+local sf2 = 0.2
+local sf3 = 0.2
+local sf4 = 0.2
+local sf5 = 0.2
+local sf6 = 0.2
+***********************************  MUST UPDATE *********************************
 
 
 * Set random seed for replicability
@@ -49,19 +56,23 @@ set seed 37873
 
 
 * Create separate landmark substudies
-forvalues i = 1 (1) 43 {
+forvalues i = 1 (1) 73 {
 
-
-	* Open underlying base training cohort (4/5 of original TPP cohort)
-	use "data/cr_training_dataset.dta", replace
+	* Open underlying base cohort
+	use "data/cr_base_cohort.dta", replace
 
 	* Keep ethnicity complete cases
-	drop if ethnicity>=.
-		
-	* Drop people who have died prior to day i 
-	qui drop if (died_date_onscovid - d(1/03/2020) + 1) < `i' 
-	qui drop if (died_date_onsother - d(1/03/2020) + 1) < `i' 
+	drop ethnicity_5 ethnicity_16
+	drop if ethnicity_8>=.
 	
+	* Date landmark substudy i starts
+	local date_in = d(1/03/2020) + `i' - 1
+			
+	* Drop people who have died prior to day i 
+	qui drop if died_date_onscovid < `date_in'
+	qui drop if died_date_onsother < `date_in'
+
+
 	
 	*********************************
 	*  Select substudy case-cohort  *
@@ -69,14 +80,13 @@ forvalues i = 1 (1) 43 {
 	
 	* Survival time (must be between 1 and 28)
 	qui capture drop stime
-	qui gen stime = (died_date_onscovid - `cohort_first_date' + 1) ///
-			- `i' + 1 if died_date_onscovid < .
+	qui gen stime28 = died_date_onscovid - `date_in' + 1 
+	assert stime28 >= . if died_date_onscovid >= .	
 	
 	* Mark people who have an event in the relevant 28 day period
-	qui replace onscoviddeath = 0 if onscoviddeath==1 &  ///
-		stime>28
-	qui replace stime = 28 if onscoviddeath==0
-	noi bysort onscoviddeath: summ stime
+	qui replace onscoviddeath = 0 if onscoviddeath==1 & stime>28
+	qui replace stime28 = 28 if onscoviddeath==0
+	noi bysort onscoviddeath: summ stime28
 	
 	* Keep all cases and a random sample of controls (by agegroup)
 	qui gen subcohort = 0
@@ -100,12 +110,14 @@ forvalues i = 1 (1) 43 {
 	* Apply weighting scheme
 	bysort patient_id: gen row = _n
 	
+	* Create variable containing Barlow weights (~sampling weights)
 	gen sf_wts = .	
+	label var sf_wts "Sampling fraction weights (Barlow)"
+
 	* Case in subcohort at event
 	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 1 & row == 2
 	* Case outside subcohort at event 
 	replace sf_wts = 1 if onscoviddeath == 1 & subcohort == 0 
-	label var sf_wts "Sampling fraction weights (Barlow)"
 	
 	* Subcohort weights
 	forvalues j = 1 (1) 6 {
@@ -120,7 +132,7 @@ forvalues i = 1 (1) 43 {
 	
 	* Start and stop dates for follow-up
 	gen 	dayin  = 0
-	gen  	dayout = stime
+	gen  	dayout = stime28
 	replace dayout = 1.5 if dayout==1
 	
 	replace dayout = dayout-1 if onscoviddeath == 1 & subcohort == 1 & row == 1
@@ -129,13 +141,13 @@ forvalues i = 1 (1) 43 {
 	replace onscoviddeath = 0 if onscoviddeath == 1 & subcohort == 1 & row == 1
 	drop row
 	
-	label var dayin  "Day (this row of data) enters risk set (case-cohort)"
-	label var dayout "Day (this row of data) exits risk set (case-cohort)"
+	label var dayin  "Day (this row of data) enters risk set (landmark case-cohort)"
+	label var dayout "Day (this row of data) exits risk set (landmark case-cohort)"
 	
 	* Tidy and save dataset
 	qui gen time = `i'
 	qui label var time "First day of landmark substudy"
-	qui drop stime
+	qui drop stime28
 	qui save time_`i', replace
 }
 	
@@ -146,7 +158,7 @@ forvalues i = 1 (1) 43 {
 *  Define covariates in each substudy  *
 ****************************************
 
-forvalues i = 1 (1) 43 {
+forvalues i = 1 (1) 73 {
 	qui use time_`i'.dta, clear
 	qui summ time
 	local study_first_date = d(1/03/2020) + r(mean) - 1
@@ -166,12 +178,12 @@ forvalues i = 1 (1) 43 {
 
 * Stack datasets
 qui use time_1.dta, clear
-forvalues i = 2 (1) 43 {
+forvalues i = 2 (1) 73 {
 	qui append using time_`i'
 }
 
 * Delete unneeded datasets
-forvalues i = 1 (1) 43 {
+forvalues i = 1 (1) 73 {
 	qui erase time_`i'.dta
 }
 
@@ -197,13 +209,12 @@ stsplit shield, at(32)
 recode shield 32=1
 label define shield 0 "Pre-shielding" 1 "Shielding"
 label values shield shield
-label var shield "Binary shielding (period) indicator"
+label var shield "Binary shielding indicator (pre-post 1 April)"
 recode onscoviddeath .=0
 
 replace dayin = _t0 - time
 replace dayout = _t - time
 drop datein dateout day_since1mar_in day_since1mar_out newid _*
-sort time patient_id dayin 
 
 
 
@@ -213,12 +224,27 @@ sort time patient_id dayin
 ****************************************
 
 
-* Merge in the summary infection prevalence data
-*merge m:1 time using infected_coefs, assert(match using) keep(match) nogen 
+/*  Force of infection data  */ 
 
-* Merge in the infection and immunity data prevalence data
-*merge m:1 time using infect_immune, assert(match using) keep(match) nogen ///
-*	keepusing(susc infect)
+recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
+		50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 	///
+		gen(agegroupfoi)
+
+merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
+	keep(match) assert(match using) nogen
+drop agegroupfoi 
+
+
+
+
+
+/*  Objective measure: A&E data  (???) */ 
+
+
+
+
+
+
 
 
 
@@ -227,8 +253,10 @@ sort time patient_id dayin
 *  Save dataset  *
 ******************
 
-label data "Training data 28-day landmark substudies (complete case ethnicity) for model fitting"
-save "data/cr_tr_landmark_models.dta", replace
+order time patient_id
+sort time patient_id dayin
+label data "28-day landmark substudies (complete case ethnicity) for model fitting"
+save "data/cr_landmark.dta", replace
 
 * Close log file
 log close
