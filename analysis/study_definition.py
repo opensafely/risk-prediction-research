@@ -281,7 +281,7 @@ study = StudyDefinition(
     # BMI
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/10
     bmi_1=patients.most_recent_bmi(
-        on_or_before="2010-03-01",
+        on_or_before="2020-03-01",
         minimum_age_at_measurement=16,
         include_measurement_date=False,
         return_expectations={
@@ -291,7 +291,7 @@ study = StudyDefinition(
     ),
     # Time-updated: BMI as of 6 April 2020
     bmi_2=patients.most_recent_bmi(
-        on_or_before="2010-04-06",
+        on_or_before="2020-04-06",
         minimum_age_at_measurement=16,
         include_measurement_date=False,
         return_expectations={
@@ -301,7 +301,7 @@ study = StudyDefinition(
     ),
     # Time-updated: BMI as of 12 May 2020
     bmi_3=patients.most_recent_bmi(
-        on_or_before="2010-05-12",
+        on_or_before="2020-05-12",
         minimum_age_at_measurement=16,
         include_measurement_date=False,
         return_expectations={

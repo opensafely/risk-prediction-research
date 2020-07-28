@@ -50,7 +50,7 @@ log using "output/000_cr_analysis_dataset", replace t
 keep patient_id household_id age
 bysort household_id: egen hh_num=count(patient_id)
 gen schoolchild_id = patient_id if inrange(age, 0, 12)
-bysort household_id: egen hh_num_child=count(patient_id)
+bysort household_id: egen hh_num_child=count(schoolchild_id)
 
 label var hh_num 		"Number of people in household"
 label var hh_num_child 	"Number of children (age 0-12) in household"
@@ -106,6 +106,7 @@ if _rc==0 {
 }
 else {
 	drop if imd>=.
+	drop if imd==-1
 }
 
 
@@ -511,6 +512,7 @@ label values imd imd
 
 * Spleen problems (dysplenia/splenectomy/etc and sickle cell disease)   
 egen spleen_date = rowmin(dysplenia_date sickle_cell_date)
+format spleen_date %td
 order spleen_date spleen, after(sickle_cell)
 drop dysplenia_date sickle_cell_date
 
@@ -519,8 +521,10 @@ drop dysplenia_date sickle_cell_date
 /*  Non-haematological malignancies  */
 
 gen exhaem_cancer_date = min(lung_cancer_date, other_cancer_date)
+format exhaem_cancer_date %td
 order exhaem_cancer_date, after(other_cancer_date)
 drop lung_cancer_date other_cancer_date
+
 
 
 /*  Temporary immunosuppression  */
@@ -555,7 +559,7 @@ forvalues j = 1 (1) 3 {
 egen transplant_date = rowmin(transplant_kidney_*_date ///
 							  transplant_notkidney_date)
 drop transplant_kidney_*_date transplant_notkidney_date
-
+format transplant_date %td
 
 
 
@@ -708,6 +712,7 @@ replace died_date_ons = . if died_date_ons>d(8jun2020)
 gen died_date_onscovid = died_date_ons if died_ons_covid_flag_any==1
 gen died_date_onsother = died_date_ons if died_ons_covid_flag_any!=1
 drop died_date_ons
+format died_date_onscovid died_date_onsother %td
 
 * Delete unneeded variables
 drop died_ons_covid_flag_any 
@@ -764,8 +769,8 @@ drop if hh_num >=10
 rename other_respiratory_date			respiratory_date
 rename chronic_cardiac_disease_date		cardiac_date
 rename other_neuro_date					neuro_date
-rename haem_cancer_date					cancerExhaem_date
-rename exhaem_cancer_date				cancerHaem_date
+rename haem_cancer_date					cancerHaem_date
+rename exhaem_cancer_date				cancerExhaem_date
 rename chronic_liver_disease_date		liver_date
 rename ra_sle_psoriasis_date			autoimmune_date
 
