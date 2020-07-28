@@ -51,6 +51,7 @@ program define define_covs
 	* Replace dates with binary indicators 
 	foreach var of varlist	hypertension_date				///
 							respiratory_date	 			///
+							cf_date	 						///
 							cardiac_date 					///
 							diabetes_date 					///
 							af_date 						///

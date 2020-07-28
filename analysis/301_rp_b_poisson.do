@@ -151,7 +151,55 @@ estat ic
 
 
 
-/*  Measure of burden of infection:  (?????)  */
+/*  Measure of burden of infection:  A&E attendances  */
+
+
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors						///
+	aemean, 											///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+
+* Measure of force of infection - quadratic model of last 3 weeks
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors				///
+	ae_q_cons ae_q_day ae_q_daysq,				///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+gen logae = log(max(aemean), 0.14)
+
+* Measure of force of infection on the previous day
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors				///
+	logae, 										///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
+
+gen logae_q_cons 	= log(ae_q_cons)
+gen logae_q_day  	= log(ae_q_day)
+gen logae_q_daysq 	= log(ae_q_daysq)
+
+
+* Measure of force of infection - quadratic model of last 3 weeks
+timer clear 1
+timer on 1
+poisson onscoviddeath $predictors				///
+	logae_q_cons logae_q_day logae_q_daysq,		///
+	robust cluster(patient_id) offset(offset)
+timer off 1
+timer list 1
+estat ic
 
 
 

@@ -44,11 +44,11 @@ log using "output/100_pr_variable_selection", text replace
 
 /*  List to be forced in  */
 
-global pred_cts_f = "age1 age2 age3"
+global pred_cts_f = "age1 hh_num"
 
-global pred_bin_f = "male respiratory cardiac stroke dementia neuro dialysis liver transplant autoimmune hiv suppression"
+global pred_bin_f = "male"
 
-global pred_cat_f = "ethnicity_8 obese4cat imd smoke_nomiss diabetes bpcat_nomiss asthma cancerExhaem cancerHaem kidneyfn region_9"
+global pred_cat_f = "region_9"
 
 
 
@@ -58,9 +58,9 @@ global pred_cat_f = "ethnicity_8 obese4cat imd smoke_nomiss diabetes bpcat_nomis
 
 global pred_cts_c = " "
 
-global pred_bin_c = "hypertension spleen"
+global pred_bin_c = "respiratory cardiac stroke dementia neuro dialysis liver transplant autoimmune hiv suppression hypertension spleen smi af pvd"
 
-global pred_cat_c = "bpcat_nomiss"
+global pred_cat_c = "ethnicity_8 imd obese4cat smoke_nomiss bpcat_nomiss bpcat_nomiss asthma diabetes cancerExhaem cancerHaem kidneyfn"
 
 
 
@@ -75,32 +75,11 @@ use "data/cr_casecohort_var_select.dta", clear
 
 
 * Standardise continous variables
-foreach var of varlist $pred_cts_f $pred_cts_c {
+foreach var of varlist hh_num {
 	qui summ `var'
 	qui replace `var' = (`var' - r(mean))/r(sd)
 }
 
-
-
-/*
-
-: Good idea - maybe not? 
-
-* Binary variables
-* Change other value codes for presentation purposes
-for var male respiratory 	///	
-		cardiac liver 		///
-		stroke dementia neuro transplant spleen ///
-		autoimmune suppression: replace X = X+1
-
-* Agegroup
-* Make agegroup 3 (50-70) the "baseline", i.e. value 1
-recode agegroup 1=18 2=40 3=1 4=60 5=70 6=80
-label values agegroup
-
-
- */
- 
 
  
 
@@ -128,12 +107,14 @@ recode onscoviddeath .=0
 * Create outcome for Poisson model and exposure variable
 gen diedcovforpoisson  = _d
 gen exposureforpoisson = _t-_t0
-gen offset = log(exposureforpoisson) + log(sf_wts)
+gen offset = log(exposureforpoisson) 
+*+ log(sf_wts)
 
 timer clear 1
 timer on 1
 lasso poisson diedcovforpoisson 									///
-			(c.(${pred_cts_f}) i.(${pred_bin_f}) i.(${pred_cat_f}))	///
+			(c.(${pred_cts_f}) i.(${pred_bin_f}) i.(${pred_cat_f}) 	///
+			age2 age3)												///
 																	///
 			c.(${pred_cts_c}) i.(${pred_bin_c}) i.(${pred_cat_c})	///
 																	///
@@ -155,7 +136,7 @@ lasso poisson diedcovforpoisson 									///
 			c.(${pred_cts_c})##c.(${pred_cts_c})					///
 			i.(${pred_bin_c})##c.(${pred_cts_c})					///	
 			i.(${pred_cat_c})##c.(${pred_cts_c})					///
-			i.(${pred_bin_c})##c.(${pred_cat_c})					///
+			i.(${pred_bin_c})##i.(${pred_cat_c})					///
 																	///
 			if shield==0,											///
 			offset(offset) selection(plugin) 

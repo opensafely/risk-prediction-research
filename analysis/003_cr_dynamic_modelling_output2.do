@@ -135,6 +135,7 @@ drop date
 
 /*  Tidy and save data  */
 
+rename stpcode stpcode_aedata
 	
 * Label variables
 label var time 			"Days since 1 March 2020 (inclusive)"

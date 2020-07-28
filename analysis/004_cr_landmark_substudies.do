@@ -236,14 +236,11 @@ drop agegroupfoi
 
 
 
+/*  Objective measure: A&E data   */ 
 
-
-/*  Objective measure: A&E data  (???) */ 
-
-
-
-
-
+****  LATER _ CROSS_CHECK STPS
+**** LATER 0 ADD ASSERT AS APPROPRIATE 
+merge m:1 time stp using "data/ae_coefs", keep(match master) nogen
 
 
 

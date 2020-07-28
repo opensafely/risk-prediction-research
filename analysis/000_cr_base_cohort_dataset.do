@@ -294,11 +294,10 @@ drop ethnicity_date ethnicity_16_date
 
 
 * STP 
-rename stp stp_old
-bysort stp_old: gen stp = 1 if _n==1
+rename stp stpcode
+bysort stpcode: gen stp = 1 if _n==1
 replace stp = sum(stp)
-drop stp_old
-
+order stp, after(stpcode)
 
 * Region
 rename region region_string
@@ -800,6 +799,7 @@ label var ethnicity_5			"Ethnicity in 5 categories"
 label var ethnicity_16			"Ethnicity in 16 categories"
 label var ethnicity_8			"Ethnicity in 8 categories"
 label var stp 					"Sustainability and Transformation Partnership"
+label var stpcode 				"Sustainability and Transformation Partnership"
 label var region_9 				"Geographical region (9 England regions)"
 label var region_7 				"Geographical region (7 England regions)"
 label var rural_urban 			"Rural/urban classification"
@@ -878,7 +878,7 @@ label var stime					"Survival time (days from 1 March; end 8 June) for COVID-19 
 *********************
 
 sort patient_id
-order 	patient_id stp region_9 region_7 imd rural_urban hh* 		///
+order 	patient_id stp* region_9 region_7 imd rural_urban hh* 		///
 		age age1 age2 age3 agegroup male							///
 		bmi* bmicat* obesecat* smoke* smoke_nomiss*					///
 		ethnicity*													/// 
