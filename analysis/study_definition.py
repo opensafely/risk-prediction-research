@@ -29,6 +29,7 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         (age >=0 AND age <= 105)
+        AND alive_at_cohort_start
         """,
         alive_at_cohort_start=patients.registered_with_one_practice_between(
             "2020-02-29", "2020-03-01"
