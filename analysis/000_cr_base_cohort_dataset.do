@@ -349,6 +349,37 @@ label var region_7 "Region of England (7 regions)"
 drop region_string
 
 
+*  Rural-urban classification 
+
+capture confirm string var imd 
+if _rc==0 {
+    assert inlist("rural", "urban", "")
+	replace rural_urban = "urban" if !inlist(rural_urban, "rural", "urban")
+
+	gen rural = rural_urban=="rural"
+	order rural, after(rural_urban)
+	drop rural_urban
+}
+else {
+	recode rural_urban -1 0=.
+	bysort stp: egen ru_mode=mode(rural_urban)
+	replace rural_urban = ru_mode if rural_urban>=.
+	drop ru_mode
+	
+	* Categorise
+	recode rural_urban 1/4=0 5/8=1, gen(rural)
+	order rural, after(rural_urban)
+	drop rural_urban
+}
+
+
+* Replace missing values (-1 and 0) by mode in 
+recode rural 1/4=
+
+
+
+
+
 
 		 
 
@@ -802,7 +833,7 @@ label var stp 					"Sustainability and Transformation Partnership"
 label var stpcode 				"Sustainability and Transformation Partnership"
 label var region_9 				"Geographical region (9 England regions)"
 label var region_7 				"Geographical region (7 England regions)"
-label var rural_urban 			"Rural/urban classification"
+label var rural					"Rural/urban binary classification"
 label var hh_id 				"Household ID"
 label var hh_num 				"Number of adults in household"
 label var hh_num_child			"Number of children (<=12)"
@@ -878,7 +909,7 @@ label var stime					"Survival time (days from 1 March; end 8 June) for COVID-19 
 *********************
 
 sort patient_id
-order 	patient_id stp* region_9 region_7 imd rural_urban hh* 		///
+order 	patient_id stp* region_9 region_7 imd rural hh*		 		///
 		age age1 age2 age3 agegroup male							///
 		bmi* bmicat* obesecat* smoke* smoke_nomiss*					///
 		ethnicity*													/// 

@@ -160,8 +160,7 @@ forvalues i = 1 (1) 73 {
 
 forvalues i = 1 (1) 73 {
 	qui use time_`i'.dta, clear
-	qui summ time
-	local study_first_date = d(1/03/2020) + r(mean) - 1
+	local study_first_date = d(1/03/2020) + `i' - 1
 
 	* Define covariates as of 1st March 2020
 	qui define_covs, dateno(`study_first_date')

@@ -129,6 +129,9 @@ program define define_covs
 	else if `first_date'  <= d(12/05/2020) {
 		local j = 3
 	}	
+	else if `first_date' > (12/05/2020) {
+		local j = 3
+	}	
 
 	
 
@@ -232,6 +235,7 @@ program define define_covs
 	
 	* Comorbidities
 	label var respiratory		"Respiratory disease (excl. asthma)"
+	label var cf				"Cystic fibrosis"
 	label var cardiac			"Heart disease"
 	label var af				"Atrial fibrillation"
 	label var pvd				"PVD"
