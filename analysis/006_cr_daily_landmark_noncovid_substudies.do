@@ -111,7 +111,7 @@ forvalues i = 1 (1) 100 {
 	label var sf_wts "Sampling fraction weights"
 
 	* Case 
-	replace sf_wts = 1 if onsotherdeath == 1 & 
+	replace sf_wts = 1/`sfd' if onsotherdeath == 1  
 	
 	* Non-case weights
 	forvalues j = 1 (1) 6 {

@@ -70,11 +70,12 @@ poisson onscoviddeath										///
 
 
 * Fit model	
-daypois covid male i.agegroup chronic_respiratory_disease	///
-		asthma chronic_cardiac_disease diabetes 			///
-		hypertension stroke_dementia other_neuro			///
-		organ_transplant spleen ra_sle_psoriasis			///
-		other_immunosuppression, 							///
+daypois onscoviddeath 										///
+		male i.agegroup respiratory							///
+		i.asthmacat cardiac i.diabcat 						///
+		stroke dementia neuro								///
+		transplant spleen autoimmune						///
+		hiv, 												///
 		timeadj("Quadratic")								///
 		timevar(foi_q_cons foi_q_day foi_q_daysq) 			///
 		weight(sf_wts)  
@@ -82,24 +83,26 @@ daypois covid male i.agegroup chronic_respiratory_disease	///
 
 	
 * Today's infection
-daypois covid male i.agegroup chronic_respiratory_disease	///
-		asthma chronic_cardiac_disease diabetes 			///
-		hypertension stroke_dementia other_neuro			///
-		organ_transplant spleen ra_sle_psoriasis			///
-		other_immunosuppression, 							///
-		timeadj("Other")								///
-		timevar(foi_q_cons) 			///
+daypois onscoviddeath										///
+		male i.agegroup respiratory							///
+		i.asthmacat cardiac i.diabcat 						///
+		stroke dementia neuro								///
+		transplant spleen autoimmune						///
+		hiv, 												///
+		timeadj("Other")									///
+		timevar(foi_q_cons) 								///
 		weight(sf_wts)  
 	
 gen logfoi = log(foi_q_cons)
 
-daypois covid male i.agegroup chronic_respiratory_disease	///
-		asthma chronic_cardiac_disease diabetes 			///
-		hypertension stroke_dementia other_neuro			///
-		organ_transplant spleen ra_sle_psoriasis			///
-		other_immunosuppression, 							///
-		timeadj("Other")								///
-		timevar(logfoi) 			///
+daypois oonscoviddeath										///
+		male i.agegroup respiratory							///
+		i.asthmacat cardiac i.diabcat 						///
+		stroke dementia neuro								///
+		transplant spleen autoimmune						///
+		hiv, 												///
+		timeadj("Other")									///
+		timevar(logfoi) 									///
 		weight(sf_wts)  
 
 * Close the log file
