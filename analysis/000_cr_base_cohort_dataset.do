@@ -351,9 +351,9 @@ drop region_string
 
 *  Rural-urban classification 
 
-capture confirm string var imd 
+capture confirm string var rural_urban 
 if _rc==0 {
-    assert inlist("rural", "urban", "")
+    assert inlist(rural_urban, "rural", "urban", "")
 	replace rural_urban = "urban" if !inlist(rural_urban, "rural", "urban")
 
 	gen rural = rural_urban=="rural"
@@ -371,14 +371,6 @@ else {
 	order rural, after(rural_urban)
 	drop rural_urban
 }
-
-
-* Replace missing values (-1 and 0) by mode in 
-recode rural 1/4=
-
-
-
-
 
 
 		 
