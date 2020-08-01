@@ -95,7 +95,7 @@ daypois onscoviddeath										///
 	
 gen logfoi = log(foi_q_cons)
 
-daypois oonscoviddeath										///
+daypois onscoviddeath										///
 		male i.agegroup respiratory							///
 		i.asthmacat cardiac i.diabcat 						///
 		stroke dementia neuro								///
