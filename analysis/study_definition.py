@@ -24,18 +24,16 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.2,
     },
-
     # STUDY POPULATION
     population=patients.satisfying(
         """
         (age >=0 AND age <= 105)
+        AND alive_at_cohort_start
         """,
         alive_at_cohort_start=patients.registered_with_one_practice_between(
             "2020-02-29", "2020-03-01"
         ),
     ),
-
-
     # OUTCOMES
     died_ons_covid_flag_any=patients.with_these_codes_on_death_certificate(
         covid_codelist,
@@ -49,9 +47,7 @@ study = StudyDefinition(
         include_month=True,
         include_day=True,
     ),
-
     ### GEOGRAPHICAL AREA AND DEPRIVATION
-
     # RURAL/URBAN
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/37
     rural_urban=patients.address_as_of(
@@ -105,7 +101,6 @@ study = StudyDefinition(
             },
         },
     ),
-
     # DEPRIVATION
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/52
     imd=patients.address_as_of(
@@ -117,7 +112,6 @@ study = StudyDefinition(
             "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
         },
     ),
-
     ### HOUSEHOLD INFORMATION
     # HOUSEHOLD ID
     household_id=patients.household_as_of(
@@ -137,9 +131,7 @@ study = StudyDefinition(
             "incidence": 1,
         },
     ),
-
     # DEMOGRAPHIC COVARIATES
-
     # AGE
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/33
     age=patients.age_as_of(
@@ -215,69 +207,67 @@ study = StudyDefinition(
     ),
     # Time-updated: Smoking status as of 6 April 2020
     smoking_status_2=patients.categorised_as(
-            {
-                "S": "most_recent_smoking_code_2 = 'S' OR smoked_last_18_months_2",
-                "E": """
+        {
+            "S": "most_recent_smoking_code_2 = 'S' OR smoked_last_18_months_2",
+            "E": """
                      (most_recent_smoking_code_2 = 'E' OR (
                        most_recent_smoking_code_2 = 'N' AND ever_smoked_2
                        )
                      ) AND NOT smoked_last_18_months_2
                 """,
-                "N": "most_recent_smoking_code_2 = 'N' AND NOT ever_smoked_2",
-                "M": "DEFAULT",
-            },
-            return_expectations={
-                "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
-            },
-            most_recent_smoking_code_2=patients.with_these_clinical_events(
-                clear_smoking_codes,
-                find_last_match_in_period=True,
-                on_or_before="2020-04-06",
-                returning="category",
-            ),
-            ever_smoked_2=patients.with_these_clinical_events(
-                filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
-                on_or_before="2020-04-06",
-            ),
-            smoked_last_18_months_2=patients.with_these_clinical_events(
-                filter_codes_by_category(clear_smoking_codes, include=["S"]),
-                between=["2018-10-06", "2020-04-06"],
-            ),
+            "N": "most_recent_smoking_code_2 = 'N' AND NOT ever_smoked_2",
+            "M": "DEFAULT",
+        },
+        return_expectations={
+            "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
+        },
+        most_recent_smoking_code_2=patients.with_these_clinical_events(
+            clear_smoking_codes,
+            find_last_match_in_period=True,
+            on_or_before="2020-04-06",
+            returning="category",
         ),
+        ever_smoked_2=patients.with_these_clinical_events(
+            filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
+            on_or_before="2020-04-06",
+        ),
+        smoked_last_18_months_2=patients.with_these_clinical_events(
+            filter_codes_by_category(clear_smoking_codes, include=["S"]),
+            between=["2018-10-06", "2020-04-06"],
+        ),
+    ),
     # Time-updated: Smoking status as of 12 May 2020
-     smoking_status_3=patients.categorised_as(
-             {
-                 "S": "most_recent_smoking_code_3 = 'S' OR smoked_last_18_months_3",
-                 "E": """
+    smoking_status_3=patients.categorised_as(
+        {
+            "S": "most_recent_smoking_code_3 = 'S' OR smoked_last_18_months_3",
+            "E": """
                       (most_recent_smoking_code_3 = 'E' OR (
                         most_recent_smoking_code_3 = 'N' AND ever_smoked_3
                         )
                       ) AND NOT smoked_last_18_months_3
                  """,
-                 "N": "most_recent_smoking_code_3 = 'N' AND NOT ever_smoked_3",
-                 "M": "DEFAULT",
-             },
-             return_expectations={
-                 "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
-             },
-             most_recent_smoking_code_3=patients.with_these_clinical_events(
-                 clear_smoking_codes,
-                 find_last_match_in_period=True,
-                 on_or_before="2020-05-12",
-                 returning="category",
-             ),
-             ever_smoked_3=patients.with_these_clinical_events(
-                 filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
-                 on_or_before="2020-05-12",
-             ),
-             smoked_last_18_months_3=patients.with_these_clinical_events(
-                 filter_codes_by_category(clear_smoking_codes, include=["S"]),
-                 between=["2018-11-12", "2020-05-12"],
-             ),
-         ),
-
+            "N": "most_recent_smoking_code_3 = 'N' AND NOT ever_smoked_3",
+            "M": "DEFAULT",
+        },
+        return_expectations={
+            "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
+        },
+        most_recent_smoking_code_3=patients.with_these_clinical_events(
+            clear_smoking_codes,
+            find_last_match_in_period=True,
+            on_or_before="2020-05-12",
+            returning="category",
+        ),
+        ever_smoked_3=patients.with_these_clinical_events(
+            filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
+            on_or_before="2020-05-12",
+        ),
+        smoked_last_18_months_3=patients.with_these_clinical_events(
+            filter_codes_by_category(clear_smoking_codes, include=["S"]),
+            between=["2018-11-12", "2020-05-12"],
+        ),
+    ),
     # CLINICAL MEASUREMENTS
-
     # BMI
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/10
     bmi_1=patients.most_recent_bmi(
@@ -309,9 +299,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
-
-
     # Chronic kidney disease
     # Most recent creatinine within 5 years (not inc. last fortnight)
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/17
@@ -326,7 +313,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
     # Time-updated: Most recent creatinine as of 6 April 2020
     creatinine_2=patients.with_these_clinical_events(
         creatinine_codes,
@@ -351,8 +337,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
-
     # Blood pressure
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/35
     bp_sys=patients.mean_recorded_value(
@@ -448,8 +432,6 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
-
     # ASTHMA
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/55
     asthma_severity_1=patients.categorised_as(
@@ -492,7 +474,6 @@ study = StudyDefinition(
             returning="number_of_matches_in_period",
         ),
     ),
-
     # Time-updated: Most recent creatinine as of 6 April 2020
     asthma_severity_2=patients.categorised_as(
         {
@@ -534,7 +515,6 @@ study = StudyDefinition(
             returning="number_of_matches_in_period",
         ),
     ),
-
     # Time-updated: Most recent creatinine as of 12 May 2020
     asthma_severity_3=patients.categorised_as(
         {
@@ -576,10 +556,7 @@ study = StudyDefinition(
             returning="number_of_matches_in_period",
         ),
     ),
-
-
     ### COMORBIDITIES - FIRST DIAGNOSIS DATE
-
     # RESPIRATORY - ASTHMA, CYSTIC FIBROSIS, OTHER (largely COPD)
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/55
     cf=patients.with_these_clinical_events(
@@ -617,7 +594,6 @@ study = StudyDefinition(
         include_month=True,
     ),
     # ADD DEEP VEIN THROMBOSIS/PULMONARY EMBOLISM HERE WHEN READY
-
     # Diabetes
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/30
     diabetes=patients.with_these_clinical_events(
@@ -688,7 +664,6 @@ study = StudyDefinition(
         on_or_before="2020-06-08",
         include_month=True,
     ),
-
     # SPLEEN PROBLEMS, HIV, IMMUNODEFICIENCY
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/13
     dysplenia=patients.with_these_clinical_events(
@@ -738,7 +713,6 @@ study = StudyDefinition(
         include_month=True,
     ),
     # ADD INTELLECTUAL DISABILITY HERE WHEN READY
-
     # Frailty - osteoporosis
     osteo=patients.with_these_clinical_events(
         osteo_codes,
@@ -746,10 +720,7 @@ study = StudyDefinition(
         on_or_before="2020-06-08",
         include_month=True,
     ),
-
-
     ### TRANSIENT COMORBIDITIES - MOST RECENT DIAGNOSIS DATE
-
     # Aplastic anaemia and temporary immunosuppression
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/36
     aplastic_anaemia_1=patients.with_these_clinical_events(
@@ -765,7 +736,7 @@ study = StudyDefinition(
         include_month=True,
     ),
     # Time update: Aplastic anaemia as of 6 April 2020
-        aplastic_anaemia_2=patients.with_these_clinical_events(
+    aplastic_anaemia_2=patients.with_these_clinical_events(
         aplastic_codes,
         return_last_date_in_period=True,
         between=["2019-04-06", "2020-04-06"],
@@ -790,7 +761,6 @@ study = StudyDefinition(
         between=["2019-05-12", "2020-05-12"],
         include_month=True,
     ),
-
     # Fragility fracture in two years
     fracture_1=patients.with_these_clinical_events(
         fracture_codes,
@@ -812,9 +782,6 @@ study = StudyDefinition(
         between=["2018-05-12", "2020-05-12"],
         include_month=True,
     ),
-
-
-
     #  KIDNEY TRANSPLANT AND DIALYSIS (most recent)
     #  https://github.com/ebmdatalab/tpp-sql-notebook/issues/31
     transplant_kidney_1=patients.with_these_clinical_events(
@@ -855,5 +822,4 @@ study = StudyDefinition(
         on_or_before="2020-05-12",
         include_month=True,
     ),
-
 )
