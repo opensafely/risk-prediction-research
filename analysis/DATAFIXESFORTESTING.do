@@ -40,9 +40,9 @@ replace ethnicity_8 = 7 if uniform()<0.8 & ethnicity_5<. & ethnicity_8>=.
 replace ethnicity_8 = 8 if uniform()<1   & ethnicity_5<. & ethnicity_8>=.
 
 * Asthma - should not have missingness
-recode asthmacat_1 .=0
-recode asthmacat_2 .=0
-recode asthmacat_3 .=0
+recode asthmacat_1 .=1
+recode asthmacat_2 .=1
+recode asthmacat_3 .=1
 
 
 

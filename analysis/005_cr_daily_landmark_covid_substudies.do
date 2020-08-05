@@ -29,6 +29,10 @@ log using "output/005_cr_daily_covid_landmark", replace t
 
 
 
+* Load do-file which extracts covariates 
+do "analysis/0000_cr_define_covariates.do"
+
+
 ***********************
 *  Create substudies  *
 ***********************

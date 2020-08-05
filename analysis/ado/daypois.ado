@@ -37,7 +37,8 @@ capture program drop daypois
 program define daypois, rclass
 	version 16
 	syntax varlist(min=2 fv), timeadj(string) timevar(varlist) ///
-		[weight(varname) start(numlist min=3 max=3)]
+		[weight(varname) start(numlist min=3 max=3) constraint(numlist)]
+		
 		
 	*********************
 	*  Pick up inputs   *
@@ -83,6 +84,15 @@ program define daypois, rclass
 			local start_opt = "difficult"
 		}
 
+		* Constraints	
+		if "`constraint'" != "" {
+			local constraint_opt = "constraint(`constraint')"
+		}
+		else {
+			local constraint_opt " "
+		}
+		
+				
 	
 	************************
 	*  Linear predictors   *
@@ -136,6 +146,9 @@ program define daypois, rclass
 		noi display   _col(5) "Day:" 		_col(50) "`c'"
 		noi display   _col(5) "Day-sq:"  	_col(50) "`d'"
 	}
+	else if  "`timeadj'"== "Other" {
+		noi display   _col(5) "Time-covariates:"	_col(50) "`timecov'"
+	}
 	else {
 		noi display   _col(5) "None"  	
 	}
@@ -158,11 +171,12 @@ program define daypois, rclass
 	
 	local ll = "-(1-`y')*`expt1l'*`t2l' + `y'*log(1 - exp(-1*`expt1'*`t2'))"
 	
+
 	
 	/*  Derivative for time-fixed covariates  */
 		
 	local dtheta1 = "deriv(/xb = -(1-`y')*`expt1'*`t2'"  		+ ///
-					"+ `y'*`expt1'*`t2'*exp(-`expt1'*`t2')*("	+ ///
+					"+ `y'*`expt1'*`t2'*exp(-1*`expt1'*`t2')*("	+ ///
 						"(1 - exp(-1*`expt1'*`t2'))^(-1)"		+ ///
 					")"											+ ///
 				")" 	
@@ -171,37 +185,24 @@ program define daypois, rclass
 	
 	/*  Derivative for time-varying covariates   */
 
-	if "`timeadj'"== "Quadratic" {
-		local dtheta2b =	"deriv(/b = 	`t2_b'*("				+ ///
-							"-(1-`y')*`expt1'" 						+ ///
-							"+ `y'*`expt1'*exp(-`expt1'*`t2')*("	+ ///
+	if inlist("`timeadj'", "Quadratic", "Other") {
+	    
+		
+		local deriv = 		"-(1-`y')*`expt1'" 						+ ///
+							"+ `y'*`expt1'*exp(-1*`expt1'*`t2')*("	+ ///
 								"(1 - exp(-1*`expt1'*`t2'))^(-1)"	+ ///
-							")"										+ ///
-						")"											+ ///
-					")"												
-		local dtheta2c =	"deriv(/c = 	-`t2_c'*("				+ ///
-							"-(1-`y')*`expt1'" 						+ ///
-							"+ `y'*`expt1'*exp(-`expt1'*`t2')*("	+ ///
-								"(1 - exp(-1*`expt1'*`t2'))^(-1)"	+ ///
-							")"										+ ///
-						")"											+ ///
-					")"												
-		local dtheta2d =	"deriv(/d = 	`t2_d'*("				+ ///
-							"-(1-`y')*`expt1'" 						+ ///
-							"+ `y'*`expt1'*exp(-`expt1'*`t2')*("	+ ///
-								"(1 - exp(-1*`expt1'*`t2'))^(-1)"	+ ///
-							")"										+ ///
-						")"											+ ///
-					")"	
-		local dtheta2 = "`dtheta2b' " + "`dtheta2c' " + "`dtheta2d' " 
-	}	
-	else if "`timeadj'"== "Other" {
-		local dtheta2 =	"deriv(/z = 	"				+ ///
-							"-(1-`y')*`expt1'" 						+ ///
-							"+ `y'*`expt1'*exp(-`expt1'*`t2')*("	+ ///
-								"(1 - exp(-1*`expt1'*`t2'))^(-1)"	+ ///
-							")"										+ ///
-					")"												
+							")"		
+
+		if "`timeadj'"=="Quadratic" {
+		
+			local dtheta2b = "deriv(/b =  `t2_b'*(`deriv'))" 
+			local dtheta2c = "deriv(/c = -`t2_c'*(`deriv'))" 
+			local dtheta2d = "deriv(/d =  `t2_d'*(`deriv'))" 
+			local dtheta2 = "`dtheta2b' " + "`dtheta2c' " + "`dtheta2d' " 
+		}	
+		else if "`timeadj'"== "Other" {
+			local dtheta2 =	"deriv(/z = `deriv'" +  ")"												
+		}
 	}
 	else if "`timeadj'"== "None" {
 	   local dtheta2 = " "
@@ -216,7 +217,8 @@ program define daypois, rclass
 		`weight_opt',								///	
 		`dtheta1'									///
 		`dtheta2'									///
-		`start_opt'
+		`start_opt'									///
+		`constraint_opt'
 		
 		matrix b = e(b)
 		matrix V = e(V)

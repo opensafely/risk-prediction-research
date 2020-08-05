@@ -31,6 +31,9 @@ cap log close
 log using "output/001_cr_case_cohort", replace t
 
 
+* Load do-file which extracts covariates 
+do "analysis/0000_cr_define_covariates.do"
+
 
 
 *************************

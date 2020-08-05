@@ -25,6 +25,13 @@ capture log close
 log using "output/rp_c_dynamic_poisson", text replace
 
 
+* Add relevant files to adopath
+adopath ++ "`c(pwd)'/analysis/ado"
+
+* Run do-file just in case
+do "analysis/ado/daypois.ado"
+
+
 
 
 
@@ -35,19 +42,7 @@ log using "output/rp_c_dynamic_poisson", text replace
 use "data/cr_daily_landmark_covid.dta", clear
 
 		
-* Fit model	
-daypois onscoviddeath										///
-		male i.agegroup respiratory							///
-		i.asthmacat cardiac i.diabcat 						///
-		stroke dementia neuro								///
-		transplant spleen autoimmune						///
-		hiv, 												///
-		timeadj("None")										///
-		timevar(foi_q_cons foi_q_day foi_q_daysq) 			///
-		weight(sf_wts)  
-
-/* To mimic std poisson add a const:
-
+* Standard Poisson model (approximately)
 gen cons = 1
 daypois onscoviddeath										///
 		male i.agegroup respiratory							///
@@ -58,7 +53,10 @@ daypois onscoviddeath										///
 		timeadj("None")										///
 		timevar(foi_q_cons foi_q_day foi_q_daysq) 			///
 		weight(sf_wts)  
-		
+
+/* 
+
+* CF:	
 poisson onscoviddeath										///
 		male i.agegroup respiratory							///
 		i.asthmacat cardiac i.diabcat 						///
@@ -70,15 +68,16 @@ poisson onscoviddeath										///
 
 
 * Fit model	
+constraint define 1 _b[b:_cons]=0
 daypois onscoviddeath 										///
 		male i.agegroup respiratory							///
-		i.asthmacat cardiac i.diabcat 						///
+		io1.asthmacat cardiac i.diabcat 					///
 		stroke dementia neuro								///
 		transplant spleen autoimmune						///
 		hiv, 												///
 		timeadj("Quadratic")								///
 		timevar(foi_q_cons foi_q_day foi_q_daysq) 			///
-		weight(sf_wts)  
+		weight(sf_wts) constraint(1)
 	
 
 	

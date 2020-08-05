@@ -29,6 +29,10 @@ cap log close
 log using "output/004_cr_landmark", replace t
 
 
+* Load do-file which extracts covariates 
+do "analysis/0000_cr_define_covariates.do"
+
+
 
 ***********************
 *  Create substudies  *
