@@ -67,20 +67,7 @@ poisson onscoviddeath										///
 */
 
 
-* Fit model	
-constraint define 1 _b[b:_cons]=0
-daypois onscoviddeath 										///
-		male i.agegroup respiratory							///
-		io1.asthmacat cardiac i.diabcat 					///
-		stroke dementia neuro								///
-		transplant spleen autoimmune						///
-		hiv, 												///
-		timeadj("Quadratic")								///
-		timevar(foi_q_cons foi_q_day foi_q_daysq) 			///
-		weight(sf_wts) constraint(1)
-	
 
-	
 * Today's infection
 daypois onscoviddeath										///
 		male i.agegroup respiratory							///
@@ -104,6 +91,30 @@ daypois onscoviddeath										///
 		timevar(logfoi) 									///
 		weight(sf_wts)  
 
+		
+* Model including quadratic model of FOI
+constraint define 1 _b[b:_cons]=0
+daypois onscoviddeath 										///
+		male i.agegroup respiratory							///
+		io1.asthmacat cardiac i.diabcat 					///
+		stroke dementia neuro								///
+		transplant spleen autoimmune						///
+		hiv, 												///
+		timeadj("Quadratic")								///
+		timevar(foi_q_cons foi_q_day foi_q_daysq) 			///
+		weight(sf_wts) constraint(1)
+	
+* Compare with version using other Poisson likelihood
+daypois2 onscoviddeath 										///
+		male i.agegroup respiratory							///
+		io1.asthmacat cardiac i.diabcat 					///
+		stroke dementia neuro								///
+		transplant spleen autoimmune						///
+		hiv, 												///
+		timeadj("Quadratic")								///
+		timevar(foi_q_cons foi_q_day foi_q_daysq) 			///
+		weight(sf_wts) constraint(1)
+		
 * Close the log file
 log close
 
