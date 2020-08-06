@@ -317,7 +317,7 @@ study = StudyDefinition(
     creatinine_2=patients.with_these_clinical_events(
         creatinine_codes,
         find_last_match_in_period=True,
-        between=["2015-04-6", "2020-03-23"],
+        between=["2015-04-06", "2020-03-23"],
         returning="numeric_value",
         include_date_of_match=False,
         return_expectations={
