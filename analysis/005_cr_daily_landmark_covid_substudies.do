@@ -163,16 +163,16 @@ forvalues i = 1 (1) 100 {
 drop days_until_coviddeath days_until_otherdeath
 
 
-/*
 
-***** NEED TO DEAL WITH THE SHIELDING SOMEHOW
 
 ***********************************************
 *  Split pre-shielding and shielding periods  *
 ***********************************************
 
-
-*/
+recode time 0/31=0 32/100=1, gen(shield)
+label define shield 0 "Pre-shielding" 1 "Shielding"
+label values shield shield
+label var shield "Binary shielding (period) indicator"
 
 
 
