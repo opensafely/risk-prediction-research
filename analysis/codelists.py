@@ -105,7 +105,7 @@ hypertension_codes = codelist_from_csv(
 af_codes = codelist_from_csv(
     "codelists/opensafely-atrial-fibrillation-or-flutter.csv",
     system="ctv3",
-    column="CTV3ID",
+    column="CTV3Code",
 )
 pvd_codes = codelist_from_csv(
     "local_codelists/OpenSAFELY_eFI_Codes_PVD.csv",
@@ -230,7 +230,7 @@ fracture_codes = codelist_from_csv(
 smi_codes = codelist_from_csv(
     "codelists/opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv",
     system="ctv3",
-    column="CTV3ID",
+    column="CTV3Code",
 )
 ld_codes = codelist_from_csv(
     "local_codelists/CTV3_ID_v2.0.csv",
