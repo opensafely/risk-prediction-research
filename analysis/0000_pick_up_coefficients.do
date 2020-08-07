@@ -160,7 +160,7 @@ end
 capture program drop get_coefs
 program define get_coefs
 	syntax , coef_matrix(string) eqname(string) dataname(string) [cons_no]
-
+	
 	global terms: colfullnames `coef_matrix'
 	tokenize $terms 
 	
@@ -169,8 +169,13 @@ program define get_coefs
 	local j = 1
 	while "``i''" != "" {
 
-		* Remove eqname prefix, e.g. "onscoviddeath:"
-		local length_prefix = length("`eqname'") + 2
+		if "`eqname'"!="None" {
+			* Remove eqname prefix, e.g. "onscoviddeath:"
+			local length_prefix = length("`eqname'") + 2
+		}
+		else {
+			local length_prefix = 1
+		}
 		local term_`j' = substr("``i''", `length_prefix', .)
 			
 		* Check for baseline categories in either a single or two terms

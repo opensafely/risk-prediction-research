@@ -47,12 +47,10 @@ log using "output/102_pr_variable_selection_landmark", text replace
 
 /*  List to be forced in  */
 
-global pred_cts_f 	 = "age1 "
-global pred_cts_fnoi = "age2 age3 tvar1"
-
-global pred_bin_f = "male"
-
-global pred_cat_f = " "
+global pred_cts_f 	  	= "age1 "
+global pred_cts_f_noi 	= "tvar1"
+global pred_bin_f		= "male"
+global pred_cat_f 		= " "
 
 
 
@@ -63,14 +61,13 @@ global pred_cat_f = " "
 *global pred_cts_c_noi 	= "hh_num2 hh_num3"
 
 global pred_cts_c 		= " "
-global pred_cts_c_noi 	= "tvar2 tvar3 tvar4 tvar5 tvar6"
+global pred_cts_c_noi 	= "age2 age3 tvar2 tvar3 tvar4 tvar5 tvar6"
 
 
 *** TO BE UPDATED: NEXT 5 ROWS
 *global pred_bin_c = "rural hh_children respiratory cf cardiac hypertension af pvd dvt_pe stroke dementia neuro liver transplant dialysis spleen autoimmune hiv suppression ibd smi ld fracture"
 
 global pred_bin_c = "rural hh_children respiratory cf cardiac hypertension af pvd stroke dementia neuro liver transplant dialysis spleen autoimmune hiv suppression ibd smi fracture"
-global pred_bin_c_noi 	= " "
 
 
 global pred_cat_c = "ethnicity_8 imd obesecat smoke_nomiss bpcat_nomiss asthma diabcat cancerExhaem cancerHaem kidneyfn"
@@ -118,8 +115,7 @@ lasso poisson diedcovforpoisson 									///
 			c.(${pred_cts_f_noi}))									///
 																	///
 			c.(${pred_cts_c}) i.(${pred_bin_c}) i.(${pred_cat_c})	///
-			c.(${pred_cts_c_noi}) i.(${pred_bin_c_noi})				///
-			i.(${pred_cat_c_noi})									///
+			c.(${pred_cts_c_noi}) i.(${pred_cat_c_noi})				///
 																	///
 			c.(${pred_cts_f})##c.(${pred_cts_f})					///
 			i.(${pred_bin_f})##c.(${pred_cts_f})					///
@@ -143,12 +139,36 @@ lasso poisson diedcovforpoisson 									///
 																	///
 			if shield==0,											///
 			offset(offset) selection(plugin) 
-lassocoef, display(coef, postselection eform)
 timer off 1
 timer list 1
 
 
+
+/*  Extract a list of the variables appearing in the final model  */
+
+global outcomevar = "diedcovforpoisson"
+global selvars  = "`e(post_sel_vars)'"
+global selterms = "`e(allvars_sel)'"
+ 
+* Remove outcome from list of variables involved in selected model
+global selvars:  list global(selvars) - global(outcomevar)
+
+* Remove things that are not to be interacted with
+global selvars : list global(selvars) - global(pred_cts_f_noi)
+global selvars : list global(selvars) - global(pred_cts_c_noi)
+global selvars : list global(selvars) - global(pred_cat_c_noi)
+
+* Extract the continous terms
+global cts1 : list global(selvars) & global(pred_cts_f)
+global cts2 : list global(selvars) & global(pred_cts_c)
+global cts  : list global(cts1) | global(cts2)
+
+global bin_cat: list global(selvars) - global(cts)
+
+
+
 * Matrix of coefs from selected model 
+lassocoef, display(coef, postselection eform)
 mat defin A = r(coef)
 
 * Selected covariates						
@@ -156,46 +176,10 @@ local preShieldSelectedVars = e(allvars_sel)
 noi di "`preShieldSelectedVars'"
 
 
-**** TIDY THIS UP ****
 
-local preShieldSelectedVars2 = " " + "`preShieldSelectedVars'"
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " c", " c.c", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " a", " c.a", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " b", " c.b", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " d", " c.d", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " e", " c.e", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " f", " c.f", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " g", " c.g", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " h", " c.h", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " i", " c.i", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " j", " c.j", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " k", " c.k", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " l", " c.l", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " m", " c.m", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " n", " c.n", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " o", " c.o", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " p", " c.p", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " q", " c.q", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " r", " c.r", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " s", " c.s", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " t", " c.t", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " u", " c.u", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " v", " c.v", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " w", " c.w", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " x", " c.x", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " y", " c.y", .)
-local preShieldSelectedVars2 = subinstr("`preShieldSelectedVars2'", " z", " c.z", .)
-
-
-noi di "`preShieldSelectedVars'"
-noi di "`preShieldSelectedVars2'"
-
-
-
-
-* Create postfile
+* Save coefficients of post-lasso 
 tempname coefs
-postfile `coefs' str30(variable) coef using "data\cr_selected_model_coefficients_landmark.dta", replace
+postfile `coefs' str30(variable) coef using "data\cr_selected_model_coefficients.dta", replace
 
 local i = 1
 
@@ -207,8 +191,62 @@ foreach v of local preShieldSelectedVars {
 	post `coefs' ("`v'") (`coef')
     local ++i
 }
+postclose `coefs'
+
+
+
+
+
+
+
+***************************************************************** 
+* Stage 2: 														*
+* Selection of interactions with shielding 					    *
+* (Performed 1st March until 10th May, with time split 			*
+*  at the 1st April) 											*
+*****************************************************************
+
+
+timer clear 1
+timer on 1
+lasso poisson diedcovforpoisson ($selterms)						///
+								i.shield 						///
+								i.shield##c.(${cts})			///
+								i.shield##i.(${bin_cat})		///
+								, offset(offset) selection(plugin) 
+lassocoef, display(coef, postselection eform)
+timer off 1
+timer list 1
+
+
+* Matrix of coefs from selected model 
+mat defin B = r(coef)
+
+* Selected covariates						
+local postShieldSelectedVars = e(allvars_sel)
+noi di "`postShieldSelectedVars'"
+
+* Create postfile
+tempname coefs
+postfile `coefs' str30(variable) coef using "output\cr_selected_model_coefficients_landmark.dta", replace
+
+local i = 1
+
+foreach v of local postShieldSelectedVars {
+	
+	local coef = A[`i',1]
+	
+	post `coefs' ("`v'") (`coef')
+    local ++i
+}
 
 postclose `coefs'
+
+***! 
+*  No predictors will be removed from the first-stage model - needs to be checked
+* Final model 'Selected' predictor set
+
+
 
 
 
