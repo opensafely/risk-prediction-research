@@ -33,60 +33,63 @@ log using "output/100_pr_variable_selection", text replace
 
 
 
+*********************************************************************************
+*  UPDATE  
+*    Unstar a few linse below adding: DVT_PE, LD, HHNUM*
+*
+*   THEN DELETE THIS BOX!!!
+*********************************************************************************
+
+
+
 ***********************************
 *  Candidate predictor variables  *
 ***********************************
 
-***************************            UPDATE            **************************************
-* Covariate list needs updating when we add covariates  
-***************************            UPDATE            **************************************
-
 
 /*  List to be forced in  */
 
-global pred_cts_f = "age1 hh_num"
+global pred_cts_f = "age1"
 
 global pred_bin_f = "male"
 
-global pred_cat_f = "region_9"
-
+global pred_cat_f = " "
 
 
 
 /*  List to be additionally considered  */
 
+*** TO BE UPDATED: NEXT 5 ROWS
+*global pred_cts_c 		= "hh_num1"
+*global pred_cts_c_noi 	= "hh_num2 hh_num3"
 
-global pred_cts_c = " "
-
-global pred_bin_c = "respiratory cardiac stroke dementia neuro dialysis liver transplant autoimmune hiv suppression hypertension spleen smi af pvd"
-
-global pred_cat_c = "ethnicity_8 imd obese4cat smoke_nomiss bpcat_nomiss bpcat_nomiss asthma diabetes cancerExhaem cancerHaem kidneyfn"
-
-
+global pred_cts_c 		= " "
+global pred_cts_c_noi 	= " "
 
 
+*** TO BE UPDATED: NEXT 5 ROWS
+*global pred_bin_c = "rural hh_children respiratory cf cardiac hypertension af pvd dvt_pe stroke dementia neuro liver transplant dialysis spleen autoimmune hiv suppression ibd smi ld fracture"
+
+global pred_bin_c = "rural hh_children respiratory cf cardiac hypertension af pvd stroke dementia neuro liver transplant dialysis spleen autoimmune hiv suppression ibd smi fracture"
+global pred_bin_c_noi 	= " "
 
 
-*************************************************
-*  Open data to be used for variable selection  *
-*************************************************
-
-use "data/cr_casecohort_var_select.dta", clear
+global pred_cat_c = "ethnicity_8 imd obese4cat smoke_nomiss bpcat_nomiss asthma diabetes cancerExhaem cancerHaem kidneyfn"
+global pred_cat_c_noi 	= "region_9"
 
 
-* Standardise continous variables
-foreach var of varlist hh_num {
-	qui summ `var'
-	qui replace `var' = (`var' - r(mean))/r(sd)
-}
 
 
- 
 
 
 ************************
 *  Variable Selection  *
 ************************
+
+
+*  Open data to be used for variable selection 
+use "data/cr_casecohort_var_select.dta", clear
+
 
 ***************************************************************** 
 * Stage 1: 														*
@@ -117,6 +120,8 @@ lasso poisson diedcovforpoisson 									///
 			age2 age3)												///
 																	///
 			c.(${pred_cts_c}) i.(${pred_bin_c}) i.(${pred_cat_c})	///
+			c.(${pred_cts_c_noi}) i.(${pred_bin_c_noi})				///
+			i.(${pred_cat_c_noi})									///
 																	///
 			c.(${pred_cts_f})##c.(${pred_cts_f})					///
 			i.(${pred_bin_f})##c.(${pred_cts_f})					///
