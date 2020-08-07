@@ -1,7 +1,7 @@
 opensafely/aplastic-anaemia/2020-04-24
 opensafely/asplenia/2020-06-02
 opensafely/asthma-diagnosis/2020-04-15
-opensafely/atrial-fibrillation-or-flutter/2020-07-30-draft
+opensafely/atrial-fibrillation-or-flutter/2020-07-30
 opensafely/cancer-excluding-lung-and-haematological/2020-04-15
 opensafely/chronic-cardiac-disease/2020-04-08
 opensafely/chronic-liver-disease/2020-06-02
@@ -28,4 +28,3 @@ opensafely/smoking-clear/2020-04-29
 opensafely/smoking-unclear/2020-04-29
 opensafely/stroke-updated/2020-06-02
 opensafely/temporary-immunosuppression/2020-04-24
-

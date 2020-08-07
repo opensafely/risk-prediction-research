@@ -56,6 +56,7 @@ program define define_covs
 							diabetes_date 					///
 							af_date 						///
 							pvd_date						///
+							dvt_pe_date						///
 							stroke_date						///
 							dementia_date		 			///
 							neuro_date 						///
@@ -67,6 +68,7 @@ program define define_covs
 							autoimmune_date 				///
 							ibd_date 						///
 							smi_date 						///
+							ld_date 						///
 						{
 		local newvar =  substr("`var'", 1, length("`var'") - 5)
 		gen `newvar' = (`var'< `first_date')
@@ -146,6 +148,8 @@ program define define_covs
 	gen bmi 		= bmi_`j'
 	gen bmicat 		= bmicat_`j'
 	gen obesecat 	= obesecat_`j'
+	
+	order bmi bmicat obesecat, after(obesecat_`j')
 	drop bmi_* bmicat_* obesecat_*
 
 	
@@ -153,12 +157,15 @@ program define define_covs
 
 	gen smoke 			= smoke_`j'
 	gen smoke_nomiss 	= smoke_nomiss_`j'
+
+	order smoke smoke_nomiss, after(smoke_nomiss_`j')
 	drop smoke_? smoke_nomiss_* 
 	
 	
 	/*  Asthma  */
 
 	gen asthmacat = asthmacat_`j'
+	order asthmacat, after(asthmacat_`j')
 	drop asthmacat_*
 	
 	
@@ -166,6 +173,7 @@ program define define_covs
 
 	gen kidneyfn = kidneyfn_`j' 
 	gen dialysis = dialysis_`j'  
+	order kidneyfn dialysis, after(dialysis_`j')
 	drop kidneyfn_* dialysis_*
 	
 	
@@ -183,6 +191,7 @@ program define define_covs
 	/*  Diabetes control  */
 		
 	gen hba1ccat = hba1ccat_`j' 
+	order hba1ccat, after(hba1ccat_`j')
 	drop hba1ccat_*
 	
 	* Create diabetes, split by control/not
@@ -238,6 +247,7 @@ program define define_covs
 	label var cardiac			"Heart disease"
 	label var af				"Atrial fibrillation"
 	label var pvd				"PVD"
+	label var dvt_pe			"Deep vein thrombosis/Pulmonary embolism"
 	label var diabcat			"Diabetes, by level of control"
 	label var hypertension		"Date of diagnosed hypertension"
 	label var stroke			"Stroke"
@@ -253,6 +263,7 @@ program define define_covs
 	label var suppression		"Permanent or recent temporary (inc. aa) immunosuppression"
 	label var ibd				"IBD"
 	label var smi 				"Serious mental illness"
+	label var ld 				"Learning disability inc. Down's Syndrome"
 	label var fracture			"Fragility fracture"
 	label var asthmacat 		"Severity of asthma"
 	label var dialysis 			"Dialysis"

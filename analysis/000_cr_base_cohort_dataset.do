@@ -19,19 +19,6 @@
 
 
 
-*********************
-* STILL TO DO LIST  *
-*********************
-
-* Covariates to be added and cleaned:
-* 	Rural/urban (in here now - binary, correct?)
-* Hypertension/high BP? separate? 
-* Add: 
-*   Learning disability 
-
-
-
-
 
 
 * Open a log file
@@ -132,6 +119,7 @@ foreach var of varlist 	cf								///
 						hypertension 					///
 						af 								///
 						pvd								///
+						dvt_pe							///
 						diabetes 						///
 						stroke							///
 						dementia		 				///
@@ -160,7 +148,7 @@ foreach var of varlist 	cf								///
 						ra_sle_psoriasis  				///
 						ibd 							///
 						smi 							///
-						osteo							///
+						ld								///
 						fracture_1						///
 						fracture_2						///
 						fracture_3						///
@@ -768,8 +756,17 @@ drop household_size
 rename household_id hh_id
 order hh_id, before(hh_num)
 
+* Centre number of people in household to create splines
+qui summ hh_num
+gen hh_numc = (hh_num - r(mean))/r(sd)
+mkspline hh_num = hh_numc, cubic nknots(4)
+order hh_num1 hh_num2 hh_num3, after(hh_numc)
+drop hh_numc
+
+* Binary indicator for children in household
 gen hh_children = (hh_num_child>0)
 order hh_children, after(hh_num_child)
+
 
 
 ***************************
@@ -827,10 +824,12 @@ label var region_9 				"Geographical region (9 England regions)"
 label var region_7 				"Geographical region (7 England regions)"
 label var rural					"Rural/urban binary classification"
 label var hh_id 				"Household ID"
-label var hh_num 				"Number of adults in household"
+label var hh_num 				"Number of adults in household, spline 1"
+label var hh_num1 				"Number of adults in household, spline 2"
+label var hh_num2 				"Number of adults in household, spline 3"
+label var hh_num3 				"Number of adults in household"
 label var hh_num_child			"Number of children (<=12)"
-label var hh_childre			"Presence of children (<=12)"
-
+label var hh_children			"Presence of children (<=12)"
 
 forvalues j = 1 (1) 3 {
 	label var bmi_`j'			"Body Mass Index (BMI, kg/m2); `t`j''"
@@ -859,6 +858,7 @@ forvalues j = 1 (1) 3 {
 label var respiratory_date		"Respiratory disease (excl. asthma), date"
 label var cardiac_date			"Heart disease, date"
 label var af_date				"Atrial fibrillation, date"
+label var dvt_pe_date			"Deep vein thrombosis/pulmonary embolism, date"
 label var pvd_date				"PVD, date"
 label var diabetes_date			"Diabetes, date"
 label var hypertension_date		"Date of diagnosed hypertension"
@@ -875,7 +875,7 @@ label var hiv_date 				"HIV, date"
 label var perm_immuno_date		"RA, SLE, Psoriasis (autoimmune disease), date"
 label var ibd_date				"IBD, date"
 label var smi_date 				"Serious mental illness, date"
-label var osteo_date			"Osteoporosis, date"
+label var ld_date 				"Learning disability or Down's Syndrome, date"
 
 forvalues j = 1 (1) 3 {
 	label var temp1yr_`j'		"Temporary immunosuppression in last year (inc. aa); `t`j''"	
@@ -908,12 +908,12 @@ order 	patient_id stp* region_9 region_7 imd rural hh*		 		///
 		respiratory* asthma* cf* cardiac* diabetes* hba1ccat* 		///
 		bp_sys bp_sys_date bp_dias bp_dias_date 					///
 		bpcat bpcat_nomiss hypertension*							///
-		af* pvd* 													///
+		af* pvd* dvt_pe*											///
 		stroke* dementia* neuro* 									///
 		cancerExhaem* cancerHaem* 									///
 		kidneyfn* dialysis* liver* transplant* 						///
 		spleen* autoimmune* hiv* perm_immuno_date temp1yr*	ibd*	///
-		smi* osteo* fracture*										///
+		smi* ld* fracture*											///
 		died_date_onscovid died_date_onsother onscoviddeath	stime
 
 
