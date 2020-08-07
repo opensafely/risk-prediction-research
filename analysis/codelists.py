@@ -4,16 +4,21 @@ from cohortextractor import (
 )
 
 
+##############################################################################
 ### TO UPDATE: Still using local codelists:
-# cf_codes
-# other_respiratory
-# af_codes
-# pvd_codes
-# hiv_codes
-# fracture_codes
-# osteo_codes (maybe not wanted)
-# smi_codes
-# Learning disability - not even in here yet!
+
+# pvd_codes (local version used below)
+# fracture_codes (local version used below)
+
+# DVT/PE (completely made up ones below)
+# Learning disability (completely made up ones below)
+# In each case need to:
+# (i) change the link
+# (ii) add the OS codelist to the codelists.txt
+# (iii) run cohortextractor update_codelists in Anaconda prompt
+
+### THEN DELETE THIS SECTION!!!!
+##############################################################################
 
 
 # Outcomes
@@ -71,12 +76,12 @@ pred_codes = codelist_from_csv(
     column="snomed_id",
 )
 cf_codes = codelist_from_csv(
-    "local_codelists/CTV3-cystic-fibrosis-17072020.csv",
+    "codelists/opensafely-cystic-fibrosis.csv",
     system="ctv3",
     column="CTV3ID"
 )
 other_respiratory_codes = codelist_from_csv(
-    "local_codelists/CTV3-other-chronic-respiratory-disease-17072020.csv",
+    "codelists/opensafely-other-chronic-respiratory-disease.csv",
     system="ctv3",
     column="CTV3ID",
 )
@@ -98,7 +103,7 @@ hypertension_codes = codelist_from_csv(
     column="CTV3ID"
 )
 af_codes = codelist_from_csv(
-    "local_codelists/OpenSAFELY_eFI_Codes_AF.csv",
+    "codelists/opensafely-atrial-fibrillation-or-flutter.csv",
     system="ctv3",
     column="CTV3ID"
 )
@@ -107,6 +112,12 @@ pvd_codes = codelist_from_csv(
     system="ctv3",
     column="CTV3ID"
 )
+dvt_pe_codes = codelist_from_csv(
+    "local_codelists/FAKE_CODELIST_DVT_PE.csv",
+    system="ctv3",
+    column="CTV3ID"
+)
+
 
 # Neurological
 stroke = codelist_from_csv(
@@ -168,7 +179,7 @@ dialysis_codes = codelist_from_csv(
 
 # Immunosuppression
 hiv_codes = codelist_from_csv(
-    "local_codelists/hiv_corrected.csv",
+    "codelists/opensafely-hiv.csv",
     system="ctv3",
     column="CTV3ID"
 )
@@ -214,15 +225,16 @@ fracture_codes = codelist_from_csv(
      system="ctv3",
      column="CTV3ID"
 )
-osteo_codes = codelist_from_csv(
-    "local_codelists/OpenSAFELY_eFI_Codes_Osteoporosis.csv",
+
+# Mental illness and learning disability
+smi_codes = codelist_from_csv(
+    "codelists/opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv",
     system="ctv3",
     column="CTV3ID"
 )
 
-# Mental illness and learning disability
-smi_codes = codelist_from_csv(
-    "local_codelists/opensafely_smi_UPDATE.csv",
+ld_codes = codelist_from_csv(
+    "local_codelists/FAKE_CODELIST_LD.csv",
     system="ctv3",
     column="CTV3ID"
 )

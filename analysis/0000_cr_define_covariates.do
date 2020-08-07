@@ -67,7 +67,6 @@ program define define_covs
 							autoimmune_date 				///
 							ibd_date 						///
 							smi_date 						///
-							osteo_date						///
 						{
 		local newvar =  substr("`var'", 1, length("`var'") - 5)
 		gen `newvar' = (`var'< `first_date')
@@ -254,7 +253,6 @@ program define define_covs
 	label var suppression		"Permanent or recent temporary (inc. aa) immunosuppression"
 	label var ibd				"IBD"
 	label var smi 				"Serious mental illness"
-	label var osteo				"Osteoporosis"
 	label var fracture			"Fragility fracture"
 	label var asthmacat 		"Severity of asthma"
 	label var dialysis 			"Dialysis"
