@@ -21,8 +21,9 @@
 set more off
 
 * Fizz
-cd "C:\Users\emsuewil\Documents\Work\Covid\OpenSAFELY\Risk prediction\Git\risk-prediction-research"
-
+*cd "C:\Users\emsuewil\Documents\Work\Covid\OpenSAFELY\Risk prediction\Git\risk-prediction-research"
+* John
+cd "/Users/lsh1401926/Desktop/risk-prediction-research"
 
 adopath + "analysis/ado"
 

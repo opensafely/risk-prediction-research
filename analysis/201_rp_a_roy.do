@@ -36,62 +36,32 @@ log using "./output/rp_a_parametric_survival_models_roy", text replace
 
 use "data/cr_casecohort_models.dta", replace
 
-*********************************
-*   Set data on ons covid death *
-*********************************
-*
-stset stime_onscoviddeath, fail(onscoviddeath) 				///
-  id(patient_id) enter(enter_date) origin(enter_date) // adds need to be added here
-
-*************************************************
-*   Use a complete case analysis for ethnicity  *
-*************************************************
-
-drop if ethnicity>=.
-
-
-* Create numerical region variable // move to cr_create
-encode region, gen(region_new)
-drop region
-rename region_new region
-
-
-
-*********************
-*   Royston-Parmar  *
-*********************
-
-
-rename reduced_kidney_function_cat red_kidney_cat
-rename chronic_respiratory_disease respiratory_disease
-rename chronic_cardiac_disease cardiac_disease
-rename other_immunosuppression immunosuppression
-
-
-* Create dummy variables for categorical predictors 
-foreach var of varlist obese4cat smoke_nomiss imd  		///
-	asthmacat diabcat cancer_exhaem_cat cancer_haem_cat ///
-	red_kidney_cat	region					///
-	{
-		egen ord_`var' = group(`var')
-		qui summ ord_`var'
-		local max=r(max)
-		forvalues i = 1 (1) `max' {
-			gen `var'_`i' = (`var'==`i')
-		}	
-		drop ord_`var'
-		drop `var'_1
-}
-
-
 timer clear 1
 timer on 1
-stpm2  age1 age2 age3 male 					///
-			 ,						///
-			scale(hazard) df(5) eform
+stpm2  male,						///
+			scale(hazard) df(2) 
 estat ic
 timer off 1
 timer list 1
+
+gen time = 0 
+predict s0, survival timevar(time) zeros ci
+
+summ this
+
+
+
+
+use https://www.pclambert.net/data/rott2b, clear
+
+stset rf, f(rfi==1) scale(12) exit(time 60)
+ rcsgen age, df(3) gen(agercs) center(60)
+
+
+stpm2 hormon agercs* pr_1, scale(hazard) df(4) eform
+
+
+
 
 
 
@@ -101,6 +71,7 @@ hist s_time
 
 gen time2= 70
 predict s_time1 , survival timevar(time2)
+
 *****************************************************
 *   Survival predictions from Royston-Parmar model  *
 *****************************************************
