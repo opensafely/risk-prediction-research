@@ -37,25 +37,19 @@ do "analysis/0000_cr_define_covariates.do"
 ***********************
 *  Create substudies  *
 ***********************
-***********************************  MUST UPDATE *********************************
-* True sampling fractions below. Don't work in dummy data
-* Age-group-stratified sampling fractions 
-*local sf1 = 0.01/100
-*local sf2 = 0.02/100
-*local sf3 = 0.02/100
-*local sf4 = 0.025/100
-*local sf5 = 0.05/100
-*local sf6 = 0.13/100
-*local sfd = 0.3
-local sf1 = 0.2
-local sf2 = 0.2
-local sf3 = 0.2
-local sf4 = 0.2
-local sf5 = 0.2
-local sf6 = 0.2
 
-local sfd = 1
-***********************************  MUST UPDATE *********************************
+
+* Age-group-stratified sampling fractions for controls
+local sf1 = 0.01/100
+local sf2 = 0.02/100
+local sf3 = 0.02/100
+local sf4 = 0.025/100
+local sf5 = 0.05/100
+local sf6 = 0.13/100
+
+* Age-group-stratified sampling fractions for cases (non-COVID deaths)
+local sfd = 0.3
+
 
 
 * Set random seed for replicability

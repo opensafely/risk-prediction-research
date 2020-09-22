@@ -593,7 +593,13 @@ study = StudyDefinition(
         on_or_before="2020-06-08",
         include_month=True,
     ),
-    # ADD DEEP VEIN THROMBOSIS/PULMONARY EMBOLISM HERE WHEN READY
+    # Deep vein thrombisis / pulmonary embolism
+    dvt_pe=patients.with_these_clinical_events(
+            dvt_pe_codes,
+            return_first_date_in_period=True,
+            on_or_before="2020-06-08",
+            include_month=True,
+    ),
     # Diabetes
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/30
     diabetes=patients.with_these_clinical_events(
@@ -712,10 +718,9 @@ study = StudyDefinition(
         on_or_before="2020-06-08",
         include_month=True,
     ),
-    # ADD INTELLECTUAL DISABILITY HERE WHEN READY
-    # Frailty - osteoporosis
-    osteo=patients.with_these_clinical_events(
-        osteo_codes,
+    # Learning disability (including Downs Syndrome)
+    ld=patients.with_these_clinical_events(
+        ld_codes,
         return_first_date_in_period=True,
         on_or_before="2020-06-08",
         include_month=True,
@@ -772,7 +777,7 @@ study = StudyDefinition(
     fracture_2=patients.with_these_clinical_events(
         fracture_codes,
         return_last_date_in_period=True,
-        between=["2018-04-06", "2020-04-06"],
+        between=["2019-04-06", "2020-04-06"],
         include_month=True,
     ),
     # Time update: Fragility fracture as of 12 May 2020
