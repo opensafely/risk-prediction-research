@@ -139,6 +139,7 @@ program define define_covs
 	/*  Fracture  */
 	
 	gen fracture = fracture_`j'
+	order fracture, after(fracture_4)
 	drop fracture_*
 	
 
@@ -147,6 +148,7 @@ program define define_covs
 	gen bmi 		= bmi_`j'
 	gen bmicat 		= bmicat_`j'
 	gen obesecat 	= obesecat_`j'
+	order bmi bmicat obesecat, after(obesecat_4)
 	drop bmi_* bmicat_* obesecat_*
 
 	
@@ -154,21 +156,27 @@ program define define_covs
 
 	gen smoke 			= smoke_`j'
 	gen smoke_nomiss 	= smoke_nomiss_`j'
+	order smoke smoke_nomiss, after(smoke_nomiss_4)
 	drop smoke_? smoke_nomiss_* 
+	label values smoke smoke_nomiss smoke
 	
 	
 	/*  Asthma  */
 
 	gen asthmacat = asthmacat_`j'
+	order asthmacat, after(asthmacat_4)
 	drop asthmacat_*
+	label values asthmacat asthmacat
 	
 	
 	/*  Kidney function and dialysis  */
 
 	gen kidneyfn = kidneyfn_`j' 
 	gen dialysis = dialysis_`j'  
+	order kidneyfn dialysis, after(dialysis_4)
 	drop kidneyfn_* dialysis_*
-	
+	label values kidneyfn kidneyfn
+
 	
 		
 	/*  Immunosuppression  */
@@ -200,6 +208,7 @@ program define define_covs
 	label values diabcat diabetes
 
 	* Drop unnecessary variables
+	order diabcat, after(diabetes)
 	drop diabetes hba1ccat
 	
 	
