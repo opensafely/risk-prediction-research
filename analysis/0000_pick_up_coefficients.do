@@ -30,6 +30,9 @@
 *						identify_pairinteract, 	term("3.ethnicity#age")
 *						identify_varexpress, 	term("6.bmi")
 *
+*						Note: get_coefs assumes base_surv is position
+*						1,1 in the matrix, if given
+*
 ********************************************************************************
 
 
@@ -156,19 +159,25 @@ end
 
 capture program drop get_coefs
 program define get_coefs
-	syntax , coef_matrix(string) eqname(string) dataname(string)
-
+	syntax , coef_matrix(string) eqname(string) dataname(string) [cons_no]
+	
 	global terms: colfullnames `coef_matrix'
 	tokenize $terms 
+	
 	
 	local i = 1
 	local j = 1
 	while "``i''" != "" {
-		
-		* Remove eqname prefix, e.g. "onscoviddeath:"
-		local length_prefix = length("`eqname'") + 2
+
+		if "`eqname'"!="None" {
+			* Remove eqname prefix, e.g. "onscoviddeath:"
+			local length_prefix = length("`eqname'") + 2
+		}
+		else {
+			local length_prefix = 1
+		}
 		local term_`j' = substr("``i''", `length_prefix', .)
-		
+			
 		* Check for baseline categories in either a single or two terms
 		identify_pairinteract, term("`term_`j''")
 		local ispairinter	= r(ispairinter) 
@@ -188,31 +197,37 @@ program define get_coefs
 			local isbasecat = max(`isbasecat_1', `isbasecat_2')
 		}
 		if `isbasecat'==1 {
-		    * If a baseline term then skip and move on to next term
-		    local ++i
+			* If a baseline term then skip and move on to next term
+			local ++i
 		}
 		else {
 			* If non-baseline term then save coefficient and expression
 	
 			* Save the value of coefficient
-			local coef_`j' = _b["`term_`j''"]
+			if "`term_`j''"!="base_surv" {
+				local coef_`j' = _b["`term_`j''"]
 			
-			* Identify the variable expression
-			if `ispairinter' == 0 {
-			    * Not an interaction
-				identify_varexpress, term("`term_`j''")
-				local varexpress_`j' = r(varexpress)
-			}
+				* Identify the variable expression
+				if `ispairinter' == 0 {
+					* Not an interaction
+					identify_varexpress, term("`term_`j''")
+					local varexpress_`j' = r(varexpress)
+				}
+				else {
+					* An interaction
+					identify_varexpress, term("`firstterm'")
+					local varexpress1 = r(varexpress)
+					identify_varexpress, term("`secondterm'")
+					local varexpress2 = r(varexpress)
+					local varexpress_`j' = "`varexpress1'"+"*"+"`varexpress2'"
+				}
+			} 
 			else {
-			    * An interaction
-			    identify_varexpress, term("`firstterm'")
-				local varexpress1 = r(varexpress)
-			    identify_varexpress, term("`secondterm'")
-				local varexpress2 = r(varexpress)
-				local varexpress_`j' = "`varexpress1'"+"*"+"`varexpress2'"
+				local coef_`j' = `coef_matrix'[1,1]
+				local varexpress_`j' = ""
 			}
 			local ++i
-		    local ++j
+			local ++j
 		}
 	}
 	
@@ -225,7 +240,7 @@ program define get_coefs
 		    if "`term_`k''" != "_cons" {
 				post `coefs_pf' ("`term_`k''") (`coef_`k'') ("`varexpress_`k''")
 			}
-			else {
+			else if "`cons_no'" == "" {
 				post `coefs_pf' ("`term_`k''") (`coef_`k'') ("(constant==1)")			    
 			}
 		}
