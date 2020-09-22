@@ -4,7 +4,8 @@
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		data/cr_base_cohort.dta 
+*	Data used:		output/cr_training.dta (training dataset)
+*					data/foi_coefs.dta (force of infection data)
 *
 *	Data created:	data/cr_landmark.dta (data for fitting landmark models) 
 *
@@ -54,10 +55,10 @@ set seed 37873
 * Create separate landmark substudies
 forvalues i = 1 (1) 73 {
 
-	* Open underlying base cohort
-	use "data/cr_base_cohort.dta", replace
+	* Open underlying base training cohort (4/5 of original TPP cohort)
+	use "data/cr_training_dataset.dta", replace
 
-	* Keep ethnicity complete cases
+  * Keep ethnicity complete cases
 	drop ethnicity_5 ethnicity_16
 	drop if ethnicity_8>=.
 	
@@ -74,15 +75,20 @@ forvalues i = 1 (1) 73 {
 	*  Select substudy case-cohort  *
 	*********************************
 	
+	* Date this landmark started: d(1/03/2020) + `i' - 1
+	* Days until death:  died_date_onscovid - {d(1/03/2020) + `i' - 1} + 1
+	
 	* Survival time (must be between 1 and 28)
 	qui capture drop stime
-	qui gen stime28 = died_date_onscovid - `date_in' + 1 
-	assert stime28 >= . if died_date_onscovid >= .	
+	qui gen stime = (died_date_onscovid - (d(1/03/2020) + `i' - 1) + 1) ///
+			if died_date_onscovid < .
 	
 	* Mark people who have an event in the relevant 28 day period
-	qui replace onscoviddeath = 0 if onscoviddeath==1 & stime>28
-	qui replace stime28 = 28 if onscoviddeath==0
-	noi bysort onscoviddeath: summ stime28
+	qui replace onscoviddeath = 0 if onscoviddeath==1 &  	///
+		stime>28
+	qui replace stime = 28 if onscoviddeath==0
+	noi bysort onscoviddeath: summ stime
+
 	
 	* Keep all cases and a random sample of controls (by agegroup)
 	qui gen subcohort = 0
@@ -218,24 +224,29 @@ drop datein dateout day_since1mar_in day_since1mar_out newid _*
 *  Add in time-varying infection data  *
 ****************************************
 
+gen 	agegroupfoi = 1  if age<25
+recode 	agegroupfoi .=2  if age<30
+recode 	agegroupfoi .=3  if age<35
+recode 	agegroupfoi .=4  if age<40
+recode 	agegroupfoi .=5  if age<45
+recode 	agegroupfoi .=6  if age<50
+recode 	agegroupfoi .=7  if age<55
+recode 	agegroupfoi .=8  if age<60
+recode 	agegroupfoi .=9  if age<65
+recode 	agegroupfoi .=10 if age<70
+recode 	agegroupfoi .=11 if age<75
+recode 	agegroupfoi .=12 if age<.
 
-/*  Force of infection data  */ 
 
-recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
-		50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 	///
-		gen(agegroupfoi)
-
+* Merge in the summary infection prevalence data
 merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
-	keep(match) assert(match using) nogen
-drop agegroupfoi 
+	assert(match using) keep(match) nogen 
+drop agegroupfoi
 
-
-
-/*  Objective measure: A&E data   */ 
-
-****  LATER _ CROSS_CHECK STPS
-**** LATER 0 ADD ASSERT AS APPROPRIATE 
-merge m:1 time stp using "data/ae_coefs", keep(match master) nogen
+	
+* Merge in the infection and immunity data prevalence data
+*merge m:1 time using infect_immune, assert(match using) keep(match) nogen ///
+*	keepusing(susc infect)
 
 
 
@@ -246,9 +257,11 @@ merge m:1 time stp using "data/ae_coefs", keep(match master) nogen
 ******************
 
 order time patient_id
-sort time patient_id dayin
-label data "28-day landmark substudies (complete case ethnicity) for model fitting"
-save "data/cr_landmark.dta", replace
+sort time patient_id
+
+label data "Training data 28-day landmark substudies (complete case ethnicity) for model fitting"
+save "data/cr_tr_landmark_models.dta", replace
+
 
 * Close log file
 log close

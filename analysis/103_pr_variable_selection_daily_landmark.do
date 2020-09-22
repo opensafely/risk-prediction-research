@@ -1,14 +1,15 @@
 ********************************************************************************
 *
-*	Do-file:			100_pr_variable_selection.do
+*	Do-file:			103_pr_variable_selection_daily_landmark.do
 *
 *	Written by:			Fizz & John
 *
-*	Data used:			data/cr_casecohort_var_select.dta
+*	Data used:			cr_create_analysis_dataset.dta
+*						cr_create_analysis_dataset_STSET_onscoviddeath.dta
 *
 *	Data created:		None
 *
-*	Other output:		[FILL IN]
+*	Other output:		output/102_pr_variable_selection_daily_landmark
 *
 ********************************************************************************
 *
@@ -18,7 +19,7 @@
 *
 *	Note:				This do-file uses Barlow weights (incorporated as an
 *						offset in the Poisson model) to account for the case-
-*						cohort design.  [UPDATE THIS _ NOT SURE IT DOES]
+*						cohort design.
 *
 ********************************************************************************
 
@@ -27,8 +28,7 @@
 
 * Open a log file
 capture log close
-log using "output/100_pr_variable_selection", text replace
-
+log using "output/102_pr_variable_selection_daily_landmark", text replace
 
 
 
@@ -48,10 +48,10 @@ log using "output/100_pr_variable_selection", text replace
 
 /*  List to be forced in  */
 
-* First list allowed to interact with other variables; second list main effect only
-global pred_cts_f = "age1"
-global pred_bin_f = "male"
-global pred_cat_f = " "
+global pred_cts_f 	  	= "age1 "
+global pred_cts_f_noi 	= "tvar1"
+global pred_bin_f 		= "male"
+global pred_cat_f 		= " "
 
 
 
@@ -61,8 +61,8 @@ global pred_cat_f = " "
 *global pred_cts_c 		= "hh_num1"
 *global pred_cts_c_noi 	= "hh_num2 hh_num3"
 
-global pred_cts_c 		= " "
-global pred_cts_c_noi 	= "age2 age3"
+global pred_cts_c 		= "  "
+global pred_cts_c_noi 	= "age2 age3  tvar2 tvar3 tvar4 tvar5 tvar6"
 
 
 *** TO BE UPDATED: NEXT 5 ROWS
@@ -84,7 +84,16 @@ global pred_cat_c_noi 	= "region_9"
 
 
 *  Open data to be used for variable selection 
-use "data/cr_casecohort_var_select.dta", clear
+use "data/cr_daily_landmark_covid.dta", clear
+
+gen tvar1 = log(foi_q_cons)
+gen tvar2 = foi_q_day/foi_q_cons
+gen tvar3 = foi_q_daysq/foi_q_cons
+gen tvar4 = tvar2*tvar3
+gen tvar5 = tvar2^2
+gen tvar6 = tvar3^2
+
+
 
 
 ***************************************************************** 
@@ -93,28 +102,17 @@ use "data/cr_casecohort_var_select.dta", clear
 * (Performed during pre-shielding period) 						*
 *****************************************************************
 
-
-* Create binary shielding indicator
-stset dayout, fail(onscoviddeath) enter(dayin) id(patient_id)  
-stsplit shield, at(32)
-recode shield 32=1
-label define shield 0 "Pre-shielding" 1 "Shielding"
-label values shield shield
-label var shield "Binary shielding (period) indicator"
-recode onscoviddeath .=0
-
-
-
-
-* Create outcome for Poisson model and exposure variable
-gen diedcovforpoisson  = _d
-gen exposureforpoisson = _t-_t0
-gen offset = log(exposureforpoisson) 
+* Outcome and offset for Poisson regression
+gen diedcovforpoisson = onscoviddeath
+gen offset = 0
 *+ log(sf_wts)
 
 
+timer clear 1
+timer on 1
 lasso poisson diedcovforpoisson 									///
-			(c.(${pred_cts_f}) i.(${pred_bin_f}) i.(${pred_cat_f}))	///
+			(c.(${pred_cts_f}) i.(${pred_bin_f}) i.(${pred_cat_f}) 	///
+			c.(${pred_cts_f_noi}))									///
 																	///
 			c.(${pred_cts_c}) i.(${pred_bin_c}) i.(${pred_cat_c})	///
 			c.(${pred_cts_c_noi}) i.(${pred_cat_c_noi})				///
@@ -122,7 +120,7 @@ lasso poisson diedcovforpoisson 									///
 			c.(${pred_cts_f})##c.(${pred_cts_f})					///
 			i.(${pred_bin_f})##c.(${pred_cts_f})					///
 			i.(${pred_cat_f})##c.(${pred_cts_f})					///
-			i.(${pred_bin_f})##i.(${pred_cat_f})					///
+			i.(${pred_bin_f})##c.(${pred_cat_f})					///
 																	///
 			c.(${pred_cts_f})##c.(${pred_cts_c})					///
 			c.(${pred_cts_f})##i.(${pred_bin_c})					///
@@ -140,7 +138,7 @@ lasso poisson diedcovforpoisson 									///
 			i.(${pred_bin_c})##i.(${pred_cat_c})					///
 																	///
 			if shield==0,											///
-			offset(offset) selection(plugin)
+			offset(offset) selection(plugin) 
 timer off 1
 timer list 1
 
@@ -230,7 +228,7 @@ noi di "`postShieldSelectedVars'"
 
 * Create postfile
 tempname coefs
-postfile `coefs' str30(variable) coef using "output\cr_selected_model_coefficients.dta", replace
+postfile `coefs' str30(variable) coef using "output\cr_selected_model_coefficients_daily_landmark.dta", replace
 
 local i = 1
 
