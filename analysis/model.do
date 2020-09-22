@@ -34,22 +34,26 @@ adopath + "`c(pwd)'/analysis/ado"
 
 * Program to extract covariates
 do "`c(pwd)'/analysis/0000_cr_define_covariates.do"
+
 * Define base cohort
 do "`c(pwd)'/analysis/000_cr_base_cohort_dataset.do"
-count
-noi di r(N)
-if r(N)<65000 {
-    noi di "Do some post-fixes to data (assumed to be the dummy)"
-	do "`c(pwd)'/analysis/DATAFIXESFORTESTING.do"
-}
-
-* Split into training and evaluation
-do "`c(pwd)'/analysis/001_cr_data_splitting.do"
 
 * Create case-cohort samples for model fitting and variable selection
-do "`c(pwd)'/analysis/002_cr_case_cohort.do"
+do "`c(pwd)'/analysis/001_cr_case_cohort.do"
 
+* Create validation datasets
+do "`c(pwd)'/analysis/002_cr_validation_datasets.do"
 
+/*
+* Create landmark (stacked) dataset
+do "`c(pwd)'/analysis/003_cr_dynamic_modelling_output.do"
+do "`c(pwd)'/analysis/003_cr_dynamic_modelling_output2.do"
+do "`c(pwd)'/analysis/004_cr_landmark_substudies.do"
 
+* Create daily landmark (stacked) dataset
+do "`c(pwd)'/analysis/005_cr_daily_landmark_covid_substudies.do"
+do "`c(pwd)'/analysis/006_cr_daily_landmark_noncovid_substudies.do"
+
+*/
 
 

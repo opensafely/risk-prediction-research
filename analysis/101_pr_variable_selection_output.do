@@ -21,11 +21,6 @@
 
 
 
-* Open a log file
-capture log close
-log using "output/100_pr_variable_selection.do", text replace
-
-
 
 ****************************************
 *  Model selected via lasso procedure  *
@@ -33,6 +28,7 @@ log using "output/100_pr_variable_selection.do", text replace
 
 
 global predictors "age1 age2 age3 i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression i.shield i.stroke#i.shield"
+
 
 noi di "$predictors"
 
@@ -51,7 +47,4 @@ noi di "$predictors"
 **?
 
 
-
-* Close the log file
-log close
 

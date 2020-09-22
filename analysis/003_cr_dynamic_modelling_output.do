@@ -161,7 +161,7 @@ sort region_7 agegroupfoi time
 label data "Force of infection data, estimate and quadratic model"
 save "data/foi_coefs", replace
 
-	
+
 * Close the log file
 log close
 

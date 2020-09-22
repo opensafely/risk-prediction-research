@@ -33,6 +33,9 @@ program define define_covs
 	}
 	else {
 		local first_date = `dateno'
+		local date =  string(day(`dateno'))+"/"		///
+					+ string(month(`dateno'))+"/"	///
+					+ string(year(`dateno'))
 	}
 	
 	* Time lags required for variable definintion (cancer)
@@ -48,6 +51,7 @@ program define define_covs
 	* Replace dates with binary indicators 
 	foreach var of varlist	hypertension_date				///
 							respiratory_date	 			///
+							cf_date	 						///
 							cardiac_date 					///
 							diabetes_date 					///
 							af_date 						///
@@ -119,15 +123,16 @@ program define define_covs
 	if `first_date' <= d(1/03/2020) {
 		local j = 1  
 	} 
-	else if `first_date'  <= d(1/04/2020) {
+	else if `first_date'  <= d(6/04/2020) {
 		local j = 2
 	}
-	else if `first_date'  <= d(12/04/2020) {
+	else if `first_date'  <= d(12/05/2020) {
 		local j = 3
 	}	
-	else if `first_date'  <= d(11/05/2020) {
-		local j = 4
-	}
+	else if `first_date' > (12/05/2020) {
+		local j = 3
+	}	
+
 	
 
 	
@@ -239,6 +244,7 @@ program define define_covs
 	
 	* Comorbidities
 	label var respiratory		"Respiratory disease (excl. asthma)"
+	label var cf				"Cystic fibrosis"
 	label var cardiac			"Heart disease"
 	label var af				"Atrial fibrillation"
 	label var pvd				"PVD"
