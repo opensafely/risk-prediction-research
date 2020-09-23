@@ -172,7 +172,14 @@ program define get_coefs
 		* Remove eqname prefix, e.g. "onscoviddeath:
 		local term_`j' = "``i''"
 		}
-    else {
+		   if "`eqname'" == "xb0:" | "`eqname'" == "_t:" {
+		* Remove eqname prefix, e.g. "onscoviddeath:
+		local length_prefix = length("`eqname'") + 1
+		local term_`j' = substr("``i''", `length_prefix', .)
+		}
+		
+
+else  {
 		* Remove eqname prefix, e.g. "onscoviddeath:"
 		local length_prefix = length("`eqname'") + 2
 		local term_`j' = substr("``i''", `length_prefix', .)

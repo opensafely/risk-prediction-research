@@ -36,84 +36,60 @@ log using "./output/rp_a_parametric_survival_models_roy", text replace
 
 use "data/cr_casecohort_models.dta", replace
 
+*********************
+*   Royston Model  *
+*********************
+* df(5) -> 4 knots at centile positions 20 40 60 80
+
 timer clear 1
 timer on 1
-stpm2  male,						///
-			scale(hazard) df(2) 
+stpm2  $predictors_preshield , df(5) scale(hazard)
 estat ic
 timer off 1
 timer list 1
 
-gen time = 0 
-predict s0, survival timevar(time) zeros ci
+***********************************************
+*  Put coefficients and survival in a matrix  * 
+***********************************************
 
-summ this
+* Pick up coefficient matrix
+matrix b = e(b)
+mat list b
 
+local cols = (colsof(b) + 1)/2
+local cols2 = cols+3
+mat c = b[1,`cols2'..colsof(b)]
+mat list c
 
+*  Calculate baseline survival 
+gen time = 28
+predict s0, survival timevar(time) zeros 
+summ s0 
+global base_surv = `r(min)'
 
-
-use https://www.pclambert.net/data/rott2b, clear
-
-stset rf, f(rfi==1) scale(12) exit(time 60)
- rcsgen age, df(3) gen(agercs) center(60)
-
-
-stpm2 hormon agercs* pr_1, scale(hazard) df(4) eform
-
-
-
-
-
-
-gen time1 = 28 
-predict s_time, survival timevar(time1) 
-hist s_time
-
-gen time2= 70
-predict s_time1 , survival timevar(time2)
-
-*****************************************************
-*   Survival predictions from Royston-Parmar model  *
-*****************************************************
-
-gen time28 = 28
-
-* calculate 01mar + 60
-* pred =. if dead <=
-
-gen time60 = 60 + 28
-
- 
-gen time80 = 80
+* Add baseline survival to matrix (and add a matrix column name)
+matrix c = [$base_surv, c]
+local names: colfullnames c
+local names: subinstr local names "c1" "xb0:base_surv"
+mat colnames c = `names'
 
 
-* Survival at t
-predict surv_royp, surv timevar(_t)
+* Don't think needed for rp
+/* Remove unneeded parameters from matrix
+local np = colsof(b) - 1
+matrix b = b[1,1..`np']
+matrix list b
+*/
 
-* Survival at 30 days
-predict surv28_royp, surv timevar(time28)
+*  Save coefficients to Stata dataset  
+do "analysis/0000_pick_up_coefficients.do"
 
-* Survival at 60 days
-predict surv60_royp, surv timevar(time60)
+* Save coeficients needed for prediction
 
-* Survival at 80 days
-predict surv80_royp, surv timevar(time80)
-
-
-* Absolute risk at 30, 60 and 80 days
-gen risk_royp   = 1-surv_royp
-gen risk30_royp = 1-surv30_royp
-gen risk60_royp = 1-surv60_royp
-gen risk80_royp = 1-surv80_royp
-
-
-
-/*  Quantiles of predicted 30, 60 and 80 day risk   */
-
-centile risk30_royp, c(10 20 30 40 50 60 70 80 90)
-centile risk60_royp, c(10 20 30 40 50 60 70 80 90)
-centile risk80_royp, c(10 20 30 40 50 60 70 80 90)
-
+get_coefs, coef_matrix(c) eqname("xb0:") cons_no ///
+	dataname("data/model_a_roy_noshield")
+	
+	
 
 
 
