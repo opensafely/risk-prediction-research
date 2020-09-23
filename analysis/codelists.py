@@ -115,17 +115,17 @@ af_codes = codelist_from_csv(
 dvt_pe_codes = codelist_from_csv(
     "codelists/opensafely-venous-thromboembolic-disease.csv",
     system="ctv3",
-    column="CTV3ID",
+    column="CTV3Code",
 )
 pad_surg_codes = codelist_from_csv(
     "codelists/opensafely-surgery-for-peripheral-artery-disease.csv",
     system="ctv3",
-    column="CTV3ID",
+    column="CTV3Code",
 )
 amputate_codes = codelist_from_csv(
     "codelists/opensafely-amputation.csv",
     system="ctv3",
-    column="CTV3ID",
+    column="CTV3Code",
 )
 
 # Neurological
@@ -232,7 +232,7 @@ inflammatory_bowel_disease_codes = codelist_from_csv(
 fracture_codes = codelist_from_csv(
     "codelists/opensafely-fragility.csv",
      system="ctv3",
-     column="CTV3ID",
+     column="CTV3Code",
 )
 
 # Mental illness and learning disability
