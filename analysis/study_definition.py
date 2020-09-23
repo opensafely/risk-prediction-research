@@ -579,7 +579,7 @@ study = StudyDefinition(
         on_or_before="2020-06-08",
         include_month=True,
     ),
-    other_respiratory=patients.with_these_clinical_events(
+    respiratory=patients.with_these_clinical_events(
         other_respiratory_codes,
         return_first_date_in_period=True,
         on_or_before="2020-06-08",
@@ -587,7 +587,7 @@ study = StudyDefinition(
     ),
     # CARDIAC - CARDIAC DISEASE, DIABETES
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/7
-    chronic_cardiac_disease=patients.with_these_clinical_events(
+    cardiac=patients.with_these_clinical_events(
         chronic_cardiac_disease_codes,
         return_first_date_in_period=True,
         on_or_before="2020-06-08",
@@ -661,7 +661,7 @@ study = StudyDefinition(
         include_month=True,
     ),
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/14
-    other_neuro=patients.with_these_clinical_events(
+    neuro=patients.with_these_clinical_events(
         other_neuro,
         return_first_date_in_period=True,
         on_or_before="2020-06-08",
@@ -689,7 +689,7 @@ study = StudyDefinition(
     ),
     # LIVER DISEASE, DIALYSIS AND TRANSPLANT
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/12
-    chronic_liver_disease=patients.with_these_clinical_events(
+    liver=patients.with_these_clinical_events(
         chronic_liver_disease_codes,
         return_first_date_in_period=True,
         on_or_before="2020-06-08",
@@ -728,7 +728,7 @@ study = StudyDefinition(
         include_month=True,
     ),
     # # https://github.com/ebmdatalab/tpp-sql-notebook/issues/49
-    ra_sle_psoriasis=patients.with_these_clinical_events(
+    autoimmune=patients.with_these_clinical_events(
         ra_sle_psoriasis_codes,
         return_first_date_in_period=True,
         on_or_before="2020-06-08",

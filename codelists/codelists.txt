@@ -31,6 +31,6 @@ opensafely/smoking-clear/2020-04-29
 opensafely/smoking-unclear/2020-04-29
 opensafely/stroke-updated/2020-06-02
 opensafely/surgery-for-peripheral-artery-disease/2020-09-16
-opensafely/temporary-immunosuppresion/2020-04-24
+opensafely/temporary-immunosuppression/2020-04-24
 opensafely/venous-thromboembolic-disease/2020-09-14
 

@@ -98,7 +98,7 @@ else {
 
 
 * People who had an event prior to our start date
-* (this should not occur)
+* (this should not occur in the real data)
 noi di "DROPPING IF DIED BEFORE MAR 1st" 
 confirm string variable died_date_ons
 gen temp = date(died_date_ons, "YMD")
@@ -112,22 +112,24 @@ drop temp
 *  Convert strings to dates  *
 ******************************
 
+
 * To be added: dates related to outcomes
 foreach var of varlist 	cf								///
-						other_respiratory			 	///
-						chronic_cardiac_disease 		///
+						respiratory					 	///
+						cardiac 						///
 						hypertension 					///
 						af 								///
-						pvd								///
 						dvt_pe							///
+						pad_surg 						///
+						amputate						///
 						diabetes 						///
 						stroke							///
 						dementia		 				///
-						other_neuro 					///
+						neuro 							///
 						lung_cancer 					///
 						haem_cancer						///
 						other_cancer 					///
-						chronic_liver_disease 			///
+						liver				 			///
 						transplant_notkidney 			///	
 						transplant_kidney_1				///
 						transplant_kidney_2				///
@@ -145,7 +147,7 @@ foreach var of varlist 	cf								///
 						temp_immuno_1					///
 						temp_immuno_2					///
 						temp_immuno_3					///
-						ra_sle_psoriasis  				///
+						autoimmune		  				///
 						ibd 							///
 						smi 							///
 						ld								///
@@ -394,7 +396,7 @@ assert age<.
 assert agegroup<.
 
 
-* Centre age to create splines
+* Centre age and then create splines of centred age
 qui summ age
 gen agec = (age - r(mean))/r(sd)
 mkspline age = agec, cubic nknots(4)
@@ -535,6 +537,9 @@ format exhaem_cancer_date %td
 order exhaem_cancer_date, after(other_cancer_date)
 drop lung_cancer_date other_cancer_date
 
+rename haem_cancer_date		cancerHaem_date
+rename exhaem_cancer_date	cancerExhaem_date
+
 
 
 /*  Temporary immunosuppression  */
@@ -637,7 +642,8 @@ forvalues j = 1 (1) 3 {
 }
 
 
-* If either dialysis or kidney transplant
+* If either dialysis or kidney transplant then set kidney function to the 
+*   lowest level
 forvalues j = 1 (1) 3 {
 	replace  kidneyfn_`j' = 3 if dialysis_`j'			== 1
 	replace  kidneyfn_`j' = 3 if transplant_kidney_`j'	== 1
@@ -788,10 +794,13 @@ drop if hh_num >=10
 rename other_respiratory_date			respiratory_date
 rename chronic_cardiac_disease_date		cardiac_date
 rename other_neuro_date					neuro_date
-rename haem_cancer_date					cancerHaem_date
-rename exhaem_cancer_date				cancerExhaem_date
 rename chronic_liver_disease_date		liver_date
 rename ra_sle_psoriasis_date			autoimmune_date
+
+
+
+
+
 
 
 
@@ -890,6 +899,7 @@ label var  died_date_onsother 	"Date of ONS non-COVID-19 death"
 		
 label var onscoviddeath 		"COVID-19 death (1 March - 8 June)"
 label var stime					"Survival time (days from 1 March; end 8 June) for COVID-19 death"
+
 
 
 
