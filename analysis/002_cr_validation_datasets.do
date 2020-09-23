@@ -18,6 +18,9 @@
 *	Purpose:		This do-file creates three cohort datasets to perform
 *					model validation on, one for each validation period.
 *
+*	NOTES: 			1) Stata do-file called internally:
+*							analysis/0000_cr_define_covariates.do
+*  
 ********************************************************************************* 
 
 
@@ -65,6 +68,7 @@ forvalues i = 1/3 {
 	*******************************
 
 	
+	
 	/* Open base cohort   */ 
 	
 	use "data/cr_base_cohort.dta", replace
@@ -91,8 +95,9 @@ forvalues i = 1/3 {
 	
 	/*  Obtain observed 28-day mortality  */
 	
-	gen onscoviddeath28 = days_until_coviddeath <=28
+	gen onscoviddeath28 = (days_until_coviddeath <=28)
 	label var onscoviddeath28 "Observed 28-day COVID-19 death, validation period `i'"
+	
 	
 
 	*******************

@@ -1,19 +1,19 @@
 ********************************************************************************
 *
-*	Do-file:			cr_dynamic_modelling_output2.do
+*	Do-file:			005_cr_primary_care_case_data.do
 *
 *	Written by:			Fizz
 *
-*	Data used:			outputs/stp_ae_attendances.csv
+*	Data used:			data/stp_ae_attendances.csv
 *
 *	Data created:		data/ae_coefs (A&E attendances over time)
 *
-*	Other output:		None
+*	Other output:		Log file:  005_cr_primary_care_case_data.log
 *
 ********************************************************************************
 *
-*	Purpose:			To create a dataset containing summaries of A&E 
-*						attendances over time by STP. 
+*	Purpose:			To create a dataset containing summaries of suspected  
+*						COVID-19 cases in primary care over time by STP. 
 *
 ********************************************************************************
 
@@ -21,19 +21,21 @@
 
 * Open a log file
 capture log close
-log using "output/cr_dynamic_modelling_output2", text replace
+log using "output/005_cr_primary_care_case_data", text replace
 
 *** PARAMETER NEEDED:  max days from infection to death
 global maxlag = 21
 
 
 
+********************     UPDATE REQUIRED   *************************************
 
 
-/*  Import AE attendance data  */
+/* 
+/*  Import GP suspected COVID-19 case data  */
 
 * Import first row (dates)
-import delimited "outputs\stp_ae_attendances.csv", ///
+import delimited "data/stp_ae_attendances.csv", ///
 	varnames(nonames) rowrange(1:1) colrange(2) clear 
 
 gen cons = 1
@@ -46,7 +48,7 @@ save "tempdate", replace
 
 
 * Import remaining rows (counts)
-import delimited "outputs\stp_ae_attendances.csv", ///
+import delimited "data/stp_ae_attendances.csv", ///
 	varnames(nonames) rowrange(2) clear 
 
 egen stp = group(v1)
@@ -96,8 +98,6 @@ drop if date < d(29feb2020)
 
 
 
-
-
 /*  Fit quadratic model to A&E data  */
 
 gen aemean_init = aemean_lag0
@@ -113,7 +113,7 @@ statsby ae_q_cons	=_b[_cons] 								///
 		ae_q_daysq	=_b[c.lag#c.lag]	 					///
 		, by(stp stpcode date aemean_init) clear: 			///
 	regress aemean_lag c.lag##c.lag
-save quadratic, replace
+save "quadratic", replace
 restore
 statsby ae_c_cons	=_b[_cons] 								///
 		ae_c_day	=_b[lag] 								///
@@ -121,11 +121,13 @@ statsby ae_c_cons	=_b[_cons] 								///
 		ae_c_daycu	=_b[c.lag#c.lag#c.lag]					///
 		, by(stp stpcode date aemean_init) clear: 			///
 	regress aemean_lag c.lag##c.lag##c.lag
-merge 1:1 stp date using quadratic, assert(match) nogen
+merge 1:1 stp date using "quadratic", assert(match) nogen
 rename aemean_init aemean
 
+* Delete data not needed
+erase "quadratic.dta"
 
-	
+
 /*  Days since cohort start date  */
 
 gen time = date - d(1mar2020) + 2
@@ -135,33 +137,34 @@ drop date
 
 /*  Tidy and save data  */
 
-rename stpcode stpcode_aedata
 	
 * Label variables
 label var time 			"Days since 1 March 2020 (inclusive)"
-label var aemean		"A&E attendances (mean daily count over last 7 days)"
-label var ae_q_cons 	"Quadratic model of A&E attendances: constant coefficient"
-label var ae_q_day		"Quadratic model of A&E attendances: linear coefficient"
-label var ae_q_daysq	"Quadratic model of A&E attendances: squared coefficient"
-label var ae_c_cons 	"Cubic model of A&E attendances: constant coefficient"
-label var ae_c_day		"Cubic model of A&E attendances: linear coefficient"
-label var ae_c_daysq	"Cubic model of A&E attendances: squared coefficient"
-label var ae_c_daycu	"Cubic model of A&E attendances: cubed coefficient"
+label var aemean		"Suspected (GP) cases (mean daily count over last 7 days)"
+label var gp_q_cons 	"Quadratic model of suspected (GP) cases: constant coefficient"
+label var gp_q_day		"Quadratic model of suspected (GP) cases: linear coefficient"
+label var gp_q_daysq	"Quadratic model of suspected (GP) cases: squared coefficient"
+label var gp_c_cons 	"Cubic model of suspected (GP) cases: constant coefficient"
+label var gp_c_day		"Cubic model of suspected (GP) cases: linear coefficient"
+label var gp_c_daysq	"Cubic model of suspected (GP) cases: squared coefficient"
+label var gp_c_daycu	"Cubic model of suspected (GP) cases: cubed coefficient"
 label var stp 			"Sustainability and Transformation Partnership"
 label var stpcode 		"Sustainability and Transformation Partnership"
 
 * Order and sort variables
-order time stp* aemean ae_q_cons ae_q_day ae_q_daysq	///
-		ae_c_cons ae_c_day ae_c_daysq ae_c_daycu
+order time stp* gpmean gp_q_cons gp_q_day gp_q_daysq	///
+		gp_c_cons gp_c_day gp_c_daysq gp_c_daycu
 sort stp time
 
 * Label and save dataset
-label data "A&E attendance data, mean over last week and quadratic/cubic model"
-save "data/ae_coefs", replace
+label data "Primary care suspected COVID data, mean over last week and quadratic/cubic model"
+save "data/gp_coefs", replace
 
-
-* Delete data not needed
-erase "quadratic.dta"
 
 * Close the log file
 log close
+
+
+*/
+
+

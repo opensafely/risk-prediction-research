@@ -56,7 +56,7 @@ set seed 37873
 forvalues i = 1 (1) 73 {
 
 	* Open underlying base training cohort (4/5 of original TPP cohort)
-	use "data/cr_training_dataset.dta", replace
+	use "data/cr_base_cohort.dta", replace
 
   * Keep ethnicity complete cases
 	drop ethnicity_5 ethnicity_16
