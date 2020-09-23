@@ -14,9 +14,10 @@ from cohortextractor import (
 from codelists import *
 
 
-## STUDY POPULATION
+#########################
+##   STUDY POPULATION   #
+#########################
 
-# Defines both the study population and points to the important covariates
 
 study = StudyDefinition(
     default_expectations={
@@ -24,7 +25,7 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.2,
     },
-    # STUDY POPULATION
+    # STUDY POPULATION: Eligibility (0-105 yrs, alive at 1 Mar 2020)
     population=patients.satisfying(
         """
         (age >=0 AND age <= 105)
@@ -34,7 +35,7 @@ study = StudyDefinition(
             "2020-02-29", "2020-03-01"
         ),
     ),
-    # OUTCOMES
+    # OUTCOMES: Death and whether or not due to COVID
     died_ons_covid_flag_any=patients.with_these_codes_on_death_certificate(
         covid_codelist,
         on_or_before="2020-06-07",
@@ -53,10 +54,23 @@ study = StudyDefinition(
     rural_urban=patients.address_as_of(
         "2020-03-01",
         returning="rural_urban_classification",
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"rural": 0.1, "urban": 0.9}},
-        },
+                return_expectations={
+                    "rate": "universal",
+                    "category": {
+                        "ratios": {
+                            "0": 0.025,
+                            "1": 0.2,
+                            "2": 0.05,
+                            "3": 0.5,
+                            "4": 0.05,
+                            "5": 0.1,
+                            "6": 0.025,
+                            "7": 0.025,
+                            "8": 0.025,
+                        }
+                    },
+                },
+
     ),
     # GEOGRAPHICAL AREA - SUSTAINABILITY AND TRANSFORMATION PARTNERSHIP
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/54
@@ -131,7 +145,7 @@ study = StudyDefinition(
             "incidence": 1,
         },
     ),
-    # DEMOGRAPHIC COVARIATES
+    ### DEMOGRAPHIC COVARIATES
     # AGE
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/33
     age=patients.age_as_of(
@@ -267,7 +281,7 @@ study = StudyDefinition(
             between=["2018-11-12", "2020-05-12"],
         ),
     ),
-    # CLINICAL MEASUREMENTS
+    ### CLINICAL MEASUREMENTS
     # BMI
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/10
     bmi_1=patients.most_recent_bmi(
@@ -299,7 +313,7 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-    # Chronic kidney disease
+    # Chronic kidney disease (as measured by creatinine)
     # Most recent creatinine within 5 years (not inc. last fortnight)
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/17
     creatinine_1=patients.with_these_clinical_events(
@@ -432,7 +446,7 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-    # ASTHMA
+    # ASTHMA  (diagnosis and medication)
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/55
     asthma_severity_1=patients.categorised_as(
         {
@@ -586,20 +600,37 @@ study = StudyDefinition(
         on_or_before="2020-06-08",
         include_month=True,
     ),
-    # PVD
-    pvd=patients.with_these_clinical_events(
-        pvd_codes,
-        return_first_date_in_period=True,
-        on_or_before="2020-06-08",
-        include_month=True,
-    ),
-    # Deep vein thrombisis / pulmonary embolism
+
+
+
+
+    # Deep vein thrombosis / pulmonary embolism
     dvt_pe=patients.with_these_clinical_events(
             dvt_pe_codes,
             return_first_date_in_period=True,
             on_or_before="2020-06-08",
             include_month=True,
     ),
+    # PAD surgery
+    pad_surg=patients.with_these_clinical_events(
+        pad_surg_codes,
+        return_first_date_in_period=True,
+        on_or_before="2020-06-08",
+        include_month=True,
+    ),
+    # Amputation (limb)
+    amputate=patients.with_these_clinical_events(
+        amputate_codes,
+        return_first_date_in_period=True,
+        on_or_before="2020-06-08",
+        include_month=True,
+    ),
+
+
+
+
+
+
     # Diabetes
     # https://github.com/ebmdatalab/tpp-sql-notebook/issues/30
     diabetes=patients.with_these_clinical_events(
