@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		006_cr_daily_landmark_noncovid_substudies.do
+*	Do-file:		008_cr_daily_landmark_noncovid_substudies.do
 *
 *	Programmed by:	Fizz & John
 *
@@ -8,7 +8,7 @@
 *
 *	Data created:	data/cr_daily_landmark_noncovid.dta 
 *
-*	Other output:	Log file:  005_cr_daily_noncovid_landmark.log
+*	Other output:	Log file:  008_cr_daily_landmark_noncovid_substudies.log
 *
 ********************************************************************************
 *
@@ -16,16 +16,19 @@
 *					substudies, each of a single day, to perform model fitting in,
 *					for daily prediction models for NON-COVID-19-related death.
 *
-*	NOTE: 			These landmark substudies remove people with missing 
+*	NOTES: 			1) These landmark substudies remove people with missing 
 *					ethnicity information.
-*  
-********************************************************************************* 
+*
+*					2) Stata programmes called internally:
+*							"analysis/0000_cr_define_covariates.do"
+*
+*********************************************************************************
 
 
 
 * Open a log file
 cap log close
-log using "output/005_cr_daily_noncovid_landmark", replace t
+log using "output/008_cr_daily_landmark_noncovid_substudies", replace t
 
 
 
@@ -66,6 +69,9 @@ forvalues i = 1 (1) 100 {
 	* Keep ethnicity complete cases
 	drop ethnicity_5 ethnicity_16
 	drop if ethnicity_8>=.
+	
+	* Drop unnecessary variables
+	drop bp_sys_date_measured bp_dias_date_measured
 	
 	* Date of daily landmark substudy 
 	local date_in = d(1/03/2020) + `i' - 1

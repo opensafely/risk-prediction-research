@@ -6,9 +6,9 @@
 *
 *	Data used:		data/cr_base_cohort.dta (base cohort)
 *
-*	Data created:	output/cr_casecohort_var_select.dta 
+*	Data created:	data/cr_casecohort_var_select.dta 
 *								(case-cohort: variable selection)
-*					output/cr_casecohort_models.dta 
+*					data/cr_casecohort_models.dta 
 *								(case-cohort: modelling fitting) 
 *
 *	Other output:	Log file:  001_cr_case_cohort.log
