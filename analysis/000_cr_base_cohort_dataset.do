@@ -589,6 +589,15 @@ forvalues j = 1 (1) 3 {
 }
 
 
+/*  Peripheral arterial disease  */
+
+* First of either surgery for PAD or limb amputation
+egen pad_date = rowmin(pad_surg_date amputate_date)
+drop pad_surg_date amputate_date
+format pad_date %td
+
+
+
 
 
 
@@ -784,26 +793,6 @@ drop if hh_num >=10
 
 
 
-**********************
-*  Rename variables  *
-**********************
-
-* (Shorter names make subsequent programming easier)
-
-* Dates of comorbidities
-rename other_respiratory_date			respiratory_date
-rename chronic_cardiac_disease_date		cardiac_date
-rename other_neuro_date					neuro_date
-rename chronic_liver_disease_date		liver_date
-rename ra_sle_psoriasis_date			autoimmune_date
-
-
-
-
-
-
-
-
 
 *********************
 *  Label variables  *
@@ -868,7 +857,7 @@ label var respiratory_date		"Respiratory disease (excl. asthma), date"
 label var cardiac_date			"Heart disease, date"
 label var af_date				"Atrial fibrillation, date"
 label var dvt_pe_date			"Deep vein thrombosis/pulmonary embolism, date"
-label var pvd_date				"PVD, date"
+label var pad_date				"Surgery for peripheral arterial disease or limb amputation, date"
 label var diabetes_date			"Diabetes, date"
 label var hypertension_date		"Date of diagnosed hypertension"
 label var stroke_date			"Stroke, date"
@@ -881,7 +870,7 @@ label var transplant_date		"Organ transplant recipient, date"
 label var spleen_date			"Spleen problems (dysplenia, sickle cell), date"
 label var autoimmune_date		"RA, SLE, Psoriasis (autoimmune disease), date"
 label var hiv_date 				"HIV, date"
-label var perm_immuno_date		"RA, SLE, Psoriasis (autoimmune disease), date"
+label var perm_immuno_date		"Conditions causing permanent immunosuppression, date"
 label var ibd_date				"IBD, date"
 label var smi_date 				"Serious mental illness, date"
 label var ld_date 				"Learning disability or Down's Syndrome, date"
@@ -918,7 +907,7 @@ order 	patient_id stp* region_9 region_7 imd rural hh*		 		///
 		respiratory* asthma* cf* cardiac* diabetes* hba1ccat* 		///
 		bp_sys bp_sys_date bp_dias bp_dias_date 					///
 		bpcat bpcat_nomiss hypertension*							///
-		af* pvd* dvt_pe*											///
+		af* dvt_pe* pad* 											///
 		stroke* dementia* neuro* 									///
 		cancerExhaem* cancerHaem* 									///
 		kidneyfn* dialysis* liver* transplant* 						///
