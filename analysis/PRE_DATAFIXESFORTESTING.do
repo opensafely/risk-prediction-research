@@ -15,20 +15,8 @@ import delimited "output/input.csv", clear
 set more off
 
 
-foreach var of varlist temporary_immunodeficiency ///
-					fracture aplastic_anaemia ///
-					transplant_kidney 			///
-					smoking_status bmi ///
-					creatinine ///
-					hba1c_mmol_per_mol ///
-					hba1c_percentage ///
-					asthma_severity ///
-					dialysis ///
-					{
-						rename `var' `var'_1
-					}
 
-/*
+
 gen temp=ceil(uniform()*10)
 sort temp
 
@@ -50,4 +38,4 @@ forvalues j = 2 (1) 10 {
 drop hhid* temp
 
 
-*/
+

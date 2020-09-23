@@ -8,7 +8,7 @@
 *
 *	Data created:   data/cr_base_cohort.dta (full base cohort dataset)
 *
-*	Other output:	None
+*	Other output:	Log file:  000_cr_analysis_dataset.log
 *
 ********************************************************************************
 *
@@ -98,7 +98,7 @@ else {
 
 
 * People who had an event prior to our start date
-* (this should not occur)
+* (this should not occur in the real data)
 noi di "DROPPING IF DIED BEFORE MAR 1st" 
 confirm string variable died_date_ons
 gen temp = date(died_date_ons, "YMD")
@@ -112,22 +112,24 @@ drop temp
 *  Convert strings to dates  *
 ******************************
 
+
 * To be added: dates related to outcomes
 foreach var of varlist 	cf								///
-						other_respiratory			 	///
-						chronic_cardiac_disease 		///
+						respiratory					 	///
+						cardiac 						///
 						hypertension 					///
 						af 								///
-						pvd								///
 						dvt_pe							///
+						pad_surg 						///
+						amputate						///
 						diabetes 						///
 						stroke							///
 						dementia		 				///
-						other_neuro 					///
+						neuro 							///
 						lung_cancer 					///
 						haem_cancer						///
 						other_cancer 					///
-						chronic_liver_disease 			///
+						liver				 			///
 						transplant_notkidney 			///	
 						transplant_kidney_1				///
 						transplant_kidney_2				///
@@ -145,7 +147,7 @@ foreach var of varlist 	cf								///
 						temp_immuno_1					///
 						temp_immuno_2					///
 						temp_immuno_3					///
-						ra_sle_psoriasis  				///
+						autoimmune		  				///
 						ibd 							///
 						smi 							///
 						ld								///
@@ -394,7 +396,7 @@ assert age<.
 assert agegroup<.
 
 
-* Centre age to create splines
+* Centre age and then create splines of centred age
 qui summ age
 gen agec = (age - r(mean))/r(sd)
 mkspline age = agec, cubic nknots(4)
@@ -535,6 +537,9 @@ format exhaem_cancer_date %td
 order exhaem_cancer_date, after(other_cancer_date)
 drop lung_cancer_date other_cancer_date
 
+rename haem_cancer_date		cancerHaem_date
+rename exhaem_cancer_date	cancerExhaem_date
+
 
 
 /*  Temporary immunosuppression  */
@@ -582,6 +587,15 @@ forvalues j = 1 (1) 3 {
 	* Ignore fractures for people aged < 65
 	replace fracture_`j' = 0 if age<65
 }
+
+
+/*  Peripheral arterial disease  */
+
+* First of either surgery for PAD or limb amputation
+egen pad_date = rowmin(pad_surg_date amputate_date)
+drop pad_surg_date amputate_date
+format pad_date %td
+
 
 
 
@@ -637,7 +651,8 @@ forvalues j = 1 (1) 3 {
 }
 
 
-* If either dialysis or kidney transplant
+* If either dialysis or kidney transplant then set kidney function to the 
+*   lowest level
 forvalues j = 1 (1) 3 {
 	replace  kidneyfn_`j' = 3 if dialysis_`j'			== 1
 	replace  kidneyfn_`j' = 3 if transplant_kidney_`j'	== 1
@@ -778,23 +793,6 @@ drop if hh_num >=10
 
 
 
-**********************
-*  Rename variables  *
-**********************
-
-* (Shorter names make subsequent programming easier)
-
-* Dates of comorbidities
-rename other_respiratory_date			respiratory_date
-rename chronic_cardiac_disease_date		cardiac_date
-rename other_neuro_date					neuro_date
-rename haem_cancer_date					cancerHaem_date
-rename exhaem_cancer_date				cancerExhaem_date
-rename chronic_liver_disease_date		liver_date
-rename ra_sle_psoriasis_date			autoimmune_date
-
-
-
 
 *********************
 *  Label variables  *
@@ -859,7 +857,7 @@ label var respiratory_date		"Respiratory disease (excl. asthma), date"
 label var cardiac_date			"Heart disease, date"
 label var af_date				"Atrial fibrillation, date"
 label var dvt_pe_date			"Deep vein thrombosis/pulmonary embolism, date"
-label var pvd_date				"PVD, date"
+label var pad_date				"Surgery for peripheral arterial disease or limb amputation, date"
 label var diabetes_date			"Diabetes, date"
 label var hypertension_date		"Date of diagnosed hypertension"
 label var stroke_date			"Stroke, date"
@@ -872,7 +870,7 @@ label var transplant_date		"Organ transplant recipient, date"
 label var spleen_date			"Spleen problems (dysplenia, sickle cell), date"
 label var autoimmune_date		"RA, SLE, Psoriasis (autoimmune disease), date"
 label var hiv_date 				"HIV, date"
-label var perm_immuno_date		"RA, SLE, Psoriasis (autoimmune disease), date"
+label var perm_immuno_date		"Conditions causing permanent immunosuppression, date"
 label var ibd_date				"IBD, date"
 label var smi_date 				"Serious mental illness, date"
 label var ld_date 				"Learning disability or Down's Syndrome, date"
@@ -896,6 +894,7 @@ label var stime					"Survival time (days from 1 March; end 8 June) for COVID-19 
 
 
 
+
 *********************
 *  Order variables  *
 *********************
@@ -908,7 +907,7 @@ order 	patient_id stp* region_9 region_7 imd rural hh*		 		///
 		respiratory* asthma* cf* cardiac* diabetes* hba1ccat* 		///
 		bp_sys bp_sys_date bp_dias bp_dias_date 					///
 		bpcat bpcat_nomiss hypertension*							///
-		af* pvd* dvt_pe*											///
+		af* dvt_pe* pad* 											///
 		stroke* dementia* neuro* 									///
 		cancerExhaem* cancerHaem* 									///
 		kidneyfn* dialysis* liver* transplant* 						///

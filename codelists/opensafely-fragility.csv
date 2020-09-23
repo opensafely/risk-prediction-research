@@ -1,4 +1,4 @@
-CTV3ID,CTV3_Description,CodeType
+CTV3Code,CTV3_Description,CodeType
 7K1D0,Pr op rd & fx #NOF & vars: [scrw]/ [nail]/ [plt]/ [mult pin],Non_Numeric_Code
 7K1D6,Prmy open red+int fxn prox femoral #+screw/nail device alone,Non_Numeric_Code
 7K1H6,Revsn to opn red+int fxtn prox fem #+screw/nail device alone,Non_Numeric_Code

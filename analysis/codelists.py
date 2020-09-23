@@ -21,11 +21,15 @@ from cohortextractor import (
 ##############################################################################
 
 
-# Outcomes
+### Outcomes
+
+# COVID death
 covid_codelist = codelist(["U071", "U072"], system="icd10")
 
 
-# Demographics
+### Demographics
+
+# Smoking
 clear_smoking_codes = codelist_from_csv(
     "codelists/opensafely-smoking-clear.csv",
     system="ctv3",
@@ -39,6 +43,7 @@ unclear_smoking_codes = codelist_from_csv(
     category_column="Category",
 )
 
+# Ethnicity
 ethnicity_codes = codelist_from_csv(
     "codelists/opensafely-ethnicity.csv",
     system="ctv3",
@@ -97,13 +102,21 @@ af_codes = codelist_from_csv(
     system="ctv3",
     column="CTV3Code",
 )
-pvd_codes = codelist_from_csv(
-    "local_codelists/OpenSAFELY_eFI_Codes_PVD.csv", system="ctv3", column="CTV3ID",
-)
 dvt_pe_codes = codelist_from_csv(
-    "local_codelists/FAKE_CODELIST_DVT_PE.csv", system="ctv3", column="CTV3ID",
+    "codelists/opensafely-venous-thromboembolic-disease.csv",
+    system="ctv3",
+    column="CTV3Code",
 )
-
+pad_surg_codes = codelist_from_csv(
+    "codelists/opensafely-surgery-for-peripheral-artery-disease.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
+amputate_codes = codelist_from_csv(
+    "codelists/opensafely-amputation.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
 
 # Neurological
 stroke = codelist_from_csv(
@@ -181,9 +194,9 @@ inflammatory_bowel_disease_codes = codelist_from_csv(
 
 # Frailty
 fracture_codes = codelist_from_csv(
-    "local_codelists/OpenSAFELY_eFI_Codes_Fragility.csv",
-    system="ctv3",
-    column="CTV3ID",
+    "codelists/opensafely-fragility.csv",
+     system="ctv3",
+     column="CTV3Code",
 )
 
 # Mental illness and learning disability
@@ -193,5 +206,7 @@ smi_codes = codelist_from_csv(
     column="CTV3Code",
 )
 ld_codes = codelist_from_csv(
-    "local_codelists/CTV3_ID_v2.0.csv", system="ctv3", column="CTV3ID",
+    "codelists/opensafely-intellectual-disability-including-downs-syndrome.csv",
+    system="ctv3",
+    column="CTV3ID",
 )
