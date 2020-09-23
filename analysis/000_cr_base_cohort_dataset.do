@@ -8,7 +8,7 @@
 *
 *	Data created:   data/cr_base_cohort.dta (full base cohort dataset)
 *
-*	Other output:	None
+*	Other output:	Log file:  000_cr_analysis_dataset.log
 *
 ********************************************************************************
 *
