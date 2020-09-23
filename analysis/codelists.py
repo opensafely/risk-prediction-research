@@ -122,11 +122,6 @@ pad_surg_codes = codelist_from_csv(
     system="ctv3",
     column="CTV3ID",
 )
-pad_surg_codes = codelist_from_csv(
-    "codelists/opensafely-surgery-for-peripheral-artery-disease.csv",
-    system="ctv3",
-    column="CTV3ID",
-)
 amputate_codes = codelist_from_csv(
     "codelists/opensafely-amputation.csv",
     system="ctv3",
