@@ -27,6 +27,10 @@ cap log close
 log using "output/002_cr_validation_datasets", replace t
 
 
+* Load do-file which extracts covariates 
+do "analysis/0000_cr_define_covariates.do"
+
+
 
 **************************************
 *  Create three validation datasets  *

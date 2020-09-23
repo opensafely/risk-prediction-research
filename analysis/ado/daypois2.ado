@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			daypois.do
+*	Do-file:			daypois2.do
 *
 *	Written by:			Fizz
 *
@@ -8,7 +8,7 @@
 *						None
 *	Data created:		None
 *
-*	Other output:		Program: daypois
+*	Other output:		Program: daypois2
 *
 ********************************************************************************
 *
@@ -16,6 +16,11 @@
 *						likelihood estimation for a Poisson model for COVID-19
 *						incorporating time-varying measures of infection 
 *						prevalance and immunity. 
+*
+*						This differs from daypois.do in that daypois bases the
+*						likelihood on P(Y=0) and P(Y>0). This version bases the
+*						likelihood on P(Y=0), P(Y=1), (theoretically Y could be
+*						larger but we know it won't be in our data).
 *	 
 *		Typical use:
 *			daypois covid i.diabetes age chronic_respiratory_disease, 	///
@@ -33,8 +38,8 @@
 
 
 
-capture program drop daypois
-program define daypois, rclass
+capture program drop daypois2
+program define daypois2, rclass
 	version 16
 	syntax varlist(min=2 fv), timeadj(string) timevar(varlist) ///
 		[weight(varname) start(numlist min=3 max=3) constraint(numlist)]
@@ -147,7 +152,7 @@ program define daypois, rclass
 		noi display   _col(5) "Day-sq:"  	_col(50) "`d'"
 	}
 	else if  "`timeadj'"== "Other" {
-		noi display   _col(5) "Time-covariates  (fitted on log scale):"	_col(50) "`timecov'"
+		noi display   _col(5) "Time-covariates (fitted on log scale):"	_col(50) "`timecov'"
 	}
 	else {
 		noi display   _col(5) "None"  	
@@ -169,18 +174,13 @@ program define daypois, rclass
 	
 	/*  Log-likelihood */
 	
-	local ll = "-(1-`y')*`expt1l'*`t2l' + `y'*log(1 - exp(-1*`expt1'*`t2'))"
+	local ll = "-`expt1l'*`t2l' + `y'*(log(`expt1') + log(`t2'))"
 	
 
 	
 	/*  Derivative for time-fixed covariates  */
 		
-	local dtheta1 = "deriv(/xb = -(1-`y')*`expt1'*`t2'"  		+ ///
-					"+ `y'*`expt1'*`t2'*exp(-1*`expt1'*`t2')*("	+ ///
-						"(1 - exp(-1*`expt1'*`t2'))^(-1)"		+ ///
-					")"											+ ///
-				")" 	
-	
+	local dtheta1 = "deriv(/xb = -`expt1'*`t2' + `y')" 	
 	
 	
 	/*  Derivative for time-varying covariates   */
@@ -188,10 +188,7 @@ program define daypois, rclass
 	if inlist("`timeadj'", "Quadratic", "Other") {
 	    
 		
-		local deriv = 		"-(1-`y')*`expt1'" 						+ ///
-							"+ `y'*`expt1'*exp(-1*`expt1'*`t2')*("	+ ///
-								"(1 - exp(-1*`expt1'*`t2'))^(-1)"	+ ///
-							")"		
+		local deriv = 		"(-`expt1' + `y'*(`t2')^(-1))"
 
 		if "`timeadj'"=="Quadratic" {
 		

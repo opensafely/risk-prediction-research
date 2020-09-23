@@ -29,25 +29,22 @@ log using "output/005_cr_daily_covid_landmark", replace t
 
 
 
+* Load do-file which extracts covariates 
+do "analysis/0000_cr_define_covariates.do"
+
+
 ***********************
 *  Create substudies  *
 ***********************
-***********************************  MUST UPDATE *********************************
-* True sampling fractions below. Don't work in dummy data
+
 * Age-group-stratified sampling fractions 
-*local sf1 = 0.01/100
-*local sf2 = 0.02/100
-*local sf3 = 0.02/100
-*local sf4 = 0.025/100
-*local sf5 = 0.05/100
-*local sf6 = 0.13/100
-local sf1 = 0.2
-local sf2 = 0.2
-local sf3 = 0.2
-local sf4 = 0.2
-local sf5 = 0.2
-local sf6 = 0.2
-***********************************  MUST UPDATE *********************************
+local sf1 = 0.01/100
+local sf2 = 0.02/100
+local sf3 = 0.02/100
+local sf4 = 0.025/100
+local sf5 = 0.05/100
+local sf6 = 0.13/100
+
 
 
 * Set random seed for replicability
@@ -159,16 +156,16 @@ forvalues i = 1 (1) 100 {
 drop days_until_coviddeath days_until_otherdeath
 
 
-/*
 
-***** NEED TO DEAL WITH THE SHIELDING SOMEHOW
 
 ***********************************************
 *  Split pre-shielding and shielding periods  *
 ***********************************************
 
-
-*/
+recode time 0/31=0 32/100=1, gen(shield)
+label define shield 0 "Pre-shielding" 1 "Shielding"
+label values shield shield
+label var shield "Binary shielding (period) indicator"
 
 
 
