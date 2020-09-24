@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		005_cr_daily_landmark_covid_substudies.do
+*	Do-file:		007_cr_daily_landmark_covid_substudies.do
 *
 *	Programmed by:	Fizz & John
 *
@@ -8,7 +8,7 @@
 *
 *	Data created:	data/cr_daily_landmark_covid.dta 
 *
-*	Other output:	Log file:  005_cr_daily_covid_landmark.log
+*	Other output:	Log file:  007_cr_daily_landmark_covid_substudies.log
 *
 ********************************************************************************
 *
@@ -16,16 +16,20 @@
 *					substudies, each of a single day, to perform model fitting in,
 *					for daily prediction models for COVID-19-related death.
 *
-*	NOTE: 			These landmark substudies remove people with missing 
+*	NOTES: 			1) These landmark substudies remove people with missing 
 *					ethnicity information.
-*  
-********************************************************************************* 
+*
+*					2) Stata programmes called internally:
+*							"analysis/0000_cr_define_covariates.do"
+*
+********************************************************************************
+
 
 
 
 * Open a log file
 cap log close
-log using "output/005_cr_daily_covid_landmark", replace t
+log using "output/007_cr_daily_landmark_covid_substudies", replace t
 
 
 
@@ -62,6 +66,9 @@ forvalues i = 1 (1) 100 {
 	drop ethnicity_5 ethnicity_16
 	drop if ethnicity_8>=.
 	
+	* Drop unnecessary variables
+	drop bp_sys_date_measured bp_dias_date_measured
+	
 	* Date of daily landmark substudy 
 	local date_in = d(1/03/2020) + `i' - 1
 			
@@ -81,7 +88,7 @@ forvalues i = 1 (1) 100 {
 	label var onscoviddeath "COVID-19 related death on this day"
 	capture drop stime*
 	
-	* Select ... all non-COVID deaths
+	* Select ... all COVID deaths
 	qui gen keep = onscoviddeath
 	
 	* ... and a sample of controls, randomly selected by agegroup
@@ -158,17 +165,6 @@ drop days_until_coviddeath days_until_otherdeath
 
 
 
-***********************************************
-*  Split pre-shielding and shielding periods  *
-***********************************************
-
-recode time 0/31=0 32/100=1, gen(shield)
-label define shield 0 "Pre-shielding" 1 "Shielding"
-label values shield shield
-label var shield "Binary shielding (period) indicator"
-
-
-
 
 ****************************************
 *  Add in time-varying infection data  *
@@ -181,17 +177,23 @@ recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 		50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 	///
 		gen(agegroupfoi)
 
+* Merge in the force of infection data
 merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
-	keep(match) assert(match using) nogen
-drop agegroupfoi 
+	assert(match using) keep(match) nogen 
+drop agegroupfoi
+drop foi_c*
 
+* Merge in the A&E STP count data
+merge m:1 time stpcode using "data/ae_coefs", keep(master match)
+* CHANGE TO:  /// 	assert(match using) keep(match) nogen
+* AND THEN REMOVE LINE BELOW
+drop _m
+drop ae_c*
 
+* Merge in the GP suspected COVID case data
+*merge m:1 time stpcode using "data/gp_coefs", 	
+* AS ABOVE...
 
-/*  Objective measure: A&E data   */ 
-
-****  LATER _ CROSS_CHECK STPS
-**** LATER 0 ADD ASSERT AS APPROPRIATE 
-merge m:1 time stp using "data/ae_coefs", keep(match master) nogen
 
 
 

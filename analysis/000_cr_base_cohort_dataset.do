@@ -289,6 +289,16 @@ bysort stpcode: gen stp = 1 if _n==1
 replace stp = sum(stp)
 order stp, after(stpcode)
 
+* Combine smaller STPs 
+gen     stp_combined = stpcode
+replace stp_combined ="E54000007/E54000008" if inlist(stpcode, "E54000007", "E54000008")
+replace stp_combined ="E54000010/E54000012" if inlist(stpcode, "E54000010", "E54000012")
+replace stp_combined ="E54000027/E54000029" if inlist(stpcode, "E54000027", "E54000029")
+replace stp_combined ="E54000033/E54000035" if inlist(stpcode, "E54000033", "E54000035")
+replace stp_combined ="E54000036/E54000037" if inlist(stpcode, "E54000036", "E54000037")
+replace stp_combined ="E54000042/E54000044" if inlist(stpcode, "E54000042", "E54000044")
+
+
 * Region
 rename region region_string
 assert inlist(region_string, 								///
@@ -749,7 +759,7 @@ drop died_ons_covid_flag_any
 
 * For training and internal evaluation: 
 *   Outcome = COVID-19 death between cohort first and last date
-gen onscoviddeath = died_date_onscovid <= d(8/06/2020)
+gen onscoviddeath = (died_date_onscovid <= d(8/06/2020))
 
 * Survival time
 gen 	stime = (died_date_onscovid - d(1/03/2020) + 1) if onscoviddeath==1
@@ -818,6 +828,7 @@ label var ethnicity_16			"Ethnicity in 16 categories"
 label var ethnicity_8			"Ethnicity in 8 categories"
 label var stp 					"Sustainability and Transformation Partnership"
 label var stpcode 				"Sustainability and Transformation Partnership"
+label var stp_combined 			"STP, with smaller areas combined"
 label var region_9 				"Geographical region (9 England regions)"
 label var region_7 				"Geographical region (7 England regions)"
 label var rural					"Rural/urban binary classification"
