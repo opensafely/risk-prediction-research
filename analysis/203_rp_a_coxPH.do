@@ -39,7 +39,7 @@ noi di "$predictors"
 
 timer clear 1
 timer on 1
-stcox  $predictors_preshield , vce(robust)
+stcox $predictors_preshield , vce(robust)
 estat ic
 timer off 1
 timer list 1

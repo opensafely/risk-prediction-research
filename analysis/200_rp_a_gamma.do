@@ -44,14 +44,6 @@ estat ic
 timer off 1
 timer list 1
 
-
-timer clear 1
-timer on 1
-streg i.male , dist(ggamma) vce(robust)
-estat ic
-timer off 1
-timer list 1
-
 ***********************************************
 *  Put coefficients and survival in a matrix  * 
 ***********************************************

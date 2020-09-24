@@ -168,11 +168,8 @@ program define get_coefs
 	local i = 1
 	local j = 1
 	while "``i''" != "" {
-      if "`eqname'" == "" {
-		* Remove eqname prefix, e.g. "onscoviddeath:
-		local term_`j' = "``i''"
-		}
-		   if "`eqname'" == "xb0:" | "`eqname'" == "_t:" {
+
+		   if "`eqname'" == "xb0:" | "`eqname'" == "_t:" | "`eqname'" == "" {
 		* Remove eqname prefix, e.g. "onscoviddeath:
 		local length_prefix = length("`eqname'") + 1
 		local term_`j' = substr("``i''", `length_prefix', .)

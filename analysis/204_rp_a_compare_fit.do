@@ -21,36 +21,70 @@
 ********************************************************************************
 
 
-use "output\rp_a_weibull_output.dta", replace
 * Read in output from each model
 
 * Open a log file
 capture log close
 log using "./output/rp_a_compare_fit", text replace
 
-
 ******************************************************
 *   Pick up coefficients needed to make predictions  *
 ******************************************************
 
-
 /*  Cox model  */
-
 
 *** No shielding
 use "data/model_a_coxPH_noshield", clear
 
 qui count
-global nt_b_logit_nos = r(N)
-forvalues j = 1 (1) $no_terms {
-	global coef`j'_b_logit_nos = coef[`j']
-	global varexpress`j'_b_logit_nos = varexpress[`j']
+global nt_a_cox_nos = r(N)
+forvalues j = 1 (1) $nt_a_cox_nos {
+	global coef`j'_a_cox_nos = coef[`j']
+	global varexpress`j'_a_cox_nos = varexpress[`j']
 	
 }
 
-*** Shielding
+
+/*  Royston Parmar model  */
+
+*** No shielding
+use "data/model_a_roy_noshield", clear
+
+qui count
+global nt_a_roy_nos = r(N)
+forvalues j = 1 (1) $nt_a_roy_nos {
+	global coef`j'_a_roy_nos = coef[`j']
+	global varexpress`j'_a_roy_nos = varexpress[`j']
+	
+}
 
 
+/*  Weibull model  */
+
+*** No shielding
+use "data/model_a_weibull_noshield", clear
+
+qui count
+global nt_a_weibull_nos = r(N)
+forvalues j = 1 (1) $nt_a_weibull_nos {
+	global coef`j'_a_weibull_nos = coef[`j']
+	global varexpress`j'_a_weibull_nos = varexpress[`j']
+	
+}
+
+
+/*  Generalised gamma model  */
+
+*** No shielding
+use "data/model_a_ggamma_noshield", clear
+
+qui count
+global nt_a_ggamma_nos = r(N)
+forvalues j = 1 (1) $nt_a_ggamma_nos {
+	global coef`j'_a_ggamma_nos = coef[`j']
+	global varexpress`j'_a_ggamma_nos = varexpress[`j']
+	
+}
 
 *******************************
 *  Open validation dataset 1  *

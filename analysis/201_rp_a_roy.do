@@ -28,13 +28,18 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_parametric_survival_models_roy", text replace
-
-************************************************
-*   Fit on model development and evaluation datasets *
-************************************************
+log using "./output/201_rp_a_roy", text replace
 
 use "data/cr_casecohort_models.dta", replace
+
+*******************************
+*  Pick up predictor list(s)  *
+*******************************
+
+
+do "analysis/101_pr_variable_selection_output.do" 
+noi di "$predictors_preshield"
+noi di "$predictors"
 
 *********************
 *   Royston Model  *
