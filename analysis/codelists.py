@@ -246,3 +246,8 @@ ld_codes = codelist_from_csv(
     system="ctv3",
     column="CTV3ID",
 )
+covid_suspected_codes = codelist_from_csv(
+    "local_codelists/exploratory_covid_suspected_codes.csv",
+    system="ctv3",
+    column="CTV3ID",
+)
