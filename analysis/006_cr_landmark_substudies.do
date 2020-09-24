@@ -200,10 +200,9 @@ drop agegroupfoi
 
 
 * Merge in the A&E STP count data
-merge m:1 time stpcode using "data/ae_coefs", keep(master match)
-* CHANGE TO:  /// 	assert(match using) keep(match) nogen
-* AND THEN REMOVE LINE BELOW
-drop _m
+merge m:1 time stp_combined using "data/ae_coefs", ///
+	assert(match using) keep(match) nogen
+
 
 * Merge in the GP suspected COVID case data
 *merge m:1 time stpcode using "data/gp_coefs", 	

@@ -24,7 +24,12 @@ clear all
 
 * Fizz
 cd "C:\Users\emsuewil\Documents\Work\Covid\OpenSAFELY\Risk prediction\Git\risk-prediction-research"
+<<<<<<< Updated upstream
 
+=======
+* John
+*cd "/Users/lsh1401926/Desktop/risk-prediction-research"
+>>>>>>> Stashed changes
 
 adopath + "analysis/ado"
 

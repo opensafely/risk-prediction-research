@@ -1,20 +1,19 @@
 ********************************************************************************
 *
-*	Do-file:		005_cr_primary_care_case_data.do
+*	Do-file:		005_cr_covid_by_stp.do
 *
-*	Programmed by:	Alex & Fizz & John
+*	Programmed by:	Alex (edited by Fizz)
 *
 *	Data used:		output/input_covid_by_stp.csv  
 *						(generated from study_definition_covid_by_stp.py)
 
-*	Data created:	data/susp_coefs.dta
+*	Data created:	data/covid_by_stp.dta
 *
-*	Other output:	Log file:  005_cr_primary_care_case_data.log
+*	Other output:	Log file:  005_cr_covid_by_stp.log
 *
 ********************************************************************************
 *
-*	Purpose:		To create a dataset containing summaries of GP suspected
-*					COVID-19 cases over time by STP.  
+*	Purpose:		This do-file cleans the GP suspected COVID-19 case data.  
 *  
 ********************************************************************************
 
@@ -22,7 +21,9 @@
 
 * Open a log file
 cap log close
-log using "output/005_cr_primary_care_case_data", replace t
+log using "output/005_cr_covid_by_stp", replace t
+
+
 
 
 
@@ -59,7 +60,7 @@ drop Region
 rename Name stpname
 merge 1:1 stpcode using temppop, keep(match) assert(match master) nogen
 save "temppop", replace
-
+					
 
 
 					
@@ -75,7 +76,6 @@ drop if covid_suspected == ""
 collapse (count) patient_id, by(covid_suspected stp)
 rename patient_id count
 
-* Count days since start of feb until each suspected case
 gen temp = date(covid_suspected, "YMD")
 format temp %td
 gen days_1feb = temp - d(1feb2020) + 1
@@ -88,6 +88,8 @@ reshape wide count, i(stp) j(days_1feb)
 foreach var of varlist count* {
 	recode `var' .=0
 }
+
+
 
 
 
@@ -122,7 +124,8 @@ replace stpname = "Buckinghamshire, Oxfordshire and Berkshire, Hampshire, IoW"  
 			if stpcode=="E54000042/E54000044" 
 
 
-																								
+												
+														
 														
 * Combine total population within combined STPs
 bysort stpname: egen population = sum(pop)
@@ -147,116 +150,21 @@ order stp_combined stpname region_7 population
 
 
 
+
+
 /*  Put counts over time in long format  */
 
 reshape long count, i(stp_combined) j(day)
 rename count susp_count
 
-* Put day back in date format
-gen date = day + d(1feb2020) - 1 
-drop day
 
 
 
-/*  Smooth GP cases (mean over last 7 days) */
-
-forvalues t = 0 (1) 6 {
-	bysort stp_combined (date): gen susp_count_lag`t' = susp_count[_n-`t']
-}
-egen susp_mean = rowmean( susp_count_lag0 susp_count_lag1 susp_count_lag2 	///
-						susp_count_lag3 susp_count_lag4 susp_count_lag5 	///
-						susp_count_lag6)
-drop susp_count_lag*
-
-* Smoothed (over 7 days) rate of A&E attendances 
-gen susp_rate = 100000*susp_mean/population
-label var susp_rate "Smoothed rate of suspected GP COVID cases over last 7 days"
-drop susp_mean susp_count
-
-	
-/*  Create lagged GP suspected cases  */
-
-rename susp_rate susp_rate_lag
-forvalues t = 1 (1) $maxlag {
-	bysort stp_combined (date): gen susp_rate_lag`t' = susp_rate_lag[_n-`t']
-}
-rename susp_rate_lag susp_rate_lag0
-
-* Set earlier missing values to zero (no data, i.e. zero count)
-forvalues t =  1 (1) $maxlag {
-	replace susp_rate_lag`t' = 0 if susp_rate_lag`t' ==.
-}
-
-* Only keep dates from (day before) 1 March onwards
-drop if date < d(1mar2020) - 1
-
-* Drop dates after the 7 june
-drop if date > d(7June2020) 
 
 
 
-/*  Fit quadratic model to A&E data  */
 
-gen susp_rate_init = susp_rate_lag0
-
-
-* Fit quadratic model to infection proportion over last "lag" days
-reshape long susp_rate_lag, i(date stp_combined) j(lag)
-replace lag = -lag
-
-preserve
-statsby susp_q_cons	=_b[_cons] 									///
-		susp_q_day	=_b[lag] 									///
-		susp_q_daysq	=_b[c.lag#c.lag]	 					///
-		, by(stp_combined stpname date susp_rate_init) clear: 	///
-	regress susp_rate_lag c.lag##c.lag
-save "quadratic", replace
-restore
-statsby susp_c_cons	=_b[_cons] 									///
-		susp_c_day	=_b[lag] 									///
-		susp_c_daysq	=_b[c.lag#c.lag]	 					///
-		susp_c_daycu	=_b[c.lag#c.lag#c.lag]					///
-		, by(stp_combined stpname date susp_rate_init) clear: 	///
-	regress susp_rate_lag c.lag##c.lag##c.lag
-merge 1:1 stp_combined date using "quadratic", assert(match) nogen
-rename susp_rate_init susp_rate
-
-* Delete data not needed
-erase "quadratic.dta"
-
-
-/*  Days since cohort start date  */
-
-gen time = date - d(1mar2020) + 2
-drop date
-
-
-
-/*  Tidy and save data  */
-
-
-* Label variables
-label var time 			"From 1 (29Feb, data for predicting 1Mar) to 100 (7Jun for predicting 8Jun)"
-label var susp_rate		"Suspected GP case rate (mean daily rate over last 7 days)"
-label var susp_q_cons 	"Quadratic model of suspected GP cases: constant coefficient"
-label var susp_q_day	"Quadratic model of suspected GP cases: linear coefficient"
-label var susp_q_daysq	"Quadratic model of suspected GP cases: squared coefficient"
-label var susp_c_cons 	"Cubic model of suspected GP cases: constant coefficient"
-label var susp_c_day	"Cubic model of suspected GP cases: linear coefficient"
-label var susp_c_daysq	"Cubic model of suspected GP cases: squared coefficient"
-label var susp_c_daycu	"Cubic model of suspected GP cases: cubed coefficient"
-label var stpname 		"Sustainability and Transformation Partnership"
-label var stp_combined 	"STP combined for smaller areas"
-
-
-* Order and sort variables
-order time stp* susp_rate susp_q_cons susp_q_day susp_q_daysq	///
-		susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
-sort stp_combined time
-
-* Label and save dataset
-label data "GP suspected COVID-19 cases, rate over last week and quadratic/cubic model"
-save "data/susp_coefs", replace
+save "data/covid_by_stp.dta", replace
 
 * Close the log file
 log close
