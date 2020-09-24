@@ -233,6 +233,3 @@ program define cc_calib, rclass
 	}
 	
 end
-
-
-

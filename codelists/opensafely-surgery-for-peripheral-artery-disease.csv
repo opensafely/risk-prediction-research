@@ -1,0 +1,209 @@
+CTV3Code,CTV3PreferredTermDesc,CTV3Source,Group
+7A100,Emerg aortic bypass by anastomosis axillary to femoral art,CTV3Map_Code_And_Term,7
+7A101,Bypass aorta by anastomosis axillary to femoral artery NEC,CTV3Map_Code_And_Term,7
+7A103,Axillo-unifemoral PTFE bypass graft,CTV3Map_Code_And_Term,7
+7A11.,Repair of aortic aneurysm using bifurcation graft,CTV3_Children,7
+7A110,Emerg repl aneurysm bifurc aorta by anast aorta to fem art,CTV3_Children,7
+7A111,Replace aneurysm bifurc aorta by anast aorta to femoral art,CTV3_Children,7
+7A112,Emergency Y graft abdominal Aortic aneurysm (& aortoiliac),CTV3_Children,7
+7A113,Y graft abdominal Aortic aneurysm (& aortoiliac),CTV3_Children,7
+7A11y,Replacement of aneurysmal bifurcation of aorta OS,CTV3_Children,7
+7A11z,Replacement of aneurysmal bifurcation of aorta NOS,CTV3_Children,7
+7A12.,Other bypass of bifurcation of aorta,CTV3Map_Code_And_Term,7
+7A120,Emerg bypass bifurc aorta by anast aorta to femoral artery,CTV3Map_Code_And_Term,7
+7A121,Aortobifemoral bypass (& [NEC] or [dacron Y]),CTV3_Children,7
+7A122,Emerg bypass bifurc aorta by anastom aorta to iliac artery,CTV3_Children,7
+7A123,Aorto bi-iliac graft (& Dacron),CTV3_Children,7
+7A12y,Other specified other bypass of bifurcation of aorta,CTV3Map_Code_And_Term,7
+7A12z,Other bypass of bifurcation of aorta NOS,CTV3Map_Code_And_Term,7
+7A41.,Other bypass iliac artery (& by anastomosis),CTV3_Children,7
+7A410,Emerg bypass iliac art by iliac/femoral art anastomosis NEC,CTV3Map_Code_And_Term,7
+7A411,Bypass iliac artery by iliac/femoral artery anastomosis NEC,CTV3Map_Code_And_Term,7
+7A414,Emerg bypass comm iliac art by aorta/com iliac art anast NEC,CTV3Map_Code_And_Term,7
+7A415,Emerg bypass iliac artery by aorta/ext iliac art anast NEC,CTV3_Children,7
+7A416,Emerg bypass leg artery by aorta/com fem art anastomosis NEC,CTV3Map_Code_And_Term,7
+7A418,Emerg bypass iliac artery by iliac/iliac art anastomosis NEC,CTV3_Children,7
+7A419,Bypass common iliac artery by aorta/com iliac art anast NEC,CTV3Map_Code_And_Term,7
+7A41A,Bypass iliac artery by aorta/ext iliac art anastomosis NEC,CTV3_Children,7
+7A41B,Bypass leg artery by aorta/com femoral art anastomosis NEC,CTV3Map_Code_And_Term,7
+7A41C,Bypass leg artery by aorta/deep femoral art anastomosis NEC,CTV3Map_Code_And_Term,7
+7A41D,Bypass iliac artery by iliac/iliac artery anastomosis NEC,CTV3_Children,7
+7A41E,Emergency bypass of iliac artery by unspecified anastomosis,CTV3_Children,7
+7A41F,Iliofemoral prosthetic crossover graft,CTV3Map_Code_And_Term,7
+7A41y,Other specified other bypass of iliac artery,CTV3Map_Code_And_Term,7
+7A41z,Other bypass of iliac artery NOS,CTV3Map_Code_And_Term,7
+XE0Ey,Emerg repl aneurysm bifurc aorta by anast aorta to iliac a,CTV3_Children,7
+XE0Ez,Replace aneurysm bifurc aorta by anast aorta to iliac artery,CTV3_Children,7
+XE0F0,Bypass bifurc aorta by anastom aorta to femoral artery NEC,CTV3Map_Code_And_Term,7
+XE0F0,Bypass bifurc aorta by anastom aorta to femoral artery NEC,CTV3Map_Code_Only,7
+XE0F1,Bypass bifurcation aorta by anastom aorta to iliac artery,CTV3Map_Code_And_Term,7
+XE0F1,Bypass bifurcation aorta by anastom aorta to iliac artery,CTV3Map_Code_Only,7
+XE0FK,Other bypass of iliac artery,CTV3Map_Code_And_Term,7
+XE0FL,Emerg bypass iliac artery by femoral/femoral art anast NEC,CTV3Map_Code_And_Term,7
+XE0FL,Emerg bypass iliac artery by femoral/femoral art anast NEC,CTV3Map_Code_Only,7
+XE0FM,Bypass iliac artery by femoral/femoral art anastomosis NEC,CTV3Map_Code_And_Term,7
+XE0FM,Bypass iliac artery by femoral/femoral art anastomosis NEC,CTV3Map_Code_Only,7
+XE0FO,Endarterectomy and patch repair of iliac artery,CTV3Map_Code_And_Term,7
+XE0FO,Endarterectomy and patch repair of iliac artery,CTV3Map_Code_Only,7
+XE0FP,Endarterectomy of iliac artery NEC,CTV3Map_Code_And_Term,7
+XE0FP,Endarterectomy of iliac artery NEC,CTV3Map_Code_Only,7
+XE0FX,Other emergency bypass of femoral artery or popliteal artery,CTV3Map_Code_And_Term,7
+XE0FX,Other emergency bypass of femoral artery or popliteal artery,CTV3Map_Code_Only,7
+XE0FY,Other bypass of femoral artery or popliteal artery,CTV3Map_Code_And_Term,7
+XE0FY,Other bypass of femoral artery or popliteal artery,CTV3Map_Code_Only,7
+XM1Ib,Y graft abdominal Aortic aneurysm,CTV3_Children,7
+XM1Ic,Dacron aortofemoral Y graft,CTV3Map_Code_And_Term,7
+XM1Ic,Dacron aortofemoral Y graft,CTV3Map_Code_Only,7
+XM1Id,Dacron aortoiliac Y graft,CTV3Map_Code_And_Term,7
+XM1Id,Dacron aortoiliac Y graft,CTV3Map_Code_Only,7
+XM1Ie,Emergency femorofemoral prosthetic crossover graft,CTV3Map_Code_And_Term,7
+XM1Ie,Emergency femorofemoral prosthetic crossover graft,CTV3Map_Code_Only,7
+XM1If,Endarterectomy and patch repair of common iliac artery,CTV3Map_Code_And_Term,7
+XM1If,Endarterectomy and patch repair of common iliac artery,CTV3Map_Code_Only,7
+XM1Ig,Endarterectomy of common iliac artery NEC,CTV3Map_Code_And_Term,7
+XM1Ig,Endarterectomy of common iliac artery NEC,CTV3Map_Code_Only,7
+7A420,Iliac endarterectomy and patch repair (& common iliac),CTV3_Children,7
+7A432,Operation on aneurysm of iliac artery NEC,CTV3_Children,7
+7A440,Percutaneous transluminal angioplasty of iliac artery,CTV3Map_Code_And_Term,7
+7A443,Insertion of iliac artery stent,CTV3Map_Code_And_Term,7
+7A47.,Oth em bypass art: [fem (& brs)]/[pop]/[fem/pop anastomosis],CTV3_Children,7
+7A470,Emerg bypass femoral art by fem/pop art anast c prosth NEC,CTV3Map_Code_And_Term,7
+7A471,Emerg bypass popliteal art by pop/pop art anast c prosth NEC,CTV3Map_Code_And_Term,7
+7A472,Emerg bypass femoral art by fem/pop a anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A473,Emerg bypass pop art by pop/pop art anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A474,Emerg bypass femoral art by fem/tib art anast c prosth NEC,CTV3Map_Code_And_Term,7
+7A476,Emerg bypass femoral art by fem/tib a anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A477,Emerg bypass pop art by pop/tib art anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A47B,Emerg bypass pop art by pop/peron art anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A47C,Emerg bypass femoral artery by fem/fem art anastomosis NEC,CTV3Map_Code_And_Term,7
+7A47D,Emerg bypass popliteal artery by pop/fem art anastomosis NEC,CTV3Map_Code_And_Term,7
+7A47y,Other emergency bypass of femoral or popliteal artery OS,CTV3Map_Code_And_Term,7
+7A47z,Other emergency bypass of femoral or popliteal artery NOS,CTV3Map_Code_And_Term,7
+7A48.,Oth bypass art: [fem (& brs)]/[pop]/[fem/pop by anastomosis],CTV3_Children,7
+7A480,Bypass femoral artery by fem/pop art anast c prosthesis NEC,CTV3Map_Code_And_Term,7
+7A481,Bypass popliteal artery by pop/pop a anast c prosthesis NEC,CTV3Map_Code_And_Term,7
+7A482,Bypass femoral artery by fem/pop art anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A483,Bypass popliteal artery by pop/pop a anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A484,Bypass femoral artery by fem/tib art anast c prosthesis NEC,CTV3Map_Code_And_Term,7
+7A485,Bypass popliteal artery by pop/tib a anast c prosthesis NEC,CTV3Map_Code_And_Term,7
+7A486,Bypass femoral artery by fem/tib art anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A487,Bypass popliteal artery by pop/tib a anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A488,Bypass femoral artery by fem/peron a anast c prosthesis NEC,CTV3Map_Code_And_Term,7
+7A48A,Bypass femoral artery by fem/peron a anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A48B,Bypass popliteal art by pop/peron art anast c vein graft NEC,CTV3Map_Code_And_Term,7
+7A48C,Bypass femoral artery by femoral/femoral art anastomosis NEC,CTV3Map_Code_And_Term,7
+7A48D,Bypass popliteal artery by pop/fem artery anastomosis NEC,CTV3Map_Code_And_Term,7
+7A48E,Femorofemoral prosthetic crossover graft,CTV3Map_Code_And_Term,7
+7A48E,Femorofemoral prosthetic crossover graft,CTV3Map_Code_Only,7
+7A48y,Other bypass of femoral artery or popliteal artery OS,CTV3Map_Code_And_Term,7
+7A48z,Other bypass of femoral artery or popliteal artery NOS,CTV3Map_Code_And_Term,7
+7A490,Endarterectomy and patch repair of femoral artery,CTV3Map_Code_And_Term,7
+7A491,Endarterectomy and patch repair of popliteal artery,CTV3Map_Code_And_Term,7
+7A492,Endarterectomy of femoral artery NEC,CTV3Map_Code_And_Term,7
+7A493,Endarterectomy of popliteal artery NEC,CTV3Map_Code_And_Term,7
+7A494,Profundoplasty femoral artery & patch repair deep fem artery,CTV3Map_Code_And_Term,7
+7A495,Profundoplasty and patch repair of popliteal artery,CTV3Map_Code_And_Term,7
+7A496,Profundoplasty of femoral artery NEC,CTV3Map_Code_And_Term,7
+7A497,Profundoplasty of popliteal artery NEC,CTV3Map_Code_And_Term,7
+7A4A5,Operation on aneurysm of femoral artery NEC,CTV3_Children,7
+7A4B0,Percutaneous transluminal angioplasty of femoral artery,CTV3Map_Code_And_Term,7
+7A4B1,Percutaneous angioplasty of popliteal artery,CTV3Map_Code_And_Term,7
+X015R,Other bypass of superficial femoral artery,CTV3Map_Code_And_Term,7
+X015R,Other bypass of superficial femoral artery,CTV3Map_Code_Only,7
+X015S,Other bypass of popliteal artery,CTV3Map_Code_And_Term,7
+X015S,Other bypass of popliteal artery,CTV3Map_Code_Only,7
+X015T,Other bypass of femoral artery,CTV3Map_Code_And_Term,7
+X015T,Other bypass of femoral artery,CTV3Map_Code_Only,7
+X015U,Other bypass of deep femoral artery,CTV3Map_Code_Only,7
+X015V,Other bypass of common femoral artery,CTV3Map_Code_And_Term,7
+X015V,Other bypass of common femoral artery,CTV3Map_Code_Only,7
+X015W,Other bypass of femoral or popliteal artery by anastomosis,CTV3Map_Code_And_Term,7
+X015W,Other bypass of femoral or popliteal artery by anastomosis,CTV3Map_Code_Only,7
+X015X,Other emergency bypass of femoral artery,CTV3Map_Code_And_Term,7
+X015X,Other emergency bypass of femoral artery,CTV3Map_Code_Only,7
+X015Y,Other emergency bypass of superficial femoral artery,CTV3Map_Code_And_Term,7
+X015Y,Other emergency bypass of superficial femoral artery,CTV3Map_Code_Only,7
+X015Z,Other emergency bypass of popliteal artery,CTV3Map_Code_And_Term,7
+X015Z,Other emergency bypass of popliteal artery,CTV3Map_Code_Only,7
+X015a,Other emergency bypass of deep femoral artery,CTV3Map_Code_And_Term,7
+X015a,Other emergency bypass of deep femoral artery,CTV3Map_Code_Only,7
+X015b,Other emergency bypass of common femoral artery,CTV3Map_Code_Only,7
+X015c,Other emerg bypass femoral or popliteal art by anastomosis,CTV3Map_Code_And_Term,7
+X015c,Other emerg bypass femoral or popliteal art by anastomosis,CTV3Map_Code_Only,7
+X015h,Other bypass of iliac artery by anastomosis,CTV3Map_Code_Only,7
+X015u,Aortic bifurcation bypass graft,CTV3Map_Code_And_Term,7
+X015u,Aortic bifurcation bypass graft,CTV3Map_Code_Only,7
+X015v,Y graft of abdominal Aortic aneurysm (emergency),CTV3_Children,7
+X0160,Axillofemoral bypass graft,CTV3Map_Code_And_Term,7
+X016n,Insertion common iliac artery stent,CTV3_Children,7
+X016o,Insertion of external iliac artery stent,CTV3_Children,7
+XaDmh,Open insertion of iliac artery stent,CTV3Map_Code_And_Term,7
+XaDmi,Percutaneous transluminal insertion of iliac artery stent,CTV3Map_Code_And_Term,7
+XaLhK,Endovascular stenting of aorto-uniiliac aneurysm,CTV3_Children,7
+XaLhe,Percutaneous transluminal placement peripheral stent artery,CTV3Map_Code_And_Term,7
+XaMNe,Percutaneous transluminal insertion of stent femoral artery,CTV3Map_Code_And_Term,7
+XaMmK,Endovas insertion of stent graft for aorto-uniiliac aneurysm,CTV3_Children,7
+7A44y,Other specified transluminal operation on iliac artery,CTV3Map_Code_And_Term,7
+7A44z,Transluminal operation on iliac artery NOS,CTV3Map_Code_And_Term,7
+XE0FN,Reconstruction of iliac artery,CTV3Map_Code_And_Term,8
+XE0FN,Reconstruction of iliac artery,CTV3Map_Code_Only,8
+XE0FQ,Other open operations on iliac artery,CTV3Map_Code_And_Term,8
+XE0FQ,Other open operations on iliac artery,CTV3Map_Code_Only,8
+XE0FR,Repair of iliac artery NEC,CTV3Map_Code_And_Term,8
+XE0FR,Repair of iliac artery NEC,CTV3Map_Code_Only,8
+XE0FZ,Reconstruction of femoral artery or popliteal artery,CTV3Map_Code_And_Term,8
+XE0FZ,Reconstruction of femoral artery or popliteal artery,CTV3Map_Code_Only,8
+XE0Fa,Other open operations on femoral artery or popliteal artery,CTV3Map_Code_And_Term,8
+XE0Fa,Other open operations on femoral artery or popliteal artery,CTV3Map_Code_Only,8
+XM1Ih,Other open operations on common iliac artery,CTV3Map_Code_And_Term,8
+XM1Ih,Other open operations on common iliac artery,CTV3Map_Code_Only,8
+XM1Ii,Repair of common iliac artery NEC,CTV3Map_Code_And_Term,8
+XM1Ii,Repair of common iliac artery NEC,CTV3Map_Code_Only,8
+XM1Ip,Reconstruction of popliteal artery,CTV3Map_Code_And_Term,8
+XM1Ip,Reconstruction of popliteal artery,CTV3Map_Code_Only,8
+XM1Iq,Reconstruction of deep femoral artery,CTV3Map_Code_Only,8
+XM1Ir,Reconstruction of common femoral artery,CTV3Map_Code_And_Term,8
+XM1Ir,Reconstruction of common femoral artery,CTV3Map_Code_Only,8
+XM1Is,Reconstruction of femoral artery,CTV3Map_Code_And_Term,8
+XM1Is,Reconstruction of femoral artery,CTV3Map_Code_Only,8
+XM1It,Other open operations on superficial femoral artery,CTV3Map_Code_And_Term,8
+XM1It,Other open operations on superficial femoral artery,CTV3Map_Code_Only,8
+XM1Iu,Other open operations on popliteal artery,CTV3Map_Code_And_Term,8
+XM1Iu,Other open operations on popliteal artery,CTV3Map_Code_Only,8
+XM1Iv,Other open operations on deep femoral artery,CTV3Map_Code_Only,8
+XM1Iw,Other open operations on common femoral artery,CTV3Map_Code_And_Term,8
+XM1Iw,Other open operations on common femoral artery,CTV3Map_Code_Only,8
+XM1KK,Reconstruction of superficial femoral artery,CTV3Map_Code_And_Term,8
+XM1KK,Reconstruction of superficial femoral artery,CTV3Map_Code_Only,8
+7A42.,Reconstruction of iliac artery (& common),CTV3_Children,8
+7A42y,Other specified reconstruction of iliac artery,CTV3Map_Code_And_Term,8
+7A42z,Reconstruction of iliac artery NOS,CTV3Map_Code_And_Term,8
+7A43.,Other open operations on iliac artery (& common),CTV3_Children,8
+7A430,Repair of iliac artery NEC (& common),CTV3_Children,8
+7A43y,Other specified other open operation on iliac artery,CTV3_Children,8
+7A43z,Other open operation on iliac artery NOS,CTV3_Children,8
+7A49.,Reconstruction artery: [femoral (& branches)] or [popliteal],CTV3_Children,8
+7A498,Reconstruction of femoral artery with vein graft,CTV3Map_Code_And_Term,8
+7A499,Reconstruction of popliteal artery with vein graft,CTV3Map_Code_And_Term,8
+7A49y,Reconstruction of femoral or popliteal artery OS,CTV3Map_Code_And_Term,8
+7A49z,Reconstruction of femoral or popliteal artery NOS,CTV3Map_Code_And_Term,8
+7A4A.,Oth open art operatn: [femoral (& branches)] or [popliteal],CTV3_Children,8
+7A4A0,Repair of femoral artery NEC,CTV3Map_Code_And_Term,8
+7A4A1,Repair of popliteal artery NEC,CTV3Map_Code_And_Term,8
+7A4A6,Operation on popliteal artery NEC,CTV3_Children,8
+7A4A7,Repair of femoral artery with temporary silastic shunt,CTV3Map_Code_And_Term,8
+7A4A8,Repair of popliteal artery with temporary silastic shunt,CTV3Map_Code_And_Term,8
+7A4Ay,Other open operation on femoral or popliteal artery OS,CTV3Map_Code_And_Term,8
+7A4Az,Other open operation on femoral or popliteal artery NOS,CTV3_Children,8
+7A50.,Revision of reconstruction of artery,CTV3Map_Code_And_Term,8
+7A500,Revision of reconstruction involving aorta,CTV3Map_Code_And_Term,8
+7A501,Revision of reconstruction involving iliac artery,CTV3Map_Code_And_Term,8
+7A502,Revision of reconstruction involving femoral artery,CTV3Map_Code_And_Term,8
+7A503,Revision of reconstruction of popliteal artery,CTV3Map_Code_And_Term,8
+7A50y,Other specified revision of reconstruction of artery,CTV3_Children,8
+7A50z,Revision of reconstruction of artery NOS,CTV3_Children,8
+X015H,Reconstruction of common iliac artery,CTV3Map_Code_And_Term,8
+X015H,Reconstruction of common iliac artery,CTV3Map_Code_Only,8
+7A4B4,Percutaneous transluminal embolisation of femoral artery,CTV3Map_Code_And_Term,9
+7A4B5,Percutaneous transluminal embolisation of popliteal artery,CTV3Map_Code_And_Term,9
+XaB5V,Trash foot,CTV3_Children,9

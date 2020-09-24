@@ -15,6 +15,8 @@ import delimited "output/input.csv", clear
 set more off
 
 
+
+
 gen temp=ceil(uniform()*10)
 sort temp
 

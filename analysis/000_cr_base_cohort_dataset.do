@@ -8,7 +8,7 @@
 *
 *	Data created:   data/cr_base_cohort.dta (full base cohort dataset)
 *
-*	Other output:	None
+*	Other output:	Log file:  000_cr_analysis_dataset.log
 *
 ********************************************************************************
 *
@@ -16,19 +16,6 @@
 *					base cohort and saves into a Stata dataset.
 *  
 ********************************************************************************
-
-
-
-*********************
-* STILL TO DO LIST  *
-*********************
-
-* Covariates to be added and cleaned:
-* 	Rural/urban (in here now - binary, correct?)
-* Hypertension/high BP? separate? 
-* Add: 
-*   Learning disability 
-
 
 
 
@@ -50,7 +37,7 @@ log using "output/000_cr_analysis_dataset", replace t
 keep patient_id household_id age
 bysort household_id: egen hh_num=count(patient_id)
 gen schoolchild_id = patient_id if inrange(age, 0, 12)
-bysort household_id: egen hh_num_child=count(patient_id)
+bysort household_id: egen hh_num_child=count(schoolchild_id)
 
 label var hh_num 		"Number of people in household"
 label var hh_num_child 	"Number of children (age 0-12) in household"
@@ -106,11 +93,12 @@ if _rc==0 {
 }
 else {
 	drop if imd>=.
+	drop if imd==-1
 }
 
 
 * People who had an event prior to our start date
-* (this should not occur)
+* (this should not occur in the real data)
 noi di "DROPPING IF DIED BEFORE MAR 1st" 
 confirm string variable died_date_ons
 gen temp = date(died_date_ons, "YMD")
@@ -124,21 +112,24 @@ drop temp
 *  Convert strings to dates  *
 ******************************
 
+
 * To be added: dates related to outcomes
 foreach var of varlist 	cf								///
-						other_respiratory			 	///
-						chronic_cardiac_disease 		///
+						respiratory					 	///
+						cardiac 						///
 						hypertension 					///
 						af 								///
-						pvd								///
+						dvt_pe							///
+						pad_surg 						///
+						amputate						///
 						diabetes 						///
 						stroke							///
 						dementia		 				///
-						other_neuro 					///
+						neuro 							///
 						lung_cancer 					///
 						haem_cancer						///
 						other_cancer 					///
-						chronic_liver_disease 			///
+						liver				 			///
 						transplant_notkidney 			///	
 						transplant_kidney_1				///
 						transplant_kidney_2				///
@@ -156,10 +147,10 @@ foreach var of varlist 	cf								///
 						temp_immuno_1					///
 						temp_immuno_2					///
 						temp_immuno_3					///
-						ra_sle_psoriasis  				///
+						autoimmune		  				///
 						ibd 							///
 						smi 							///
-						osteo							///
+						ld								///
 						fracture_1						///
 						fracture_2						///
 						fracture_3						///
@@ -293,11 +284,10 @@ drop ethnicity_date ethnicity_16_date
 
 
 * STP 
-rename stp stp_old
-bysort stp_old: gen stp = 1 if _n==1
+rename stp stpcode
+bysort stpcode: gen stp = 1 if _n==1
 replace stp = sum(stp)
-drop stp_old
-
+order stp, after(stpcode)
 
 * Region
 rename region region_string
@@ -349,6 +339,29 @@ label var region_7 "Region of England (7 regions)"
 drop region_string
 
 
+*  Rural-urban classification 
+
+capture confirm string var rural_urban 
+if _rc==0 {
+    assert inlist(rural_urban, "rural", "urban", "")
+	replace rural_urban = "urban" if !inlist(rural_urban, "rural", "urban")
+
+	gen rural = rural_urban=="rural"
+	order rural, after(rural_urban)
+	drop rural_urban
+}
+else {
+	recode rural_urban -1 0=.
+	bysort stp: egen ru_mode=mode(rural_urban)
+	replace rural_urban = ru_mode if rural_urban>=.
+	drop ru_mode
+	
+	* Categorise
+	recode rural_urban 1/4=0 5/8=1, gen(rural)
+	order rural, after(rural_urban)
+	drop rural_urban
+}
+
 
 		 
 
@@ -383,7 +396,7 @@ assert age<.
 assert agegroup<.
 
 
-* Centre age to create splines
+* Centre age and then create splines of centred age
 qui summ age
 gen agec = (age - r(mean))/r(sd)
 mkspline age = agec, cubic nknots(4)
@@ -511,6 +524,7 @@ label values imd imd
 
 * Spleen problems (dysplenia/splenectomy/etc and sickle cell disease)   
 egen spleen_date = rowmin(dysplenia_date sickle_cell_date)
+format spleen_date %td
 order spleen_date spleen, after(sickle_cell)
 drop dysplenia_date sickle_cell_date
 
@@ -519,8 +533,13 @@ drop dysplenia_date sickle_cell_date
 /*  Non-haematological malignancies  */
 
 gen exhaem_cancer_date = min(lung_cancer_date, other_cancer_date)
+format exhaem_cancer_date %td
 order exhaem_cancer_date, after(other_cancer_date)
 drop lung_cancer_date other_cancer_date
+
+rename haem_cancer_date		cancerHaem_date
+rename exhaem_cancer_date	cancerExhaem_date
+
 
 
 /*  Temporary immunosuppression  */
@@ -555,7 +574,7 @@ forvalues j = 1 (1) 3 {
 egen transplant_date = rowmin(transplant_kidney_*_date ///
 							  transplant_notkidney_date)
 drop transplant_kidney_*_date transplant_notkidney_date
-
+format transplant_date %td
 
 
 
@@ -568,6 +587,15 @@ forvalues j = 1 (1) 3 {
 	* Ignore fractures for people aged < 65
 	replace fracture_`j' = 0 if age<65
 }
+
+
+/*  Peripheral arterial disease  */
+
+* First of either surgery for PAD or limb amputation
+egen pad_date = rowmin(pad_surg_date amputate_date)
+drop pad_surg_date amputate_date
+format pad_date %td
+
 
 
 
@@ -623,7 +651,8 @@ forvalues j = 1 (1) 3 {
 }
 
 
-* If either dialysis or kidney transplant
+* If either dialysis or kidney transplant then set kidney function to the 
+*   lowest level
 forvalues j = 1 (1) 3 {
 	replace  kidneyfn_`j' = 3 if dialysis_`j'			== 1
 	replace  kidneyfn_`j' = 3 if transplant_kidney_`j'	== 1
@@ -708,6 +737,7 @@ replace died_date_ons = . if died_date_ons>d(8jun2020)
 gen died_date_onscovid = died_date_ons if died_ons_covid_flag_any==1
 gen died_date_onsother = died_date_ons if died_ons_covid_flag_any!=1
 drop died_date_ons
+format died_date_onscovid died_date_onsother %td
 
 * Delete unneeded variables
 drop died_ons_covid_flag_any 
@@ -741,8 +771,17 @@ drop household_size
 rename household_id hh_id
 order hh_id, before(hh_num)
 
+* Centre number of people in household to create splines
+qui summ hh_num
+gen hh_numc = (hh_num - r(mean))/r(sd)
+mkspline hh_num = hh_numc, cubic nknots(4)
+order hh_num1 hh_num2 hh_num3, after(hh_numc)
+drop hh_numc
+
+* Binary indicator for children in household
 gen hh_children = (hh_num_child>0)
 order hh_children, after(hh_num_child)
+
 
 
 ***************************
@@ -751,23 +790,6 @@ order hh_children, after(hh_num_child)
 
 noi di "DROPPING HOUSEHOLDS > 10 people"
 drop if hh_num >=10
-
-
-
-**********************
-*  Rename variables  *
-**********************
-
-* (Shorter names make subsequent programming easier)
-
-* Dates of comorbidities
-rename other_respiratory_date			respiratory_date
-rename chronic_cardiac_disease_date		cardiac_date
-rename other_neuro_date					neuro_date
-rename haem_cancer_date					cancerExhaem_date
-rename exhaem_cancer_date				cancerHaem_date
-rename chronic_liver_disease_date		liver_date
-rename ra_sle_psoriasis_date			autoimmune_date
 
 
 
@@ -795,14 +817,17 @@ label var ethnicity_5			"Ethnicity in 5 categories"
 label var ethnicity_16			"Ethnicity in 16 categories"
 label var ethnicity_8			"Ethnicity in 8 categories"
 label var stp 					"Sustainability and Transformation Partnership"
+label var stpcode 				"Sustainability and Transformation Partnership"
 label var region_9 				"Geographical region (9 England regions)"
 label var region_7 				"Geographical region (7 England regions)"
-label var rural_urban 			"Rural/urban classification"
+label var rural					"Rural/urban binary classification"
 label var hh_id 				"Household ID"
-label var hh_num 				"Number of adults in household"
+label var hh_num 				"Number of adults in household, spline 1"
+label var hh_num1 				"Number of adults in household, spline 2"
+label var hh_num2 				"Number of adults in household, spline 3"
+label var hh_num3 				"Number of adults in household"
 label var hh_num_child			"Number of children (<=12)"
-label var hh_childre			"Presence of children (<=12)"
-
+label var hh_children			"Presence of children (<=12)"
 
 forvalues j = 1 (1) 3 {
 	label var bmi_`j'			"Body Mass Index (BMI, kg/m2); `t`j''"
@@ -831,7 +856,8 @@ forvalues j = 1 (1) 3 {
 label var respiratory_date		"Respiratory disease (excl. asthma), date"
 label var cardiac_date			"Heart disease, date"
 label var af_date				"Atrial fibrillation, date"
-label var pvd_date				"PVD, date"
+label var dvt_pe_date			"Deep vein thrombosis/pulmonary embolism, date"
+label var pad_date				"Surgery for peripheral arterial disease or limb amputation, date"
 label var diabetes_date			"Diabetes, date"
 label var hypertension_date		"Date of diagnosed hypertension"
 label var stroke_date			"Stroke, date"
@@ -844,10 +870,10 @@ label var transplant_date		"Organ transplant recipient, date"
 label var spleen_date			"Spleen problems (dysplenia, sickle cell), date"
 label var autoimmune_date		"RA, SLE, Psoriasis (autoimmune disease), date"
 label var hiv_date 				"HIV, date"
-label var perm_immuno_date		"RA, SLE, Psoriasis (autoimmune disease), date"
+label var perm_immuno_date		"Conditions causing permanent immunosuppression, date"
 label var ibd_date				"IBD, date"
 label var smi_date 				"Serious mental illness, date"
-label var osteo_date			"Osteoporosis, date"
+label var ld_date 				"Learning disability or Down's Syndrome, date"
 
 forvalues j = 1 (1) 3 {
 	label var temp1yr_`j'		"Temporary immunosuppression in last year (inc. aa); `t`j''"	
@@ -868,24 +894,25 @@ label var stime					"Survival time (days from 1 March; end 8 June) for COVID-19 
 
 
 
+
 *********************
 *  Order variables  *
 *********************
 
 sort patient_id
-order 	patient_id stp region_9 region_7 imd rural_urban hh* 		///
+order 	patient_id stp* region_9 region_7 imd rural hh*		 		///
 		age age1 age2 age3 agegroup male							///
 		bmi* bmicat* obesecat* smoke* smoke_nomiss*					///
 		ethnicity*													/// 
 		respiratory* asthma* cf* cardiac* diabetes* hba1ccat* 		///
 		bp_sys bp_sys_date bp_dias bp_dias_date 					///
 		bpcat bpcat_nomiss hypertension*							///
-		af* pvd* 													///
+		af* dvt_pe* pad* 											///
 		stroke* dementia* neuro* 									///
 		cancerExhaem* cancerHaem* 									///
 		kidneyfn* dialysis* liver* transplant* 						///
 		spleen* autoimmune* hiv* perm_immuno_date temp1yr*	ibd*	///
-		smi* osteo* fracture*										///
+		smi* ld* fracture*											///
 		died_date_onscovid died_date_onsother onscoviddeath	stime
 
 
