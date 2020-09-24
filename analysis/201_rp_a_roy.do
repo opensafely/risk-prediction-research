@@ -94,13 +94,6 @@ do "analysis/0000_pick_up_coefficients.do"
 get_coefs, coef_matrix(c) eqname("xb0:") cons_no ///
 	dataname("data/model_a_roy_noshield")
 	
-	
-
-
-
-
-
-
 
 log close
 
