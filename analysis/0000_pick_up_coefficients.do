@@ -159,8 +159,8 @@ end
 
 capture program drop get_coefs
 program define get_coefs
-	syntax , coef_matrix(string) eqname(string) dataname(string) [cons_no]
-	
+	syntax , coef_matrix(string) dataname(string) [cons_no eqname(string)]
+
 	global terms: colfullnames `coef_matrix'
 	tokenize $terms 
 	
@@ -169,15 +169,18 @@ program define get_coefs
 	local j = 1
 	while "``i''" != "" {
 
-		if "`eqname'"!="None" {
-			* Remove eqname prefix, e.g. "onscoviddeath:"
-			local length_prefix = length("`eqname'") + 2
-		}
-		else {
-			local length_prefix = 1
-		}
+		   if "`eqname'" == "xb0:" | "`eqname'" == "_t:" | "`eqname'" == "" {
+		* Remove eqname prefix, e.g. "onscoviddeath:
+		local length_prefix = length("`eqname'") + 1
 		local term_`j' = substr("``i''", `length_prefix', .)
-			
+		}
+		
+
+else  {
+		* Remove eqname prefix, e.g. "onscoviddeath:"
+		local length_prefix = length("`eqname'") + 2
+		local term_`j' = substr("``i''", `length_prefix', .)
+	}	
 		* Check for baseline categories in either a single or two terms
 		identify_pairinteract, term("`term_`j''")
 		local ispairinter	= r(ispairinter) 
