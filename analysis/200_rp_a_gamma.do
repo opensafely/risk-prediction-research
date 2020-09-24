@@ -39,7 +39,7 @@ noi di "$predictors"
 
 timer clear 1
 timer on 1
-streg $predictors_preshield , dist(ggamma) vce(robust)
+streg $predictors_preshield , dist(ggamma) vce(robust) difficult
 estat ic
 timer off 1
 timer list 1
