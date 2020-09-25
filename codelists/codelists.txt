@@ -1,4 +1,4 @@
-opensafely/amputation/2020-09-21
+opensafely/amputation-of-lower-limb/2020-09-25
 opensafely/aplastic-anaemia/2020-04-24
 opensafely/asplenia/2020-06-02
 opensafely/asthma-diagnosis/2020-04-15
