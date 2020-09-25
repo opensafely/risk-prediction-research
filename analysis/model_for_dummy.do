@@ -23,12 +23,12 @@ clear all
 
 
 * Fizz
-*cd "C:\Users\emsuewil\Documents\Work\Covid\OpenSAFELY\Risk prediction\Git\risk-prediction-research"
+* cd "C:\Users\emsuewil\Documents\Work\Covid\OpenSAFELY\Risk prediction\Git\risk-prediction-research"
+
 * John
-cd "/Users/lsh1401926/Desktop/risk-prediction-research"
+*cd "/Users/lsh1401926/Desktop/risk-prediction-research"
 
 adopath + "analysis/ado"
-
 
 
 
@@ -59,13 +59,16 @@ do "`c(pwd)'/analysis/001_cr_case_cohort.do"
 do "`c(pwd)'/analysis/002_cr_validation_datasets.do"
 
 
-* Create landmark (stacked) dataset
+* Read in and clean data regarding burden of infection over time
 do "`c(pwd)'/analysis/003_cr_dynamic_modelling_output.do"
-do "`c(pwd)'/analysis/003_cr_dynamic_modelling_output2.do"
-do "`c(pwd)'/analysis/004_cr_landmark_substudies.do"
+do "`c(pwd)'/analysis/004_cr_ae_attendance_data.do"
+do "`c(pwd)'/analysis/005_cr_primary_care_case_data.do"
+
+* Create landmark (stacked) dataset
+do "`c(pwd)'/analysis/006_cr_landmark_substudies.do"
 
 * Create daily landmark (stacked) dataset
-do "`c(pwd)'/analysis/005_cr_daily_landmark_covid_substudies.do"
-do "`c(pwd)'/analysis/006_cr_daily_landmark_noncovid_substudies.do"
+do "`c(pwd)'/analysis/007_cr_daily_landmark_covid_substudies.do"
+do "`c(pwd)'/analysis/008_cr_daily_landmark_noncovid_substudies.do"
 
 
