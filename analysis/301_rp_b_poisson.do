@@ -28,32 +28,29 @@ log using "./output/rp_b_poisson", text replace
 
 
 
-*******************************
-*  Pick up predictor list(s)  *
-*******************************
+*****************************
+*  Pick up predictor lists  *
+*****************************
 
 do "analysis/101_pr_variable_selection_output.do" 
-*noi di "$predictors_noshield"
-
-* Pre-shielding
-noi di "$predictors_preshield"
-
-* Pre- and Post-shielding
 noi di "$predictors"
+noi di "$parsimonious"
 
 
 
 
-********************************************************
-*   Models not including measures of infection burden  *
-********************************************************
+
+		********************************************************
+		*   MODELS NOT INCLUDING MEASURES OF INFECTION BURDEN  *
+		********************************************************
 
 
 ************************************************************************
 *   Poisson regression:  No shielding, no time-varying infection data  *
 ************************************************************************
 
-*use "data/cr_landmark.dta", clear
+
+use "data/cr_landmark.dta", clear
  
 
 * Barlow weights used as an offset, alongside the usual offset (exposure time)
@@ -92,13 +89,13 @@ get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
 
 
 
-****************************************************
-*   Models including measures of infection burden  *
-****************************************************
 
-* WITH SHIELDING
-* Use 1 April cut-off for shielding 
-* Dataset has 2 lines of data per person already
+		****************************************************
+		*   MODELS INCLUDING MEASURES OF INFECTION BURDEN  *
+		****************************************************
+
+
+* Dataset has 2 lines of data per person already 9(????)))
 * Use post-shielding set of predictors (shielding indicator + any interactions) 
 
 

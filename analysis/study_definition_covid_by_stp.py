@@ -29,14 +29,14 @@ study = StudyDefinition(
         AND alive_at_cohort_start
         """,
         age=patients.age_as_of(
-            "2020-03-01",
+            "2020-02-01",
             return_expectations={
                 "rate": "universal",
                 "int": {"distribution": "population_ages"},
             },
         ),
         alive_at_cohort_start=patients.registered_with_one_practice_between(
-            "2020-02-29", "2020-03-01"
+            "2020-01-31", "2020-02-01"
         ),
     ),
     # GEOGRAPHICAL AREA - SUSTAINABILITY AND TRANSFORMATION PARTNERSHIP
@@ -48,16 +48,37 @@ study = StudyDefinition(
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "STP1": 0.1,
-                    "STP2": 0.1,
-                    "STP3": 0.1,
-                    "STP4": 0.1,
-                    "STP5": 0.1,
-                    "STP6": 0.1,
-                    "STP7": 0.1,
-                    "STP8": 0.1,
-                    "STP9": 0.1,
-                    "STP10": 0.1,
+                    "E54000005": 0.04,
+                    "E54000006": 0.04,
+                    "E54000007": 0.04,
+                    "E54000008": 0.04,
+                    "E54000009": 0.04,
+                    "E54000010": 0.04,
+                    "E54000012": 0.04,
+                    "E54000013": 0.03,
+                    "E54000014": 0.03,
+                    "E54000015": 0.03,
+                    "E54000016": 0.03,
+                    "E54000017": 0.03,
+                    "E54000020": 0.03,
+                    "E54000021": 0.03,
+                    "E54000022": 0.03,
+                    "E54000023": 0.03,
+                    "E54000024": 0.03,
+                    "E54000025": 0.03,
+                    "E54000026": 0.03,
+                    "E54000027": 0.03,
+                    "E54000029": 0.03,
+                    "E54000033": 0.03,
+                    "E54000035": 0.03,
+                    "E54000036": 0.03,
+                    "E54000037": 0.03,
+                    "E54000040": 0.03,
+                    "E54000041": 0.03,
+                    "E54000042": 0.03,
+                    "E54000044": 0.03,
+                    "E54000043": 0.03,
+                    "E54000049": 0.03,
                 }
             },
         },
@@ -68,7 +89,7 @@ study = StudyDefinition(
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
         return_expectations={
-            "date": {"earliest": "2020-03-01"},
+            "date": {"earliest": "2020-02-01"},
             "category": {"ratios": {"XaaNq": 0.5, "Y20cf": 0.5}},
         },
     ),

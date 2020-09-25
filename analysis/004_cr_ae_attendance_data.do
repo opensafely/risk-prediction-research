@@ -172,7 +172,7 @@ drop aecount*
 
 * Smoothed (over 7 days) rate of A&E attendances 
 gen aerate = 100000*aemean/population
-label var aerate "Smoother rate of A&E attendances over last 7 days"
+label var aerate "Smoothed rate of A&E attendances over last 7 days"
 drop aemean
 
 	
@@ -194,7 +194,11 @@ forvalues t =  1 (1) $maxlag {
 }
 
 * Only keep dates from (day before) 1 March onwards
+replace date = date + 1 if date==d(28feb2020)	// No events on either day
 drop if date < d(1mar2020) - 1
+
+* Drop dates after the 7 june
+drop if date > d(7June2020) 
 
 
 
@@ -208,18 +212,18 @@ reshape long aerate_lag, i(date stp_combined) j(lag)
 replace lag = -lag
 
 preserve
-statsby ae_q_cons	=_b[_cons] 								///
-		ae_q_day	=_b[lag] 								///
-		ae_q_daysq	=_b[c.lag#c.lag]	 					///
-		, by(stp_combined stpname date aerate_init) clear: 			///
+statsby ae_q_cons	=_b[_cons] 									///
+		ae_q_day	=_b[lag] 									///
+		ae_q_daysq	=_b[c.lag#c.lag]	 						///
+		, by(stp_combined stpname date aerate_init) clear: 		///
 	regress aerate_lag c.lag##c.lag
 save "quadratic", replace
 restore
-statsby ae_c_cons	=_b[_cons] 								///
-		ae_c_day	=_b[lag] 								///
-		ae_c_daysq	=_b[c.lag#c.lag]	 					///
-		ae_c_daycu	=_b[c.lag#c.lag#c.lag]					///
-		, by(stp_combined stpname date aerate_init) clear: 			///
+statsby ae_c_cons	=_b[_cons] 									///
+		ae_c_day	=_b[lag] 									///
+		ae_c_daysq	=_b[c.lag#c.lag]	 						///
+		ae_c_daycu	=_b[c.lag#c.lag#c.lag]						///
+		, by(stp_combined stpname date aerate_init) clear: 		///
 	regress aerate_lag c.lag##c.lag##c.lag
 merge 1:1 stp_combined date using "quadratic", assert(match) nogen
 rename aerate_init aerate
@@ -239,8 +243,8 @@ drop date
 
 
 * Label variables
-label var time 			"Days since 1 March 2020 (inclusive)"
-label var aerate		"A&E attendances (mean daily count over last 7 days)"
+label var time 			"From 1 (29Feb, data for predicting 1Mar) to 100 (7Jun for predicting 8Jun)"
+label var aerate		"A&E attendances (mean daily rate over last 7 days)"
 label var ae_q_cons 	"Quadratic model of A&E attendances: constant coefficient"
 label var ae_q_day		"Quadratic model of A&E attendances: linear coefficient"
 label var ae_q_daysq	"Quadratic model of A&E attendances: squared coefficient"
