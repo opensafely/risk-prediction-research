@@ -36,10 +36,48 @@ use "data/cr_casecohort_models.dta", replace
 *  Pick up predictor list(s)  *
 *******************************
 
-
+* Pick up selected variables
 do "analysis/101_pr_variable_selection_output.do" 
 noi di "$predictors_preshield"
 noi di "$predictors"
+
+* Provide a list of all possible categorical variables 
+global allcatvars = "i.ethnicity_8 i.obesecat i.imd i.smoke_nomiss i.diabcat i.bpcat_nomiss i.asthma i.cancerExhaem i.cancerHaem i.kidneyfn i.region_9"
+
+* Extract a list of categorical variables selected
+global predictors_preshield_nocat: 	///
+	list global(predictors_preshield) - global(allcatvars)
+global catvars_selected: 			///
+	list global(predictors_preshield) & global(allcatvars)
+
+* Remove the "i." prefixes
+global predictors_preshield_nocat 	= 	///
+	subinstr("$predictors_preshield_nocat", "i.", " ",.)
+global catvars_selected 			= 	///
+	subinstr("$catvars_selected", "i.", " ",.)
+
+* Create dummy variables for the categorical variables selected 
+*   (assume there are at least 2 categories to each variable)
+global predictors_cat_rp = " "
+foreach var of varlist $catvars_selected {
+		egen ord_`var' = group(`var')
+		qui summ ord_`var'
+		local max=r(max)
+		forvalues i = 2 (1) `max' {
+			gen `var'_`i' = (`var'==`i')
+			global addvar = "`var'_`i'"
+			noi di "$addvar"
+			global predictors_cat_rp = "$predictors_rp" +  " `var'_`i'"
+		}	
+		drop ord_`var'
+}
+
+global allvarsselect: list global(predictors_preshield_nocat)	///
+						|  global(predictors_cat_rp) 
+
+
+
+
 
 *********************
 *   Royston Model  *
@@ -48,10 +86,13 @@ noi di "$predictors"
 
 timer clear 1
 timer on 1
-stpm2  $predictors_preshield , df(5) scale(hazard)
+stpm2  $allvarsselect, df(5) scale(hazard)
 estat ic
 timer off 1
 timer list 1
+
+
+
 
 ***********************************************
 *  Put coefficients and survival in a matrix  * 
@@ -60,9 +101,8 @@ timer list 1
 * Pick up coefficient matrix
 matrix b = e(b)
 mat list b
-
 local cols = (colsof(b) + 1)/2
-local cols2 = cols+3
+local cols2 = `cols'+3
 mat c = b[1,`cols2'..colsof(b)]
 mat list c
 
@@ -79,21 +119,53 @@ local names: subinstr local names "c1" "xb0:base_surv"
 mat colnames c = `names'
 
 
-* Don't think needed for rp
-/* Remove unneeded parameters from matrix
-local np = colsof(b) - 1
-matrix b = b[1,1..`np']
-matrix list b
-*/
 
 *  Save coefficients to Stata dataset  
 do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction
-
 get_coefs, coef_matrix(c) eqname("xb0:") cons_no ///
 	dataname("data/model_a_roy_noshield")
 	
 
+	
+
+
+************************************************
+*  Re-express in same was as for other models  * 
+************************************************
+
+* Put variable expressions back in "factor-variable" language
+use "data/model_a_roy_noshield", clear
+gen drop = 0
+qui count
+local n = r(N)
+forvalues i = 1 (1) `n' {
+	global temp = varexpress[`i']
+	global yes: list global(temp) in global(predictors_cat_rp)
+	if $yes == 1 & trim(varexpress[`i'])!= "" {
+		local point = length("$temp") + 1
+		local hyphen = 0
+		while `hyphen'== 0 {
+		    local point = `point' - 1
+		    local hyphen = substr("$temp", `point', 1)=="_"
+		}
+		global var = substr("$temp", 1, `point'-1)
+		global value = substr("$temp", `point'+1, length("$temp") - `point')
+		replace varexpress = "("+ "$var"+"=="+"$value"+")" in `i'
+	}
+	if substr("$temp", 1, 7)=="_s0_rcs" {
+	    replace drop = 1 in `i'
+	}
+}
+drop if drop==1
+drop drop
+save "data/model_a_roy_noshield", replace
+
+
+
+
+	
+	
 log close
 
