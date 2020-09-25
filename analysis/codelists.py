@@ -11,7 +11,7 @@ covid_codelist = codelist(["U071", "U072"], system="icd10")
 
 # Suspected COVID in primary care
 covid_suspected_codes = codelist_from_csv(
-    "local_codelists/exploratory_covid_suspected_codes.csv",
+    "codelists/opensafely-covid-identification-in-primary-care-suspected-covid-suspected-codes.csv",
     system="ctv3",
     column="CTV3ID",
 )
