@@ -11,11 +11,16 @@ analysis/*
 !*.py
 !*.sthlp
 !posteriors.csv
-!foi-2020-07-10.csv
+analysis/model_for_dummy.do
 venv/
 .cache
 *.exe
 output/*
 data/*
+!data/foi-2020-07-10.csv
+!data/ae_counts.csv
+!data/ae_stp_pop.csv
+!data/STP_region_map.xlsx
+!data/stp_ae_attendances.csv
 *.dta 
 .DS_Store
