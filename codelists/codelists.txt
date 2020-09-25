@@ -33,4 +33,4 @@ opensafely/stroke-updated/2020-06-02
 opensafely/surgery-for-peripheral-artery-disease/2020-09-16
 opensafely/temporary-immunosuppression/2020-04-24
 opensafely/venous-thromboembolic-disease/2020-09-14
-
+opensafely/covid-identification-in-primary-care-suspected-covid-suspected-codes/2020-07-16
