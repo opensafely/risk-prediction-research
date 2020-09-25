@@ -4,27 +4,17 @@ from cohortextractor import (
 )
 
 
-##############################################################################
-### TO UPDATE: Still using local codelists:
-
-# pvd_codes (local version used below)
-# fracture_codes (local version used below)
-
-# DVT/PE (completely made up ones below)
-# Learning disability (completely made up ones below)
-# In each case need to:
-# (i) change the link
-# (ii) add the OS codelist to the codelists.txt
-# (iii) run cohortextractor update_codelists in Anaconda prompt
-
-### THEN DELETE THIS SECTION!!!!
-##############################################################################
-
-
 ### Outcomes
 
 # COVID death
 covid_codelist = codelist(["U071", "U072"], system="icd10")
+
+# Suspected COVID in primary care
+covid_suspected_codes = codelist_from_csv(
+    "local_codelists/exploratory_covid_suspected_codes.csv",
+    system="ctv3",
+    column="CTV3ID",
+)
 
 
 ### Demographics
@@ -60,7 +50,7 @@ ethnicity_codes_16 = codelist_from_csv(
 
 ### Clinical measurements
 
-systolic_blood_pressure_codes  = codelist(["2469."], system="ctv3")
+systolic_blood_pressure_codes = codelist(["2469."], system="ctv3")
 diastolic_blood_pressure_codes = codelist(["246A."], system="ctv3")
 creatinine_codes = codelist(["XE2q5"], system="ctv3")
 hba1c_new_codes = codelist(["XaPbt", "Xaeze", "Xaezd"], system="ctv3")
@@ -123,7 +113,7 @@ pad_surg_codes = codelist_from_csv(
     column="CTV3Code",
 )
 amputate_codes = codelist_from_csv(
-    "codelists/opensafely-amputation.csv",
+    "codelists/opensafely-amputation-of-lower-limb.csv",
     system="ctv3",
     column="CTV3Code",
 )
@@ -231,8 +221,8 @@ inflammatory_bowel_disease_codes = codelist_from_csv(
 # Frailty
 fracture_codes = codelist_from_csv(
     "codelists/opensafely-fragility.csv",
-     system="ctv3",
-     column="CTV3Code",
+    system="ctv3",
+    column="CTV3Code",
 )
 
 # Mental illness and learning disability
@@ -243,11 +233,6 @@ smi_codes = codelist_from_csv(
 )
 ld_codes = codelist_from_csv(
     "codelists/opensafely-intellectual-disability-including-downs-syndrome.csv",
-    system="ctv3",
-    column="CTV3ID",
-)
-covid_suspected_codes = codelist_from_csv(
-    "local_codelists/exploratory_covid_suspected_codes.csv",
     system="ctv3",
     column="CTV3ID",
 )
