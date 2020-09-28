@@ -53,14 +53,14 @@ lasso poisson diedcovforpoisson 									///
 			i.af i.dvt_pe i.pad 									///
 			i.stroke i.dementia i.neuro 							///
 			i.asthmacat i.cf i.respiratory							///
-			 i.cancerExhaem i.cancerHaem 							///
-			 i.liver i.dialysis i.transplant i.kidneyfn 			///
-			 i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
-			 i.ld i.smi i.fracture 									///
-			 i.hh_children c.hh_numc c.hh_num2 c.hh_num3			///
-			 c.age2 c.age3 											///
-			 c.agec#i.male	 										///
-			 c.agec#(i.rural i.imd i.ethnicity_8 					///
+			i.cancerExhaem i.cancerHaem 							///
+			i.liver i.dialysis i.transplant i.kidneyfn 				///
+			i.autoimmune i.spleen i.suppression i.hiv i.ibd			///
+			i.ld i.smi i.fracture 									///
+			i.hh_children c.hh_numc c.hh_num2 c.hh_num3				///
+			c.age2 c.age3 											///
+			c.agec#i.male	 										///
+			c.agec#(i.rural i.imd i.ethnicity_8 					///
 				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
 				i.hypertension i.diabcat i.cardiac 					///
 				i.af i.dvt_pe i.pad 								///
@@ -70,7 +70,7 @@ lasso poisson diedcovforpoisson 									///
 				i.liver i.dialysis i.transplant i.kidneyfn 			///
 				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
 				i.ld i.smi i.fracture 								///
-				i.hh_children c.hh_numc c.hh_num2 c.hh_num3)		///
+				i.hh_children c.hh_numc)							///
 			i.male#(i.rural i.imd i.ethnicity_8 					///
 				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
 				i.hypertension i.diabcat i.cardiac 					///
@@ -81,7 +81,7 @@ lasso poisson diedcovforpoisson 									///
 				i.liver i.dialysis i.transplant i.kidneyfn 			///
 				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
 				i.ld i.smi i.fracture 								///
-				i.hh_children c.hh_numc c.hh_num2 c.hh_num3)		///
+				i.hh_children c.hh_numc)							///
 			i.ethnicity_8#(i.rural i.imd 		 					///
 				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
 				i.hypertension i.diabcat i.cardiac 					///
@@ -92,7 +92,7 @@ lasso poisson diedcovforpoisson 									///
 				i.liver i.dialysis i.transplant i.kidneyfn 			///
 				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
 				i.ld i.smi i.fracture 								///
-				i.hh_children c.hh_numc c.hh_num2 c.hh_num3)		///		
+				i.hh_children c.hh_numc)							///		
 			 , offset(offset) rseed(7248) grid(20) folds(3)
 timer off 1
 timer list 1
