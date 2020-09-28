@@ -1,6 +1,6 @@
  program stpm2_ml_hazard_rs
-	version 10.0
-	args todo b lnf g negH g1 g2 g3
+	version 11.0
+	args todo b lnf g H g1 g2 g3
 	tempvar xb dxb
 	mleval `xb' = `b', eq(1)
 	mleval `dxb' = `b', eq(2)
@@ -11,7 +11,7 @@
 		local del_entry = 1
 		tempvar xb0 d_xb0 d33 d13 d23
 		mleval `xb0' = `b', eq(3)
-		local lnst0 +exp(`xb0')
+		local lnst0 +cond(_t0>0,exp(`xb0'),0)
 	}
 
 	local st exp(-exp(`xb'))
@@ -26,8 +26,8 @@
 		mlvecsum `lnf' `d_xb' = `g1', eq(1)
 		mlvecsum `lnf' `d_dxb' = `g2', eq(2)
 		if `del_entry' == 1 {
-			replace `g3' = exp(`xb0')
-			mlvecsum `lnf' `d_xb0' if _t0>0= `g3', eq(3)
+			replace `g3' = cond(_t0>0,exp(`xb0'),0)
+			mlvecsum `lnf' `d_xb0' = `g3', eq(3)
 			matrix `g' = (`d_xb',`d_dxb',`d_xb0')
 		}
 		else {
@@ -41,13 +41,13 @@
 		mlmatsum `lnf' `d12' = - _d*exp(`xb')*_t*$ML_y/(exp(`xb')*`dxb'+_t*$ML_y)^2, eq(1,2)
 		mlmatsum `lnf' `d22' = _d*exp(`xb'*2)/(exp(`xb')*`dxb'+_t*$ML_y)^2, eq(2)
 		if `del_entry' == 1 {
-			mlmatsum `lnf' `d33' if _t0>0 =  -exp(`xb0'), eq(3)
-			mlmatsum `lnf' `d13' if _t0>0 =  0, eq(1,3)
-			mlmatsum `lnf' `d23' if _t0>0 =  0, eq(2,3)
-			matrix `negH' = (`d11',`d12',`d13' \ `d12'',`d22',`d23' \ `d13'', `d23'', `d33')
+			mlmatsum `lnf' `d33'  =  cond(_t0>0,-exp(`xb0'),0), eq(3)
+			mlmatsum `lnf' `d13'  =  0, eq(1,3)
+			mlmatsum `lnf' `d23'  =  0, eq(2,3)
+			matrix `H' = -(`d11',`d12',`d13' \ `d12'',`d22',`d23' \ `d13'', `d23'', `d33')
 		}
 		else {
-			matrix `negH' = (`d11',`d12' \ `d12'',`d22')			
+			matrix `H' = -(`d11',`d12' \ `d12'',`d22')			
 		}
 	}
 end
