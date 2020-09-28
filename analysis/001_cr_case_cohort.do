@@ -154,12 +154,7 @@ forvalues i = 1/2 {
 	    
 		* Scale weights to avoid large weights for some individuals		
 		gen sf_wts2 = sf_wts/25
-
-		* Centre age
-		qui summ age
-		gen agec = (age - r(mean))/r(sd)
-		label var agec "Centred and stanadrdised age"
-		
+	
 		* Create outcome for Poisson (variable selection) model and exposure variable
 		stset dayout, fail(onscoviddeath) enter(dayin) id(patient_id)  
 		gen diedcovforpoisson  = _d
