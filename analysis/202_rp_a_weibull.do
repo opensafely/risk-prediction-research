@@ -37,8 +37,7 @@ gen agec = (age - r(mean))/r(sd)
 
 
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_preshield"
-noi di "$predictors_preshield"
+noi di "$predictors_noshield"
 
 *********************
 *   Weibull Model  *

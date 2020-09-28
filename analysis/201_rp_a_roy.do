@@ -54,7 +54,7 @@ noi di "$predictors_noshield"
 
 timer clear 1
 timer on 1
-stpm2  $predictors_noshield , df(5) scale(hazard)
+stpm2 $predictors_noshield , df(5) scale(hazard)
 estat ic
 timer off 1
 timer list 1
@@ -68,7 +68,7 @@ matrix b = e(b)
 mat list b
 
 local cols = (colsof(b) + 1)/2
-local cols2 = cols+3
+local cols2 = `cols' +3
 mat c = b[1,`cols2'..colsof(b)]
 mat list c
 
@@ -100,6 +100,10 @@ do "analysis/0000_pick_up_coefficients.do"
 get_coefs, coef_matrix(c) eqname("xb0:") cons_no ///
 	dataname("data/model_a_roy_noshield")
 	
+* remove unnecessary coefficients	
+use "data/model_a_roy_noshield", clear
+drop if strpos(term,"_s0_")>0
+save "data/model_a_roy_noshield", replace 
 
 log close
 

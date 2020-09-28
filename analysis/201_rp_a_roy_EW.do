@@ -33,26 +33,33 @@ log using "./output/201_rp_a_roy", text replace
 use "data/cr_casecohort_models.dta", replace
 
 *******************************
+*  TO BE UPDATED/REMOVED *
+*******************************
+* Centre age and then create splines of centred age
+qui summ age
+gen agec = (age - r(mean))/r(sd)
+
+*******************************
 *  Pick up predictor list(s)  *
 *******************************
 
 * Pick up selected variables
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_preshield"
+noi di "$predictors_noshield"
 noi di "$predictors"
 
 * Provide a list of all possible categorical variables 
 global allcatvars = "i.ethnicity_8 i.obesecat i.imd i.smoke_nomiss i.diabcat i.bpcat_nomiss i.asthma i.cancerExhaem i.cancerHaem i.kidneyfn i.region_9"
 
 * Extract a list of categorical variables selected
-global predictors_preshield_nocat: 	///
-	list global(predictors_preshield) - global(allcatvars)
+global predictors_noshield_nocat: 	///
+	list global(predictors_noshield) - global(allcatvars)
 global catvars_selected: 			///
-	list global(predictors_preshield) & global(allcatvars)
+	list global(predictors_noshield) & global(allcatvars)
 
 * Remove the "i." prefixes
-global predictors_preshield_nocat 	= 	///
-	subinstr("$predictors_preshield_nocat", "i.", " ",.)
+global predictors_noshield_nocat 	= 	///
+	subinstr("$predictors_noshield_nocat", "i.", " ",.)
 global catvars_selected 			= 	///
 	subinstr("$catvars_selected", "i.", " ",.)
 
@@ -72,7 +79,7 @@ foreach var of varlist $catvars_selected {
 		drop ord_`var'
 }
 
-global allvarsselect: list global(predictors_preshield_nocat)	///
+global allvarsselect: list global(predictors_noshield_nocat)	///
 						|  global(predictors_cat_rp) 
 
 

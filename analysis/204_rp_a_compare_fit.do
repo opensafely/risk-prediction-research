@@ -53,7 +53,7 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 	
 }
 
-/*  Royston Parmar model  
+/*  Royston Parmar model */
 *** No shielding
 use "data/model_a_roy_noshield", clear
 
@@ -68,7 +68,7 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 	global varexpress`j'_a_roy_nos = varexpress[`k']
 	
 }
-*/
+
 
 /*  Weibull model  */
 *** No shielding
@@ -125,7 +125,7 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 gen pred_a_cox_nos = 1 -  (${bs_a_cox_nos})^exp(xb)
 drop xb
 
-/* Royston-Parmar 
+/* Royston-Parmar */
 
 gen xb = 0
 forvalues j = 1 (1) $nt_a_roy_nos {
@@ -133,7 +133,7 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 }
 gen pred_a_roy_nos = 1 -  (${bs_a_roy_nos})^exp(xb)
 drop xb
-*/
+
 
 /*  Weibull */
 gen xb = 0
