@@ -27,52 +27,68 @@
 capture log close
 log using "./output/rp_a_compare_fit", text replace
 
+
+* Ensure cc_calib is available
+do "analysis/ado/cc_calib.ado"
+
+
 ******************************************************
 *   Pick up coefficients needed to make predictions  *
 ******************************************************
 
 /*  Cox model  */
-
 *** No shielding
 use "data/model_a_coxPH_noshield", clear
 
+* Pick up baseline survival
+global bs_a_cox_nos = coef[1]
+
+* Pick up HRs
 qui count
-global nt_a_cox_nos = r(N)
+global nt_a_cox_nos = r(N) - 1
 forvalues j = 1 (1) $nt_a_cox_nos {
-	global coef`j'_a_cox_nos = coef[`j']
-	global varexpress`j'_a_cox_nos = varexpress[`j']
+	local k = `j' + 1
+	global coef`j'_a_cox_nos = coef[`k']
+	global varexpress`j'_a_cox_nos = varexpress[`k']
 	
 }
 
-
-/*  Royston Parmar model  */
-
+/*  Royston Parmar model  
 *** No shielding
 use "data/model_a_roy_noshield", clear
 
+* Pick up baseline survival
+global bs_a_roy_nos = coef[1]
+
 qui count
-global nt_a_roy_nos = r(N)
+global nt_a_roy_nos = r(N) - 1
 forvalues j = 1 (1) $nt_a_roy_nos {
-	global coef`j'_a_roy_nos = coef[`j']
-	global varexpress`j'_a_roy_nos = varexpress[`j']
+	local k = `j' + 1
+	global coef`j'_a_roy_nos = coef[`k']
+	global varexpress`j'_a_roy_nos = varexpress[`k']
 	
 }
-
+*/
 
 /*  Weibull model  */
-
 *** No shielding
 use "data/model_a_weibull_noshield", clear
 
+* Pick up baseline survival
+global bs_a_weibull_nos = coef[1]
+
+* Pick up HRs
 qui count
-global nt_a_weibull_nos = r(N)
+global nt_a_weibull_nos = r(N) - 1
 forvalues j = 1 (1) $nt_a_weibull_nos {
-	global coef`j'_a_weibull_nos = coef[`j']
-	global varexpress`j'_a_weibull_nos = varexpress[`j']
+	local k = `j' + 1
+	global coef`j'_a_weibull_nos = coef[`k']
+	global varexpress`j'_a_weibull_nos = varexpress[`k']
 	
 }
 
 
+/*
 /*  Generalised gamma model  */
 
 *** No shielding
@@ -85,29 +101,47 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 	global varexpress`j'_a_ggamma_nos = varexpress[`j']
 	
 }
+*/
+
+*****************************
+*  Open validation datasets *
+*****************************
+forvalues i = 1/3 {
+use "data/cr_cohort_vp`i'.dta", clear
 
 *******************************
-*  Open validation dataset 1  *
+*  TO BE UPDATED/REMOVED *
 *******************************
-
-use "data/cr_cohort_vp1.dta", clear
-gen constant = 1
-
-* Predict under conditions of no shielding (Validation period 1 was pre-shield)
-gen shield   = 0
-
+* Centre age and then create splines of centred age
+qui summ age
+gen agec = (age - r(mean))/r(sd)
 
 
 /*   Cox model   */
+gen xb = 0
+forvalues j = 1 (1) $nt_a_cox_nos {
+	replace xb = xb + ${coef`j'_a_cox_nos}*${varexpress`j'_a_cox_nos}
+}
+gen pred_a_cox_nos = 1 -  (${bs_a_cox_nos})^exp(xb)
+drop xb
 
+/* Royston-Parmar 
 
+gen xb = 0
+forvalues j = 1 (1) $nt_a_roy_nos {
+	replace xb = xb + ${coef`j'_a_roy_nos}*${varexpress`j'_a_roy_nos}
+}
+gen pred_a_roy_nos = 1 -  (${bs_a_roy_nos})^exp(xb)
+drop xb
+*/
 
-
-
-
-
-
-
+/*  Weibull */
+gen xb = 0
+forvalues j = 1 (1) $nt_a_weibull_nos {
+	replace xb = xb + ${coef`j'_a_weibull_nos}*${varexpress`j'_a_weibull_nos}
+}
+gen pred_a_weibull_nos = 1 -  (${bs_a_weibull_nos})^exp(xb)
+drop xb
  
 **************************
 *   Validation measures  *
@@ -115,11 +149,11 @@ gen shield   = 0
 
 
 tempname measures
-postfile `measures' str5(approach) str30(prediction)						///
+postfile `measures' str5(approach) str30(prediction) str3(period)			///
 	brier brier_p c_stat c_stat_p hl hl_p mean_obs mean_pred 				///
 	calib_inter calib_inter_se calib_inter_cl calib_inter_cu calib_inter_p 	///
 	calib_slope calib_slope_se calib_slope_cl calib_slope_cu calib_slope_p 	///
-	using "data/approach_a_1", replace
+	using "data/approach_a_`i'", replace
 
 	foreach var of varlist pred* {
 		
@@ -158,7 +192,7 @@ postfile `measures' str5(approach) str30(prediction)						///
 		
 		
 		* Save measures
-		post `measures' ("B") ("`var'") (`brier') (`brier_p') 		///
+		post `measures' ("A") ("`var'") ("vp`i'") (`brier') (`brier_p') 		///
 						(`cstat') (`cstat_p') 						///
 						(`hl') (`hl_p') 							///
 						(`mean_obs') (`mean_pred') 					///
@@ -171,7 +205,15 @@ postfile `measures' str5(approach) str30(prediction)						///
 
 	}
 postclose `measures'
+}
 
+* Clean up
+use "data/approach_a_1", clear
+forvalues i = 2(1)3 { 
+append using "data/approach_a_`i'" 
+erase "data/approach_a_`i'.dta" 
+}
+save "data/approach_a_validation.dta", replace 
 
 
 

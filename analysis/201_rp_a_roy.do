@@ -33,13 +33,19 @@ log using "./output/201_rp_a_roy", text replace
 use "data/cr_casecohort_models.dta", replace
 
 *******************************
+*  TO BE UPDATED/REMOVED *
+*******************************
+* Centre age and then create splines of centred age
+qui summ age
+gen agec = (age - r(mean))/r(sd)
+
+
+*******************************
 *  Pick up predictor list(s)  *
 *******************************
 
-
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_preshield"
-noi di "$predictors"
+noi di "$predictors_noshield"
 
 *********************
 *   Royston Model  *
@@ -48,7 +54,7 @@ noi di "$predictors"
 
 timer clear 1
 timer on 1
-stpm2  $predictors_preshield , df(5) scale(hazard)
+stpm2  $predictors_noshield , df(5) scale(hazard)
 estat ic
 timer off 1
 timer list 1

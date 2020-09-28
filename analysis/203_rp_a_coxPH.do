@@ -24,13 +24,19 @@ log using "./output/203_rp_a_coxPH", text replace
 use "data/cr_casecohort_models.dta", replace
 
 *******************************
+*  TO BE UPDATED/REMOVED *
+*******************************
+* Centre age and then create splines of centred age
+qui summ age
+gen agec = (age - r(mean))/r(sd)
+
+*******************************
 *  Pick up predictor list(s)  *
 *******************************
 
 
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_preshield"
-noi di "$predictors"
+noi di "$predictors_noshield"
 
 
 *******************
@@ -39,7 +45,7 @@ noi di "$predictors"
 
 timer clear 1
 timer on 1
-stcox $predictors_preshield , vce(robust)
+stcox $predictors_noshield , vce(robust)
 estat ic
 timer off 1
 timer list 1

@@ -35,7 +35,7 @@ noi di "$predictors"
 
 global predictors_noshield "agec age2 age3 c.age1#i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression"
 
-noi di "$predictors"
+noi di "$predictors_noshield"
 
 
 
