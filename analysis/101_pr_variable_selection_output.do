@@ -27,17 +27,9 @@
 ****************************************
 
 
-global predictors "agec age2 age3 i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression i.shield i.stroke#i.shield"
+global selected_vars "agec age2 age3 c.age1#i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression"
 
-
-noi di "$predictors"
-
-
-global predictors_noshield "agec age2 age3 c.age1#i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression"
-
-noi di "$predictors_noshield"
-
-
+noi di "$seleceted_vars"
 
 
 ************************
@@ -47,6 +39,4 @@ noi di "$predictors_noshield"
 
 global parsimonious "agec age2 age3 i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression i.shield i.stroke#i.shield"
 
-
-
-
+noi di "$parsimonious"

@@ -36,7 +36,7 @@ gen agec = (age - r(mean))/r(sd)
 
 
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_noshield"
+noi di "$selected_vars"
 
 
 *******************
@@ -45,7 +45,7 @@ noi di "$predictors_noshield"
 
 timer clear 1
 timer on 1
-stcox $predictors_noshield , vce(robust)
+stcox $selected_vars , vce(robust)
 estat ic
 timer off 1
 timer list 1

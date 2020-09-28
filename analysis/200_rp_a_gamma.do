@@ -29,8 +29,7 @@ use "data/cr_casecohort_models.dta", replace
 
 
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_preshield"
-noi di "$predictors"
+noi di "$selected_vars"
 
 
 ***********************
@@ -39,7 +38,7 @@ noi di "$predictors"
 
 timer clear 1
 timer on 1
-streg $predictors_preshield , dist(ggamma) vce(robust) difficult
+streg $selected_vars , dist(ggamma) vce(robust) difficult
 estat ic
 timer off 1
 timer list 1

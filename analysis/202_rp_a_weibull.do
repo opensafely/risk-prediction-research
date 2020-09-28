@@ -37,7 +37,7 @@ gen agec = (age - r(mean))/r(sd)
 
 
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_noshield"
+noi di "$selected_vars"
 
 *********************
 *   Weibull Model  *
@@ -45,7 +45,7 @@ noi di "$predictors_noshield"
 
 timer clear 1
 timer on 1
-streg $predictors_noshield , dist(weibull) vce(robust)
+streg $selected_vars , dist(weibull) vce(robust)
 estat ic
 timer off 1
 timer list 1

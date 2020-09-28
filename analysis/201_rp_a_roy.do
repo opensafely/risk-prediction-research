@@ -45,7 +45,7 @@ gen agec = (age - r(mean))/r(sd)
 *******************************
 
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_noshield"
+noi di "$seleceted_vars"
 
 *********************
 *   Royston Model  *
@@ -54,7 +54,7 @@ noi di "$predictors_noshield"
 
 timer clear 1
 timer on 1
-stpm2 $predictors_noshield , df(5) scale(hazard)
+stpm2 $selected_vars, df(5) scale(hazard)
 estat ic
 timer off 1
 timer list 1
