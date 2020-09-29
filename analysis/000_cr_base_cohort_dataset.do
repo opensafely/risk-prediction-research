@@ -71,11 +71,6 @@ noi di "DROPPING AGE<18:"
 drop if age<18
 assert inrange(age, 18, 105)
 
-* Age: Exclude those with implausible ages
-assert age<.
-noi di "DROPPING AGE<105:" 
-drop if age>105
-
 * Sex: Exclude categories other than M and F
 assert inlist(sex, "M", "F", "I", "U")
 noi di "DROPPING GENDER NOT M/F:" 
@@ -405,13 +400,6 @@ label values agegroup agegroup
 assert age<.
 assert agegroup<.
 
-
-* Centre age and then create splines of centred age
-qui summ age
-gen agec = (age - r(mean))/r(sd)
-mkspline age = agec, cubic nknots(4)
-order age1 age2 age3, after(agec)
-drop agec
 
 
 
@@ -781,13 +769,6 @@ drop household_size
 rename household_id hh_id
 order hh_id, before(hh_num)
 
-* Centre number of people in household to create splines
-qui summ hh_num
-gen hh_numc = (hh_num - r(mean))/r(sd)
-mkspline hh_num = hh_numc, cubic nknots(4)
-order hh_num1 hh_num2 hh_num3, after(hh_numc)
-drop hh_numc
-
 * Binary indicator for children in household
 gen hh_children = (hh_num_child>0)
 order hh_children, after(hh_num_child)
@@ -800,6 +781,25 @@ order hh_children, after(hh_num_child)
 
 noi di "DROPPING HOUSEHOLDS > 10 people"
 drop if hh_num >=10
+
+
+
+
+********************************************************
+*  Continuous variables - standardize in final sample  *
+********************************************************
+		
+* Centre age and then create splines of centred age
+qui summ age
+gen agec = (age - r(mean))/r(sd)
+mkspline age = agec, cubic nknots(4)
+order age1 age2 age3, after(agec)
+
+* Centre number of people in household to create splines
+qui summ hh_num
+gen hh_numc = (hh_num - r(mean))/r(sd)
+mkspline hh_num = hh_numc, cubic nknots(4)
+order hh_num1 hh_num2 hh_num3, after(hh_numc)
 
 
 
@@ -817,6 +817,7 @@ local t4 "(11/05/2020)"
 * Demographics
 label var patient_id			"Patient ID"
 label var age 					"Age (years)"
+label var agec 					"Age (standardised)"
 label var age1 					"Age spline 1"
 label var age2 					"Age spline 2"
 label var age3 					"Age spline 3"
@@ -833,10 +834,11 @@ label var region_9 				"Geographical region (9 England regions)"
 label var region_7 				"Geographical region (7 England regions)"
 label var rural					"Rural/urban binary classification"
 label var hh_id 				"Household ID"
-label var hh_num 				"Number of adults in household, spline 1"
-label var hh_num1 				"Number of adults in household, spline 2"
-label var hh_num2 				"Number of adults in household, spline 3"
-label var hh_num3 				"Number of adults in household"
+label var hh_num 				"Number of adults in household"
+label var hh_numc 				"Number of adults in household, standardized"
+label var hh_num1 				"Number of adults in household, spline 1"
+label var hh_num2 				"Number of adults in household, spline 2"
+label var hh_num3 				"Number of adults in household, spline 3"
 label var hh_num_child			"Number of children (<=12)"
 label var hh_children			"Presence of children (<=12)"
 
@@ -912,7 +914,7 @@ label var stime					"Survival time (days from 1 March; end 8 June) for COVID-19 
 
 sort patient_id
 order 	patient_id stp* region_9 region_7 imd rural hh*		 		///
-		age age1 age2 age3 agegroup male							///
+		agec age age1 age2 age3 agegroup male						///
 		bmi* bmicat* obesecat* smoke* smoke_nomiss*					///
 		ethnicity*													/// 
 		respiratory* asthma* cf* cardiac* diabetes* hba1ccat* 		///
@@ -928,6 +930,8 @@ order 	patient_id stp* region_9 region_7 imd rural hh*		 		///
 
 
 
+
+		
 
 ***************
 *  Save data  *

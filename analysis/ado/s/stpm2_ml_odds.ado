@@ -1,6 +1,6 @@
 program stpm2_ml_odds
-	version 10.0
-	args todo b lnf g negH g1 g2 g3	
+	version 11.0
+	args todo b lnf g H g1 g2 g3	
 	tempvar xb dxb
 	mleval `xb' = `b', eq(1)
 	mleval `dxb' = `b', eq(2)
@@ -11,7 +11,7 @@ program stpm2_ml_odds
 		local del_entry = 1
 		tempvar xb0 d_xb0 d33 d13 d23
 		mleval `xb0' = `b', eq(3)
-		local lnst0 +ln(1 + exp(`xb0'))
+		local lnst0 +cond(_t0>0,ln(1 + exp(`xb0')),0)
 	}
 
 	local st ((1 + exp(`xb'))^(-1))
@@ -26,7 +26,7 @@ program stpm2_ml_odds
 		mlvecsum `lnf' `d_xb' = `g1' , eq(1)
 		mlvecsum `lnf' `d_dxb' = `g2', eq(2)
 		if `del_entry' == 1 {
-			replace `g3' = exp(`xb0')/(1 + exp(`xb0'))
+			replace `g3' = cond(_t0>0,exp(`xb0')/(1 + exp(`xb0')),0)
 			mlvecsum `lnf' `d_xb0' = `g3', eq(3)
 			matrix `g' = (`d_xb',`d_dxb',`d_xb0')
 		}
@@ -41,13 +41,13 @@ program stpm2_ml_odds
 		mlmatsum `lnf' `d12' = 0, eq(1,2)
 		mlmatsum `lnf' `d22' = _d*`dxb'^(-2), eq(2)
 		if `del_entry' == 1 {
-			mlmatsum `lnf' `d33' =  -exp(`xb0')/(1 + exp(`xb0'))^2, eq(3)
+			mlmatsum `lnf' `d33' =  cond(_t0>0,-exp(`xb0')/(1 + exp(`xb0'))^2,0), eq(3)
 			mlmatsum `lnf' `d13' =  0, eq(1,3)
 			mlmatsum `lnf' `d23' =  0, eq(2,3)
-			matrix `negH' = (`d11',`d12',`d13' \ `d12'',`d22',`d23' \ `d13'', `d23'', `d33')
+			matrix `H' = -(`d11',`d12',`d13' \ `d12'',`d22',`d23' \ `d13'', `d23'', `d33')
 		}
 		else {
-			matrix `negH' = (`d11',`d12' \ `d12'',`d22')			
+			matrix `H' = -(`d11',`d12' \ `d12'',`d22')			
 		}
 	}
 end
