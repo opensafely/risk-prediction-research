@@ -24,13 +24,6 @@ log using "./output/203_rp_a_coxPH", text replace
 use "data/cr_casecohort_models.dta", replace
 
 *******************************
-*  TO BE UPDATED/REMOVED *
-*******************************
-* Centre age and then create splines of centred age
-qui summ age
-gen agec = (age - r(mean))/r(sd)
-
-*******************************
 *  Pick up predictor list(s)  *
 *******************************
 

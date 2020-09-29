@@ -30,15 +30,14 @@
 capture log close
 log using "./output/201_rp_a_roy", text replace
 
+**************************************
+*  Ensure correct files for RP model *
+**************************************
+
+do "analysis/ado/s/stpm2_matacode.mata"
+
+
 use "data/cr_casecohort_models.dta", replace
-
-*******************************
-*  TO BE UPDATED/REMOVED *
-*******************************
-* Centre age and then create splines of centred age
-qui summ age
-gen agec = (age - r(mean))/r(sd)
-
 
 *******************************
 *  Pick up predictor list(s)  *
@@ -54,7 +53,7 @@ noi di "$seleceted_vars"
 
 timer clear 1
 timer on 1
-stpm2 $selected_vars, df(5) scale(hazard)
+stpm2 $selected_vars, df(5) scale(hazard) vce(robust)
 estat ic
 timer off 1
 timer list 1
@@ -83,14 +82,6 @@ matrix c = [$base_surv, c]
 local names: colfullnames c
 local names: subinstr local names "c1" "xb0:base_surv"
 mat colnames c = `names'
-
-
-* Don't think needed for rp
-/* Remove unneeded parameters from matrix
-local np = colsof(b) - 1
-matrix b = b[1,1..`np']
-matrix list b
-*/
 
 *  Save coefficients to Stata dataset  
 do "analysis/0000_pick_up_coefficients.do"

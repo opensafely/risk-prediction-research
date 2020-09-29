@@ -205,9 +205,9 @@ else  {
 		}
 		else {
 			* If non-baseline term then save coefficient and expression
-	
+				
 			* Save the value of coefficient
-			if "`term_`j''"!="base_surv" {
+			if "`term_`j''"!="base_surv" & "`term_`j''"!="sigma" & "`term_`j''"!="kappa" {
 				local coef_`j' = _b["`term_`j''"]
 			
 				* Identify the variable expression
@@ -228,6 +228,17 @@ else  {
 			else {
 				local coef_`j' = `coef_matrix'[1,1]
 				local varexpress_`j' = ""
+					* Sigma/Kappa for generalised gamma model 
+			if "`term_`j''" == "sigma" {
+				local coef_`j' = `coef_matrix'[1,1]
+				local varexpress_`j' = ""
+				}
+			if "`term_`j''" == "kappa" {
+				local coef_`j' = `coef_matrix'[1,2]
+				local varexpress_`j' = ""
+				}	
+				
+				
 			}
 			local ++i
 			local ++j
