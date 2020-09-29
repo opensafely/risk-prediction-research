@@ -1,47 +1,80 @@
 ********************************************************************************
 *
-*	Do-file:			100_pr_variable_selection.do
+*	Do-file:		002_cr_validation_datasets.do
 *
-*	Written by:			Fizz & John
+*	Programmed by:	Fizz & John
 *
-*	Data used:			data/cr_casecohort_var_select.dta
+*	Data used:		data/cr_base_cohort.dta
 *
-*	Data created:		None
+*	Data created:	
+*					output/cr_cohort_vp1.dta (validation period 1)
+*					output/cr_cohort_vp2.dta (validation period 2) 
+*					output/cr_cohort_vp3.dta (validation period 3) 
 *
-*	Other output:		Log file:  100_pr_variable_selection.log
-*						Selected variables (Stata dataset): 
-*							data\cr_selected_model_coefficients.dta
-*
-********************************************************************************
-*
-*	Purpose:			This do-file runs a simple lasso model on a sample of 
-*						data (all cases, random sample of controls) to variable
-*						select from all possible pairwise interactions.
-*
-*	Note:				This do-file uses Barlow weights (incorporated as an
-*						offset in the Poisson model) to account for the case-
-*						cohort design.  
+*	Other output:	Log file:  002_cr_validation_datasets.log
 *
 ********************************************************************************
-
+*
+*	Purpose:		This do-file creates three cohort datasets to perform
+*					model validation on, one for each validation period.
+*
+*	NOTES: 			1) Stata do-file called internally:
+*							analysis/0000_cr_define_covariates.do
+*  
+********************************************************************************* 
 
 
 
 * Open a log file
-capture log close
-log using "output/100_pr_variable_selection", text replace
+cap log close
+log using "output/temp_variable_selection", replace t
+
+
+* Load do-file which extracts covariates 
+do "analysis/0000_cr_define_covariates.do"
 
 
 
+	
 
+**********************************************
+*  Create random sample from cohort dataset  *
+**********************************************
 
-************************
-*  Variable Selection  *
-************************
+	
+	
+/* Open base cohort   */ 
+	
+use "data/cr_base_cohort.dta", replace
 
+* Take random sample
+noi count
+noi tab onscoviddeath
+set seed 724891
+sample 0.02
+noi count
+noi tab onscoviddeath
+	
+	
+/* Complete case for ethnicity   */ 
 
-*  Open data to be used for variable selection 
-use "data/cr_casecohort_var_select.dta", clear
+drop ethnicity_5 ethnicity_16
+drop if ethnicity_8>=.
+	
+
+/*  Extract relevant covariates  */
+
+* Define covariates as of the start date of the validation period
+local start = d(01/03/2020)
+define_covs, dateno(`start')
+
+	
+* Create outcome for Poisson (variable selection) model and exposure variable
+stset stime, fail(onscoviddeath) id(patient_id)  
+gen diedcovforpoisson  = _d
+gen exposureforpoisson = _t-_t0
+gen offset = log(exposureforpoisson) 
+
 
 timer clear 1
 timer on 1
@@ -103,7 +136,7 @@ noi di "`preShieldSelectedVars'"
 * Save coefficients of post-lasso 
 tempname coefs
 postfile `coefs' str30(variable) coef using 	///
-	"data\cr_selected_model_coefficients.dta", replace
+	"data\cr_selected_model_coefficients_2.dta", replace
 
 local i = 1
 
@@ -124,3 +157,8 @@ postclose `coefs'
 * Close the log file
 log close
 
+
+		
+	
+	
+	
