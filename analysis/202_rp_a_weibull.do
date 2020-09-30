@@ -51,12 +51,15 @@ matrix b = e(b)
 
 *  Calculate baseline survival 
 local p = exp(_b[/:ln_p])
-global base_surv = exp(-1*(28^(`p'))*exp(_b[_cons]))
+global base_surv28 = exp(-1*(28^(`p'))*exp(_b[_cons]))
+global base_surv100 = exp(-1*(100^(`p'))*exp(_b[_cons]))
+
 
 * Add baseline survival to matrix (and add a matrix column name)
-matrix b = [$base_surv, b]
+matrix b = [$base_surv28, $base_surv100, b]
 local names: colfullnames b
-local names: subinstr local names "c1" "_t:base_surv"
+local names: subinstr local names "c1" "_t:base_surv28"
+local names: subinstr local names "c2" "_t:base_surv100"
 mat colnames b = `names'
 
 * Remove unneeded parameters from matrix
@@ -69,7 +72,7 @@ do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction
 
-get_coefs, coef_matrix(b) eqname("_t") cons_no ///
+get_coefs, coef_matrix(b) eqname("_t") ///
 	dataname("data/model_a_weibull_noshield")
 
 

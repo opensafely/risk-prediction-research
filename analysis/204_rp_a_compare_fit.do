@@ -39,7 +39,7 @@ do "analysis/ado/cc_calib.ado"
 /*  Cox model  */
 *** No shielding
 use "data/model_a_coxPH_noshield", clear
-
+drop if term == "base_surv100" // remove base_surv100
 * Pick up baseline survival
 global bs_a_cox_nos = coef[1]
 
@@ -56,6 +56,7 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 /*  Royston Parmar model */
 *** No shielding
 use "data/model_a_roy_noshield", clear
+drop if term == "base_surv100" // remove base_surv100
 
 * Pick up baseline survival
 global bs_a_roy_nos = coef[1]
@@ -73,6 +74,7 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 /*  Weibull model  */
 *** No shielding
 use "data/model_a_weibull_noshield", clear
+drop if term == "base_surv100" // remove base_surv100
 
 * Pick up baseline survival
 global bs_a_weibull_nos = coef[1]
@@ -116,7 +118,7 @@ use "data/cr_cohort_vp`i'.dta", clear
 /*   Cox model   */
 gen xb = 0
 forvalues j = 1 (1) $nt_a_cox_nos {
-	replace xb = xb + ${coef`j'_a_cox_nos}*${varexpress`j'_a_cox_nos}
+	replace xb = xb + ${coef`j'_a_cox_nos}*${varexpress`j'_a_cox_nos}	
 }
 gen pred_a_cox_nos = 1 -  (${bs_a_cox_nos})^exp(xb)
 drop xb
@@ -125,7 +127,15 @@ drop xb
 
 gen xb = 0
 forvalues j = 1 (1) $nt_a_roy_nos {
+* If coefficient is NOT the constant term
+if `j' != $nt_a_roy_nos {
 	replace xb = xb + ${coef`j'_a_roy_nos}*${varexpress`j'_a_roy_nos}
+	}
+* Add on the constant term	
+if `j' == $nt_a_roy_nos {
+    replace xb = xb + ${coef`j'_a_roy_nos}
+}	
+
 }
 gen pred_a_roy_nos = 1 -  (${bs_a_roy_nos})^exp(xb)
 drop xb
@@ -134,7 +144,15 @@ drop xb
 /*  Weibull */
 gen xb = 0
 forvalues j = 1 (1) $nt_a_weibull_nos {
+
+* If coefficient is NOT the constant term
+if `j' != $nt_a_weibull_nos {
 	replace xb = xb + ${coef`j'_a_weibull_nos}*${varexpress`j'_a_weibull_nos}
+	}
+* Add on the constant term	
+if `j' == $nt_a_weibull_nos {
+    replace xb = xb + ${coef`j'_a_weibull_nos}
+}	
 }
 gen pred_a_weibull_nos = 1 -  (${bs_a_weibull_nos})^exp(xb)
 drop xb
@@ -143,10 +161,18 @@ drop xb
 /* Gamma */ 
 gen xb = 0
 forvalues j = 1 (1) $nt_a_ggamma_nos {
+
+* If coefficient is NOT the constant term
+if `j' != $nt_a_ggamma_nos {
 	replace xb = xb + ${coef`j'_a_ggamma_nos}*${varexpress`j'_a_ggamma_nos}
+	}
+* Add on the constant term	
+if `j' == $nt_a_ggamma_nos {
+    replace xb = xb + ${coef`j'_a_ggamma_nos}
+}	
 }
 gen sign = cond($kappa < 0,-1,1) 
-gen gamma = abs($kappa ^(-2))
+gen gamma = abs($kappa )^(-2)
 gen z = sign*(ln(28) - xb)/$sigma
 
 if $kappa == 0 {
@@ -155,7 +181,7 @@ global pred_a_gamma_nos = 1 - normal(z)
 }
 else {
 * s(t) = pred if k < 1
-gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z)/$sigma)
+gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
 * Replace s(t) = 1-pred if k > 1 
 replace pred_a_gamma_nos = cond(sign == 1 , 1 - pred_a_gamma_nos, pred_a_gamma_nos)
 }

@@ -52,20 +52,24 @@ matrix b = e(b)
 
 *  Calculate baseline survival 
 predict basesurv, basesurv
-summ basesurv if _t <= 28 // update to 28 days
-global base_surv = r(min) // baseline survival decreases over time
+summ basesurv if _t <= 28 
+global base_surv28 = r(min) // baseline survival decreases over time
+
+summ basesurv if _t <= 100 
+global base_surv100 = r(min) 
 
 * Add baseline survival to matrix (and add a matrix column name)
-matrix b = [$base_surv, b]
+matrix b = [$base_surv28 , $base_surv100, b]
 local names: colfullnames b
-local names: subinstr local names "c1" "base_surv"
+local names: subinstr local names "c1" "base_surv28"
+local names: subinstr local names "c2" "base_surv100"
 mat colnames b = `names'
 
 *  Save coefficients to Stata dataset  
 do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction
-get_coefs, coef_matrix(b) eqname("") cons_no ///
+get_coefs, coef_matrix(b) eqname("")  ///
 	dataname("data/model_a_coxPH_noshield")
 
 
