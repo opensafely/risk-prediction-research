@@ -6,7 +6,8 @@
 *
 *	Data used:			data/foi-2020-07-10.csv
 *
-*	Data created:		data/foi_coefs.dta  (force of infection over time)
+*	Data created:		data/foi_rates.dta  (force of infection over time)
+*						data/foi_coefs.dta  (coefficients modelling FOI over time)
 *
 *	Other output:		Log file:  003_cr_dynamic_modelling_output.log
 *
@@ -102,9 +103,22 @@ label var region_7 "Region of England (7 regions)"
 rename foi_mean foi
 label var foi "Force of infection (mean of posterior; estimated)"
 
-
 keep date agegroupfoi region_7 foi
 order date agegroupfoi region_7 foi
+
+
+
+/*  Save data for descriptive plots  */
+
+format date %td
+label var date "Date"
+
+* Label and save dataset
+label data "Estimated force of infection over time"
+save "data/foi_rates", replace
+
+
+
 
 
 
