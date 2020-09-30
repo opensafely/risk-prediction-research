@@ -268,15 +268,25 @@ drop row
 
 
 
-***********************************************
-*  Save dataset: model fitting landmark data  *
-***********************************************
+*******************
+*  Save dataset  *
+*******************
+
+
+* Declare as survival data
+sort time patient_id dayin
+gen newid = _n
+label var newid "Row ID"
+stset dayout [pweight=sf_wts], fail(onscoviddeath) enter(dayin) id(newid)  
 
 order time patient_id onscoviddeath subcohort sf_wts dayin dayout
 sort time patient_id
 
 label data "28-day landmark substudies (complete case ethnicity) for model fitting"
+note: Stset treats rows as if from different people; SEs will be incorrect
 save "data/cr_landmark.dta", replace
+
+
 
 
 * Close log file
