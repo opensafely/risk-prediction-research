@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_a_100_day_performance.do
+*	Do-file:		rp_a_validation_full_period.do
 *
 *	Programmed by:	Fizz & John
 *
@@ -25,7 +25,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_100_day_performance", text replace
+log using "./output/rp_a_validation_full_period", text replace
 
 
 * Ensure cc_calib is available
@@ -39,7 +39,7 @@ do "analysis/0000_cr_define_covariates.do"
 
 /*  Cox model  */
 *** No shielding
-use "data/model_a_coxPH_noshield", clear
+use "data/model_a_coxPH_fullperiod", clear
 
 * Pick up baseline survival
 global bs_a_cox_nos = coef[1]
@@ -56,7 +56,7 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 
 /*  Royston Parmar model */
 *** No shielding
-use "data/model_a_roy_noshield", clear
+use "data/model_a_roy_fullperiod", clear
 
 * Pick up baseline survival
 global bs_a_roy_nos = coef[1]
@@ -73,7 +73,7 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 
 /*  Weibull model  */
 *** No shielding
-use "data/model_a_weibull_noshield", clear
+use "data/model_a_weibull_fullperiod", clear
 
 * Pick up baseline survival
 global bs_a_weibull_nos = coef[1]
@@ -139,12 +139,6 @@ drop if died_date_onsother < `vp_start'
 * Define covariates as of the start date of the validation period
 define_covs, dateno(`vp_start')
 
-	
-/*  Obtain observed 100-day mortality  */
-	
-gen onscoviddeath100 = (days_until_coviddeath <=100)
-label var onscoviddeath100 "Observed 100-day COVID-19 death, full period"
-
 
 /*   Cox model   */
 gen xb = 0
@@ -180,7 +174,7 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 }
 gen sign = cond($kappa < 0,-1,1) 
 gen gamma = abs($kappa ^(-2))
-gen z = sign*(ln(28) - xb)/$sigma
+gen z = sign*(ln(100) - xb)/$sigma
 
 if $kappa == 0 {
 global pred_a_gamma_nos = 1 - normal(z)
@@ -211,7 +205,7 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 	foreach var of varlist pred* {
 		
 		* Overall performance: Brier score
-		noi brier onscoviddeath100 `var', group(10)
+		noi brier onscoviddeath `var', group(10)
 		local brier 	= r(brier) 
 		local brier_p 	= r(p) 
 
@@ -220,7 +214,7 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 		local cstat_p 	= r(p_roc)
 		 
 		* Calibration
-		noi cc_calib onscoviddeath100 `var', data(internal) 
+		noi cc_calib onscoviddeath `var', data(internal) 
 
 		* Hosmer-Lemeshow
 		local hl 		= r(chi)  

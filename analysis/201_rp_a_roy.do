@@ -46,9 +46,9 @@ use "data/cr_casecohort_models.dta", replace
 do "analysis/101_pr_variable_selection_output.do" 
 noi di "$seleceted_vars"
 
-*********************
+********************
 *   Royston Model  *
-*********************
+********************
 * df(5) -> 4 knots at centile positions 20 40 60 80
 
 timer clear 1
@@ -72,10 +72,12 @@ mat c = b[1,`cols2'..colsof(b)]
 mat list c
 
 *  Calculate baseline survival 
+* 28 day
 gen time = 28
 predict s0, survival timevar(time) zeros 
 summ s0 
-global base_surv = `r(min)'
+global base_surv = `r(min)' 
+drop time s0
 
 * Add baseline survival to matrix (and add a matrix column name)
 matrix c = [$base_surv, c]
@@ -86,7 +88,7 @@ mat colnames c = `names'
 *  Save coefficients to Stata dataset  
 do "analysis/0000_pick_up_coefficients.do"
 
-* Save coeficients needed for prediction
+* Save coeficients needed for prediction models
 
 get_coefs, coef_matrix(c) eqname("xb0:") cons_no ///
 	dataname("data/model_a_roy_noshield")

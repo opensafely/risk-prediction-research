@@ -75,8 +75,6 @@ get_coefs, coef_matrix(b) eqname("_t:") cons_no ///
 	dataname("data/model_a_ggamma_noshield")
 
 
-
-
 log close
 
 
