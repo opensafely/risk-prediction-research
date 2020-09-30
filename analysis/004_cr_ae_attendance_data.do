@@ -6,7 +6,8 @@
 *
 *	Data used:			data/stp_ae_attendances.csv
 *
-*	Data created:		data/ae_coefs (A&E attendances over time)
+*	Data created:		data/ae_rates.dta (smoothed rates over time)
+*						data/ae_coefs.dta (current rate and coefficients)
 *
 *	Other output:		Log file:  004_cr_ae_attendance_data.log
 *
@@ -158,8 +159,6 @@ erase "tempdate.dta"
 
 
 
-
-
 /*  Smooth AE attendance counts (mean over last 7 days) */
 
 forvalues t = 0 (1) 6 {
@@ -172,9 +171,26 @@ drop aecount*
 
 * Smoothed (over 7 days) rate of A&E attendances 
 gen aerate = 100000*aemean/population
-label var aerate "Smoothed rate of A&E attendances over last 7 days"
+label var aerate "Smoothed rate of A&E attendances over last 7 days (per 100,000)"
 drop aemean
 
+	
+	
+
+/*  Save data for descriptive plots  */
+
+format date %td
+label var population "TPP population used for case count" 
+label var date "Date"
+
+
+* Label and save dataset
+label data "A&E COVID-19 attendances, smoothed rates over time"
+save "data/ae_rates", replace
+
+
+
+	
 	
 /*  Create lagged A&E attendance variables  */
 
