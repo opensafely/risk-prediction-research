@@ -152,6 +152,8 @@ program define define_covs
 	
 	order bmi bmicat obesecat, after(obesecat_`j')
 	drop bmi_* bmicat_* obesecat_*
+	label values bmicat bmicat
+	label values obesecat obesecat
 
 	
 	/*  Smoking  */
