@@ -6,7 +6,7 @@
 *
 *	Data used:			cr_create_analysis_dataset.dta
 *
-*	Data created:		data\
+*	Data created:		data/
 *							cr_selected_foi.dta
 *							cr_selected_ae.dta
 *							cr_selected_susp.dta
