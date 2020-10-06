@@ -65,6 +65,26 @@ rename Name stpname
 merge 1:1 stpcode using temppop, keep(match) assert(match master) nogen
 save "temppop", replace
 					
+					
+					
+/*  Create list of STPs by possible dates  */
+
+clear
+set obs 147
+gen date = d(4feb2020) + _n
+format date %td
+save "datelist", replace
+
+import delimited "data/ae_counts.csv", ///
+	encoding(ISO-8859-9) colrange(1:1) clear 
+rename v1 stpcode
+drop in 1
+expand 147
+bysort stpcode: gen date = d(4feb2020) + _n
+merge m:1 date using "datelist", assert(match) nogen
+format date %td
+save "datelist", replace
+
 
 
 
@@ -92,6 +112,16 @@ foreach var of varlist v* {
 	recode `var' .=0
 }
 
+reshape long v, i(stpcode) j(day)
+replace day = day - 1
+merge m:1 day using "tempdate", assert(match) nogen
+merge 1:1 date stpcode using "datelist", assert(match using) nogen
+drop day
+gen day = date - d(5feb2020) + 1
+label var day "Days since 5 Feb (inc)"
+drop date
+
+reshape wide v, i(stpcode) j(day)
 merge 1:1 stpcode using "temppop", assert(match) nogen
 erase "temppop.dta"
 order stpcode stpname region_7 pop
@@ -131,7 +161,6 @@ foreach var of varlist v* {
 	bysort stpname: egen temp = sum(`var')
 	drop `var'
 	rename temp `var'
-
 }
 
 * Drop duplicated rows
@@ -150,12 +179,8 @@ order stp_combined stpname region_7 population
 
 reshape long v, i(stp_combined) j(day)
 rename v aecount
-replace day = day-1
-
-merge m:1 day using "tempdate", assert(match) nogen
-drop day
-erase "tempdate.dta"
-
+gen date = d(5feb2020) + day - 1
+format date %td
 
 
 
@@ -210,7 +235,6 @@ forvalues t =  1 (1) $maxlag {
 }
 
 * Only keep dates from (day before) 1 March onwards
-replace date = date + 1 if date==d(28feb2020)	// No events on either day
 drop if date < d(1mar2020) - 1
 
 * Drop dates after the 7 june
