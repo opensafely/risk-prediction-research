@@ -21,11 +21,6 @@
 
 
 
-* Open a log file
-cap log close
-log using "output/100_pr_variable_selection_output", replace t
-
-
 
 
 
@@ -52,7 +47,4 @@ noi di "Approach A, Model selected (lasso): "
 noi di "$selected_vars"
 restore
 
-
-* Close log file
-log close
 
