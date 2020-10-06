@@ -51,7 +51,7 @@ use "data/cr_base_cohort.dta", replace
 noi count
 noi tab onscoviddeath
 set seed 724891
-sample 0.04
+sample 4
 noi count
 noi tab onscoviddeath
 
