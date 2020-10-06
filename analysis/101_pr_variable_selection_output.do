@@ -33,6 +33,7 @@ log using "output/100_pr_variable_selection_output", replace t
 *  Approach A:  Model selected via lasso procedure  *
 *****************************************************
 
+preserve
 use "data\cr_selected_model_coefficients.dta", clear
 
 qui count
@@ -49,4 +50,9 @@ forvalues i = 1 (1) `nparam' {
 
 noi di "Approach A, Model selected (lasso): " 
 noi di "$selected_vars"
+restore
+
+
+* Close log file
+log close
 

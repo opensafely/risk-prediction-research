@@ -6,9 +6,9 @@
 *
 *	Data used:		data/cr_casecohort_models.dta
 *
-*	Data created:	
+*	Data created:	data/model_a_coxPH_noshield.dta
 *
-*	Other output:	Log file:  203_rp_a_coxPH.log
+*	Other output:	Log file:  output/203_rp_a_coxPH.log
 *
 ********************************************************************************
 *
@@ -17,19 +17,29 @@
 *  
 ********************************************************************************
 
+
 * Open a log file
 capture log close
 log using "./output/203_rp_a_coxPH", text replace
 
+
+
+
+************************************
+*  Open dataset for model fitting  *
+************************************
+
 use "data/cr_casecohort_models.dta", replace
 
-*******************************
-*  Pick up predictor list(s)  *
-*******************************
 
+
+****************************
+*  Pick up predictor list  *
+****************************
 
 do "analysis/101_pr_variable_selection_output.do" 
 noi di "$selected_vars"
+
 
 
 *******************
@@ -42,6 +52,8 @@ stcox $selected_vars , vce(robust)
 estat ic
 timer off 1
 timer list 1
+
+
 
 ***********************************************
 *  Put coefficients and survival in a matrix  * 
@@ -59,7 +71,7 @@ summ basesurv if _t <= 100
 global base_surv100 = r(min) 
 
 * Add baseline survival to matrix (and add a matrix column name)
-matrix b = [$base_surv28 , $base_surv100, b]
+matrix b = [$base_surv28 , $base_surv100 , b]
 local names: colfullnames b
 local names: subinstr local names "c1" "base_surv28"
 local names: subinstr local names "c2" "base_surv100"
