@@ -110,7 +110,7 @@ tab1 	respiratory asthmacat cf 					///
 *  Describe outcome variables  *
 ********************************
 	
-summ died_date_onscovid died_date_onsother, d
+summ died_date_onscovid died_date_onsother, d format
 tab onscoviddeath, m
 summ stime
 summ days_until_coviddeath days_until_otherdeath
