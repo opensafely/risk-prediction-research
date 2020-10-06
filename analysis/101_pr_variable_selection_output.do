@@ -39,16 +39,16 @@ qui count
 local nparam = r(N)
 
 
-global selectedvars = ""
+global selected_vars = ""
 
 forvalues i = 1 (1) `nparam' {
     local term = variable[`i']
 	noi di "`term'"
-	global selectedvars = "$selectedvars" + " " + "`term'"
+	global selected_vars = "$selected_vars" + " " + "`term'"
 }
 
 noi di "Approach A, Model selected (lasso): " 
-noi di "$selectedvars"
+noi di "$selected_vars"
 
 
 
