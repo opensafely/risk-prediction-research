@@ -829,7 +829,7 @@ study = StudyDefinition(
     fracture_2=patients.with_these_clinical_events(
         fracture_codes,
         return_last_date_in_period=True,
-        between=["2019-04-06", "2020-04-06"],
+        between=["2018-04-06", "2020-04-06"],
         include_month=True,
     ),
     # Time update: Fragility fracture as of 12 May 2020

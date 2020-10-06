@@ -5,13 +5,11 @@
 *	Programmed by:	Fizz & John
 *
 *	Data used:		data/cr_base_cohort.dta (cohort data)
-*					data/foi_coefs.dta (force of infection data)
-*					data/ae_coefs.dta (A&E COVID attendance data)
-*					data/gp_coefs.dta (GP suspected COVID data)
+*					data/foi_coefs.dta      (force of infection data)
+*					data/ae_coefs.dta       (A&E COVID attendance data)
+*					data/susp_coefs.dta     (GP suspected COVID data)
 *
-*	Data created:	data/cr_landmark_var_select.dta 
-*								(landmark: variable selection)
-*					data/cr_landmark.dta 
+*	Data created:	data/cr_landmark.dta 
 *								(landmark: modelling fitting) 
 *
 *	Other output:	Log file:  006_cr_landmark_substudies.log
@@ -197,71 +195,19 @@ recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
 	assert(match using) keep(match) nogen 
 drop agegroupfoi
+drop foi_c_cons foi_c_day foi_c_daysq foi_c_daycu
 
 
 * Merge in the A&E STP count data
 merge m:1 time stp_combined using "data/ae_coefs", ///
 	assert(match using) keep(match) nogen
+drop ae_c_cons ae_c_day ae_c_daysq ae_c_daycu
 
 
 * Merge in the GP suspected COVID case data
-*merge m:1 time stpcode using "data/gp_coefs", 	
-* AS ABOVE...
-
-
-	
-	
-*****************************************
-*  Prepare data for variable selection  *
-*****************************************
-
-
-* Declare as survival data
-sort time patient_id 
-gen newid = _n
-label var newid "Row ID"
-stset dayout, fail(onscoviddeath) enter(dayin) id(newid)  
-
-* Create outcome for Poisson model and exposure variable
-gen diedcovforpoisson  = _d
-gen exposureforpoisson = _t-_t0
-gen offset = log(exposureforpoisson) + log(sf_inv)
-drop _t* newid
-
-label var diedcovforpoisson  "ONS COVID-19 death for case-cohort variable selection"
-label var exposureforpoisson "Days at risk for case-cohort variable selection"
-label var offset			 "Offset (log scale; days at risk AND sampling fraction) for case-cohort variable selection"
-
-
-* Create time variables to be fed into the variable selection process
-gen tvar1 = log(foi_q_cons)
-gen tvar2 = foi_q_day/foi_q_cons
-gen tvar3 = foi_q_daysq/foi_q_cons
-gen tvar4 = tvar2*tvar3
-gen tvar5 = tvar2^2
-gen tvar6 = tvar3^2
-
-
-label var tvar1 "Log of foi constant term"
-label var tvar2 "Ratio of day term to constant"
-label var tvar3 "Ratio of squared term to constant"
-label var tvar4 "Product term (tvar2*tvar3)"
-label var tvar5 "Square of tvar2"
-label var tvar6 "Square of tvar3"
-
-
-
-******************************************************
-*  Save dataset 1: variable selection landmark data  *
-******************************************************
-
-* Tidy dataset
-order time patient_id onscoviddeath subcohort 	///
-	diedcovforpoisson exposureforpoisson offset sf_inv dayin dayout
-sort time patient_id
-
-label data "28-day landmark substudies (complete case ethnicity) for variable selection"
-save "data/cr_landmark_var_select.dta", replace
+merge m:1 time stp_combined using "data/susp_coefs", ///
+	assert(match using) keep(match) nogen
+drop susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
 
 
 
@@ -269,10 +215,6 @@ save "data/cr_landmark_var_select.dta", replace
 **********************
 *  Barlow Weighting  *
 **********************
-
-* Delete variables needed only for variable selection (above)
-drop tvar? 
-drop diedcovforpoisson exposureforpoisson offset
 
 
 /*  Split at-risk time into two for subcohort cases (event and prior to)  */
@@ -326,15 +268,25 @@ drop row
 
 
 
-*************************************************
-*  Save dataset 2: model fitting landmark data  *
-*************************************************
+*******************
+*  Save dataset  *
+*******************
+
+
+* Declare as survival data
+sort time patient_id dayin
+gen newid = _n
+label var newid "Row ID"
+stset dayout [pweight=sf_wts], fail(onscoviddeath) enter(dayin) id(newid)  
 
 order time patient_id onscoviddeath subcohort sf_wts dayin dayout
 sort time patient_id
 
 label data "28-day landmark substudies (complete case ethnicity) for model fitting"
+note: Stset treats rows as if from different people; SEs will be incorrect
 save "data/cr_landmark.dta", replace
+
+
 
 
 * Close log file

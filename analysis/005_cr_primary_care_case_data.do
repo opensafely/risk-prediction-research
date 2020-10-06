@@ -6,8 +6,11 @@
 *
 *	Data used:		output/input_covid_by_stp.csv  
 *						(generated from study_definition_covid_by_stp.py)
-
-*	Data created:	data/susp_coefs.dta
+*					data/ae_stp_pop.csv  (denominator data)
+* 					data/STP_region_map.xlsx (STP linked to regions)
+*
+*	Data created:	data/susp_rates.dta (smoothed rates over time)
+*					data/susp_coefs.dta (current rate and coefficients)
 *
 *	Other output:	Log file:  005_cr_primary_care_case_data.log
 *
@@ -23,6 +26,9 @@
 * Open a log file
 cap log close
 log using "output/005_cr_primary_care_case_data", replace t
+
+*** PARAMETER NEEDED:  max days from infection to death
+global maxlag = 21
 
 
 
@@ -68,20 +74,24 @@ save "temppop", replace
 * Read in data
 import delimited "output/input_covid_by_stp.csv", clear
 
-** Drop those without a code
+* Drop those without a code
 drop if covid_suspected == ""
 
-** Count patients per date and STP
+* Drop those missing STP
+drop if stp==""
+
+* Count patients per date and STP
 collapse (count) patient_id, by(covid_suspected stp)
 rename patient_id count
 
 * Count days since start of feb until each suspected case
 gen temp = date(covid_suspected, "YMD")
 format temp %td
+drop if !inrange(temp, d(1feb2020), d(7jun2020))
 gen days_1feb = temp - d(1feb2020) + 1
 drop temp
 
-** Reshape
+* Reshape
 drop covid_suspected
 reshape wide count, i(stp) j(days_1feb) 
 
@@ -128,7 +138,7 @@ replace stpname = "Buckinghamshire, Oxfordshire and Berkshire, Hampshire, IoW"  
 bysort stpname: egen population = sum(pop)
 drop pop
 
-* Combine A&E counts within new combined STPs
+* Combine suspected case counts within new combined STPs
 foreach var of varlist count* {
 	bysort stpname: egen temp = sum(`var')
 	drop `var'
@@ -158,7 +168,7 @@ drop day
 
 
 
-/*  Smooth GP cases (mean over last 7 days) */
+/*  Smooth GP suspected cases (mean over last 7 days) */
 
 forvalues t = 0 (1) 6 {
 	bysort stp_combined (date): gen susp_count_lag`t' = susp_count[_n-`t']
@@ -168,12 +178,29 @@ egen susp_mean = rowmean( susp_count_lag0 susp_count_lag1 susp_count_lag2 	///
 						susp_count_lag6)
 drop susp_count_lag*
 
-* Smoothed (over 7 days) rate of A&E attendances 
+* Smoothed (over 7 days) rate of GP suspected cases
 gen susp_rate = 100000*susp_mean/population
-label var susp_rate "Smoothed rate of suspected GP COVID cases over last 7 days"
+label var susp_rate "Smoothed rate of suspected GP COVID cases over last 7 days (per 100,000)"
 drop susp_mean susp_count
 
-	
+
+
+/*  Save data for descriptive plots  */
+
+format date %td
+label var population "TPP population used for case count" 
+label var date "Date"
+
+
+* Label and save dataset
+label data "GP suspected COVID-19 cases, smoothed rates over time"
+save "data/susp_rates", replace
+
+
+
+
+
+
 /*  Create lagged GP suspected cases  */
 
 rename susp_rate susp_rate_lag

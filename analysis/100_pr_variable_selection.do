@@ -4,23 +4,21 @@
 *
 *	Written by:			Fizz & John
 *
-*	Data used:			data/cr_casecohort_var_select.dta
+*	Data used:			data/cr_base_cohort.dta
 *
-*	Data created:		None
+*	Data created:		Selected variables (Stata dataset): 
+*							data/cr_selected_model_coefficients.dta
 *
 *	Other output:		Log file:  100_pr_variable_selection.log
-*						Selected variables (Stata dataset): 
-*							data\cr_selected_model_coefficients.dta
 *
 ********************************************************************************
 *
-*	Purpose:			This do-file runs a simple lasso model on a sample of 
-*						data (all cases, random sample of controls) to variable
-*						select from all possible pairwise interactions.
+*	Purpose:			This do-file runs a simple Poisson lasso model on a 
+*						random sample of the whole cohort to perform 
+*						variable selection.
 *
-*	Note:				This do-file uses Barlow weights (incorporated as an
-*						offset in the Poisson model) to account for the case-
-*						cohort design.  
+*	Note:				Stata do-file called:
+*							analysis/0000_cr_define_covariates.do
 *
 ********************************************************************************
 
@@ -28,9 +26,63 @@
 
 
 * Open a log file
-capture log close
-log using "output/100_pr_variable_selection", text replace
+cap log close
+log using "output/100_pr_variable_selection", replace t
 
+
+* Load do-file which extracts covariates 
+do "analysis/0000_cr_define_covariates.do"
+
+
+
+
+	
+
+*************************************************
+*  Select 4% random sample from cohort dataset  *
+*************************************************
+
+	
+/* Open base cohort   */ 
+	
+use "data/cr_base_cohort.dta", replace
+
+* Take random sample
+noi count
+noi tab onscoviddeath
+set seed 724891
+sample 4
+noi count
+noi tab onscoviddeath
+
+	
+/* Complete case for ethnicity   */ 
+
+drop ethnicity_5 ethnicity_16
+drop if ethnicity_8>=.
+noi tab onscoviddeath
+
+
+
+/*  Extract relevant covariates  */
+
+* Define covariates as of the start date of the validation period
+local start = d(01/03/2020)
+define_covs, dateno(`start')
+
+
+
+	
+
+***********************************************
+*  Outcome and offset for variable selection  *
+***********************************************
+	
+* Create outcome for Poisson (variable selection) model and exposure variable
+stset stime, fail(onscoviddeath) id(patient_id)  
+gen diedcovforpoisson  = _d
+gen exposureforpoisson = _t-_t0
+gen offset = log(exposureforpoisson) 
 
 
 
@@ -39,9 +91,6 @@ log using "output/100_pr_variable_selection", text replace
 *  Variable Selection  *
 ************************
 
-
-*  Open data to be used for variable selection 
-use "data/cr_casecohort_var_select.dta", clear
 
 timer clear 1
 timer on 1
@@ -70,7 +119,7 @@ lasso poisson diedcovforpoisson 									///
 				i.liver i.dialysis i.transplant i.kidneyfn 			///
 				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
 				i.ld i.smi i.fracture 								///
-				i.hh_children c.hh_numc)							///
+				i.hh_children)										///
 			i.male#(i.rural i.imd i.ethnicity_8 					///
 				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
 				i.hypertension i.diabcat i.cardiac 					///
@@ -81,18 +130,7 @@ lasso poisson diedcovforpoisson 									///
 				i.liver i.dialysis i.transplant i.kidneyfn 			///
 				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
 				i.ld i.smi i.fracture 								///
-				i.hh_children c.hh_numc)							///
-			i.ethnicity_8#(i.rural i.imd 		 					///
-				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
-				i.hypertension i.diabcat i.cardiac 					///
-				i.af i.dvt_pe i.pad 								///
-				i.stroke i.dementia i.neuro 						///
-				i.asthmacat i.cf i.respiratory						///
-				i.cancerExhaem i.cancerHaem 						///
-				i.liver i.dialysis i.transplant i.kidneyfn 			///
-				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
-				i.ld i.smi i.fracture 								///
-				i.hh_children c.hh_numc)							///		
+				i.hh_children)										///
 			 , offset(offset) rseed(7248) grid(20) folds(3)
 timer off 1
 timer list 1
@@ -101,14 +139,19 @@ timer list 1
 
 
 
+*****************************
+*  Save selected variables  *
+*****************************
+
+
 /*  Save coefficients of post-lasso   */
 
 lassocoef, display(coef, postselection eform)
 matrix define A = r(coef)
 
 * Selected coefficients
-local  preShieldSelectedVars = e(allvars_sel)
-noi di "`preShieldSelectedVars'"
+local  SelectedVars = e(allvars_sel)
+noi di "`SelectedVars'"
 
 
 * Save coefficients of post-lasso 
@@ -118,10 +161,9 @@ postfile `coefs' str30(variable) coef using 	///
 
 local i = 1
 
-foreach v of local preShieldSelectedVars {
+foreach v of local SelectedVars {
 	
 	local coef = A[`i',1]
-	
 
 	post `coefs' ("`v'") (`coef')
     local ++i
@@ -131,7 +173,9 @@ postclose `coefs'
 
 
 
-
 * Close the log file
 log close
+
+
+		
 
