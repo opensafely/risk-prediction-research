@@ -1,15 +1,15 @@
 ********************************************************************************
 *
-*	Do-file:			100_pr_variable_selection.do
+*	Do-file:			100_pr_variable_selection_output.do
 *
 *	Written by:			Fizz & John
 *
-*	Data used:			None / (data containing results of lasso?)
+*	Data used:			data\cr_selected_model_coefficients.dta
 *
-*	Data created:		None
+*	Data created:		None (selected model held in globals)
 *
 *	Other output:		Global macros (used in subsequent analysis do-files)
-*							$predictors (contains predictors for risk models)
+*							$selectedvars (contains predictors for approach A)
 *
 ********************************************************************************
 *
@@ -21,31 +21,34 @@
 
 
 
-
-****************************************
-*  Model selected via lasso procedure  *
-****************************************
-
-
-global predictors "agec age2 age3 i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression i.shield i.stroke#i.shield"
-
-
-noi di "$predictors"
-
-
-global predictors_noshield "agec age2 age3 c.age1#i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression"
-
-noi di "$predictors"
+* Open a log file
+cap log close
+log using "output/100_pr_variable_selection_output", replace t
 
 
 
 
-************************
-*  Parsimonious model  *
-************************
+
+*****************************************************
+*  Approach A:  Model selected via lasso procedure  *
+*****************************************************
+
+use "data\cr_selected_model_coefficients.dta", clear
+
+qui count
+local nparam = r(N)
 
 
-global parsimonious "agec age2 age3 i.male i.cardiac i.dementia i.dialysis i.transplant i.hiv i.ethnicity_8 i.obesecat i.smoke_nomiss i.diabcat i.asthmacat i.cancerExhaem i.cancerHaem i.kidneyfn i.respiratory i.stroke i.neuro i.liver i.autoimmune i.suppression i.shield i.stroke#i.shield"
+global selectedvars = ""
+
+forvalues i = 1 (1) `nparam' {
+    local term = variable[`i']
+	noi di "`term'"
+	global selectedvars = "$selectedvars" + " " + "`term'"
+}
+
+noi di "Approach A, Model selected (lasso): " 
+noi di "$selectedvars"
 
 
 
