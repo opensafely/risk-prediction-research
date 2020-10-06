@@ -1,14 +1,18 @@
 ********************************************************************************
 *
-*	Do-file:		rp_a_validation_full_period.do
+*	Do-file:		205_rp_a_validation_full_period.do
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		
+*	Data used:		data/
+*						model_a_coxPH.dta
+*						model_a_roy.dta
+*						model_a_weibull.dta
+*						model_a_ggamma.dta
 *
-*	Data created:	None
+*	Data created:	data/approach_a_validation_full_period
 *
-*	Other output:	Log file:  	rp_a_100_day_performance.log
+*	Other output:	Log file:  	205_rp_a_validation_full_period.log
 *					
 ********************************************************************************
 *
@@ -25,7 +29,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_validation_full_period", text replace
+log using "./output/205_rp_a_validation_full_period", text replace
 
 
 * Ensure cc_calib is available
@@ -38,8 +42,8 @@ do "analysis/0000_cr_define_covariates.do"
 ******************************************************
 
 /*  Cox model  */
-*** No shielding
-use "data/model_a_coxPH_noshield", clear
+
+use "data/model_a_coxPH", clear
 drop if term == "base_surv28"
 * Pick up baseline survival
 global bs_a_cox_nos = coef[1]
@@ -54,9 +58,10 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 	
 }
 
+
 /*  Royston Parmar model */
-*** No shielding
-use "data/model_a_roy_noshield", clear
+
+use "data/model_a_roy", clear
 drop if term == "base_surv28"
 * Pick up baseline survival
 global bs_a_roy_nos = coef[1]
@@ -72,8 +77,8 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 
 
 /*  Weibull model  */
-*** No shielding
-use "data/model_a_weibull_noshield", clear
+
+use "data/model_a_weibull", clear
 drop if term == "base_surv28"
 * Pick up baseline survival
 global bs_a_weibull_nos = coef[1]
@@ -90,8 +95,8 @@ forvalues j = 1 (1) $nt_a_weibull_nos {
 
 
 /*  Generalised gamma model  */
-*** No shielding
-use "data/model_a_ggamma_noshield", clear
+
+use "data/model_a_ggamma", clear
 global sigma = coef[1]
 global kappa = coef[2]
 
@@ -106,6 +111,8 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 	global varexpress`j'_a_ggamma_nos = varexpress[`j']
 	
 }
+
+
 
 ***********************************
 *  Create full validation dataset *
@@ -140,12 +147,14 @@ define_covs, dateno(`vp_start')
 
 
 /*   Cox model   */
+
 gen xb = 0
 forvalues j = 1 (1) $nt_a_cox_nos {
 	replace xb = xb + ${coef`j'_a_cox_nos}*${varexpress`j'_a_cox_nos}
 }
 gen pred_a_cox_nos = 1 -  (${bs_a_cox_nos})^exp(xb)
 drop xb
+
 
 /* Royston-Parmar */
 
@@ -166,6 +175,7 @@ drop xb
 
 
 /*  Weibull */
+
 gen xb = 0
 forvalues j = 1 (1) $nt_a_weibull_nos {
 * If coefficient is NOT the constant term
@@ -182,17 +192,18 @@ drop xb
  
  
 /* Gamma */ 
+
 gen xb = 0
 forvalues j = 1 (1) $nt_a_ggamma_nos {
 
-* If coefficient is NOT the constant term
-if `j' != $nt_a_ggamma_nos {
-	replace xb = xb + ${coef`j'_a_ggamma_nos}*${varexpress`j'_a_ggamma_nos}
-	}
-* Add on the constant term	
-if `j' == $nt_a_ggamma_nos {
-    replace xb = xb + ${coef`j'_a_ggamma_nos}
-}	
+	* If coefficient is NOT the constant term
+	if `j' != $nt_a_ggamma_nos {
+		replace xb = xb + ${coef`j'_a_ggamma_nos}*${varexpress`j'_a_ggamma_nos}
+		}
+	* Add on the constant term	
+	if `j' == $nt_a_ggamma_nos {
+		replace xb = xb + ${coef`j'_a_ggamma_nos}
+	}	
 }
 gen sign = cond($kappa < 0,-1,1) 
 gen gamma = abs($kappa )^(-2)
@@ -203,13 +214,14 @@ global pred_a_gamma_nos = 1 - normal(z)
 
 }
 else {
-* s(t) = pred if k < 1
-gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
-* Replace s(t) = 1-pred if k > 1 
-replace pred_a_gamma_nos = cond(sign == 1 , 1 - pred_a_gamma_nos, pred_a_gamma_nos)
+	* s(t) = pred if k < 1
+	gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
+	* Replace s(t) = 1-pred if k > 1 
+	replace pred_a_gamma_nos = cond(sign == 1 , 1 - pred_a_gamma_nos, pred_a_gamma_nos)
 }
 
 drop xb sign gamma z 
+
 
 
 **************************
