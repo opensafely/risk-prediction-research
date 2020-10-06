@@ -153,7 +153,7 @@ scatter susp_rate date  if region_7==1,									///
 		xtitle(" ") 													///
 		xlabel(21946 "1feb2020" 21975 "1mar2020" 22006 "1apr2020"		///
 				22036 "1may2020" 22067 "1jun2020", angle(90))			///
-		yscale(range(0 30)) ylabel(0 (5) 30, angle(0))					///
+		yscale(range(0 70)) ylabel(0 (20) 70, angle(0))					///
 		ytitle("Suspected case rate" "(per 100,000)")
 graph export "output/graphs/susp_reg1.svg", as(svg) replace
 
@@ -165,7 +165,7 @@ scatter susp_rate date  if region_7==2,									///
 		xtitle(" ") 													///
 		xlabel(21946 "1feb2020" 21975 "1mar2020" 22006 "1apr2020"		///
 				22036 "1may2020" 22067 "1jun2020", angle(90))			///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 70)) ylabel(0 (20) 70, angle(0))					///
 		ytitle("Suspected case rate" "(per 100,000)")
 graph export "output/graphs/susp_reg2.svg", as(svg) replace
 
@@ -177,7 +177,7 @@ scatter susp_rate date  if region_7==3,									///
 		xtitle(" ") 													///
 		xlabel(21946 "1feb2020" 21975 "1mar2020" 22006 "1apr2020"		///
 				22036 "1may2020" 22067 "1jun2020", angle(90))			///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 70)) ylabel(0 (20) 70, angle(0))					///
 		ytitle("Suspected case rate" "(per 100,000)")
 graph export "output/graphs/susp_reg3.svg", as(svg) replace
 	
@@ -189,7 +189,7 @@ scatter susp_rate date  if region_7==4,									///
 		xtitle(" ") 													///
 		xlabel(21946 "1feb2020" 21975 "1mar2020" 22006 "1apr2020"		///
 				22036 "1may2020" 22067 "1jun2020", angle(90))			///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 70)) ylabel(0 (20) 70, angle(0))					///
 		ytitle("Suspected case rate" "(per 100,000)")
 graph export "output/graphs/susp_reg4.svg", as(svg) replace
 
@@ -201,7 +201,7 @@ scatter susp_rate date  if region_7==5,									///
 		xtitle(" ") 													///
 		xlabel(21946 "1feb2020" 21975 "1mar2020" 22006 "1apr2020"		///
 				22036 "1may2020" 22067 "1jun2020", angle(90))			///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 70)) ylabel(0 (20) 70, angle(0))					///
 		ytitle("Suspected case rate" "(per 100,000)")
 graph export "output/graphs/susp_reg5.svg", as(svg) replace
 	
@@ -213,7 +213,7 @@ scatter susp_rate date  if region_7==6,									///
 		xtitle(" ") 													///
 		xlabel(21946 "1feb2020" 21975 "1mar2020" 22006 "1apr2020"		///
 				22036 "1may2020" 22067 "1jun2020", angle(90))			///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 70)) ylabel(0 (20) 70, angle(0))					///
 		ytitle("Suspected case rate" "(per 100,000)")
 graph export "output/graphs/susp_reg6.svg", as(svg) replace
 	
@@ -225,7 +225,7 @@ scatter susp_rate date  if region_7==7,									///
 		xtitle(" ") 													///
 		xlabel(21946 "1feb2020" 21975 "1mar2020" 22006 "1apr2020"		///
 				22036 "1may2020" 22067 "1jun2020", angle(90))			///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 70)) ylabel(0 (20) 70, angle(0))					///
 		ytitle("Suspected case rate" "(per 100,000)")
 graph export "output/graphs/susp_reg7.svg", as(svg) replace
 	
