@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_a_compare_fit.do
+*	Do-file:		rp_a_validation_full_period.do
 *
 *	Programmed by:	Fizz & John
 *
@@ -8,7 +8,7 @@
 *
 *	Data created:	None
 *
-*	Other output:	Log file:  	rp_a_compare_fit.log
+*	Other output:	Log file:  	rp_a_100_day_performance.log
 *					
 ********************************************************************************
 *
@@ -25,11 +25,12 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_compare_fit", text replace
+log using "./output/rp_a_validation_full_period", text replace
 
 
 * Ensure cc_calib is available
 do "analysis/ado/cc_calib.ado"
+do "analysis/0000_cr_define_covariates.do"
 
 
 ******************************************************
@@ -39,7 +40,7 @@ do "analysis/ado/cc_calib.ado"
 /*  Cox model  */
 *** No shielding
 use "data/model_a_coxPH_noshield", clear
-drop if term == "base_surv100" // remove base_surv100
+drop if term == "base_surv28"
 * Pick up baseline survival
 global bs_a_cox_nos = coef[1]
 
@@ -56,8 +57,7 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 /*  Royston Parmar model */
 *** No shielding
 use "data/model_a_roy_noshield", clear
-drop if term == "base_surv100" // remove base_surv100
-
+drop if term == "base_surv28"
 * Pick up baseline survival
 global bs_a_roy_nos = coef[1]
 
@@ -74,8 +74,7 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 /*  Weibull model  */
 *** No shielding
 use "data/model_a_weibull_noshield", clear
-drop if term == "base_surv100" // remove base_surv100
-
+drop if term == "base_surv28"
 * Pick up baseline survival
 global bs_a_weibull_nos = coef[1]
 
@@ -91,7 +90,6 @@ forvalues j = 1 (1) $nt_a_weibull_nos {
 
 
 /*  Generalised gamma model  */
-
 *** No shielding
 use "data/model_a_ggamma_noshield", clear
 global sigma = coef[1]
@@ -109,16 +107,42 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 	
 }
 
-*****************************
-*  Open validation datasets *
-*****************************
-forvalues i = 1/3 {
-use "data/cr_cohort_vp`i'.dta", clear
+***********************************
+*  Create full validation dataset *
+***********************************
+
+local vp_start 	= d(01/03/2020)
+local vp_end 	= d(28/03/2020) 
+		
+/* Open base cohort   */ 
+	
+use "data/cr_base_cohort.dta", replace
+
+label var onscoviddeath "COVID-19 death (1 March - 8th June)"
+label var stime "Survival time (days from 1 March; end 8th June) for COVID-19 death"
+
+/* Complete case for ethnicity   */ 
+drop ethnicity_5 ethnicity_16
+drop if ethnicity_8>=.
+	
+	
+/* Apply eligibility criteria for validation period i  */ 
+
+*  To be at risk of 28-day Covid-19 death you must be alive at start date 	
+drop if died_date_onscovid < `vp_start'
+drop if died_date_onsother < `vp_start'
+		
+	
+/*  Extract relevant covariates  */
+	
+* Define covariates as of the start date of the validation period
+define_covs, dateno(`vp_start')
+
 
 /*   Cox model   */
 gen xb = 0
 forvalues j = 1 (1) $nt_a_cox_nos {
-	replace xb = xb + ${coef`j'_a_cox_nos}*${varexpress`j'_a_cox_nos}	
+	replace xb = xb + ${coef`j'_a_cox_nos}*${varexpress`j'_a_cox_nos}
 }
 gen pred_a_cox_nos = 1 -  (${bs_a_cox_nos})^exp(xb)
 drop xb
@@ -127,7 +151,7 @@ drop xb
 
 gen xb = 0
 forvalues j = 1 (1) $nt_a_roy_nos {
-* If coefficient is NOT the constant term
+	* If coefficient is NOT the constant term
 if `j' != $nt_a_roy_nos {
 	replace xb = xb + ${coef`j'_a_roy_nos}*${varexpress`j'_a_roy_nos}
 	}
@@ -144,7 +168,6 @@ drop xb
 /*  Weibull */
 gen xb = 0
 forvalues j = 1 (1) $nt_a_weibull_nos {
-
 * If coefficient is NOT the constant term
 if `j' != $nt_a_weibull_nos {
 	replace xb = xb + ${coef`j'_a_weibull_nos}*${varexpress`j'_a_weibull_nos}
@@ -186,8 +209,9 @@ gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
 replace pred_a_gamma_nos = cond(sign == 1 , 1 - pred_a_gamma_nos, pred_a_gamma_nos)
 }
 
-
 drop xb sign gamma z 
+
+
 **************************
 *   Validation measures  *
 **************************
@@ -198,12 +222,12 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 	brier brier_p c_stat c_stat_p hl hl_p mean_obs mean_pred 				///
 	calib_inter calib_inter_se calib_inter_cl calib_inter_cu calib_inter_p 	///
 	calib_slope calib_slope_se calib_slope_cl calib_slope_cu calib_slope_p 	///
-	using "data/approach_a_`i'", replace
+	using "data/approach_a_validation_full_period", replace
 
 	foreach var of varlist pred* {
 		
 		* Overall performance: Brier score
-		noi brier onscoviddeath28 `var', group(10)
+		noi brier onscoviddeath `var', group(10)
 		local brier 	= r(brier) 
 		local brier_p 	= r(p) 
 
@@ -212,7 +236,7 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 		local cstat_p 	= r(p_roc)
 		 
 		* Calibration
-		noi cc_calib onscoviddeath28  `var', data(internal) 
+		noi cc_calib onscoviddeath `var', data(internal) 
 
 		* Hosmer-Lemeshow
 		local hl 		= r(chi)  
@@ -237,7 +261,7 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 		
 		
 		* Save measures
-		post `measures' ("A") ("`var'") ("vp`i'") (`brier') (`brier_p') 		///
+		post `measures' ("A") ("`var'") ("Full 100-day Period") (`brier') (`brier_p') 		///
 						(`cstat') (`cstat_p') 						///
 						(`hl') (`hl_p') 							///
 						(`mean_obs') (`mean_pred') 					///
@@ -250,16 +274,6 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 
 	}
 postclose `measures'
-}
-
-* Clean up
-use "data/approach_a_1", clear
-forvalues i = 2(1)3 { 
-append using "data/approach_a_`i'" 
-erase "data/approach_a_`i'.dta" 
-}
-save "data/approach_a_validation.dta", replace 
-
 
 
 * Close log file

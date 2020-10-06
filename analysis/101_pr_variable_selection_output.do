@@ -50,6 +50,3 @@ forvalues i = 1 (1) `nparam' {
 noi di "Approach A, Model selected (lasso): " 
 noi di "$selected_vars"
 
-
-
-
