@@ -6,7 +6,7 @@
 *
 *	Data used:		data/cr_casecohort_models.dta
 *
-*	Data created:	data/model_a_coxPH_noshield.dta
+*	Data created:	data/model_a_coxPH.dta
 *
 *	Other output:	Log file:  output/203_rp_a_coxPH.log
 *
@@ -82,7 +82,7 @@ do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction
 get_coefs, coef_matrix(b) eqname("")  ///
-	dataname("data/model_a_coxPH_noshield")
+	dataname("data/model_a_coxPH")
 
 
 
