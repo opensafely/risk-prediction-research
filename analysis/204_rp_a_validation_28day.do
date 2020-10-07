@@ -29,7 +29,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_vaaidation_28day", text replace
+log using "./output/rp_a_validation_28day", text replace
 
 
 * Ensure cc_calib is available
