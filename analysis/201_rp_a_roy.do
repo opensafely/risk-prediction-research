@@ -6,9 +6,9 @@
 *
 *	Data used:		data/cr_casecohort_models.dta
 *
-*	Data created:	
+*	Data created:	data/model_a_roy.dta
 *
-*	Other output:	Log file:  201_rp_a_roy.log
+*	Other output:	Log file:  output/201_rp_a_roy.log
 *
 ********************************************************************************
 *
@@ -21,30 +21,36 @@
 *
 ********************************************************************************
 
-*The following statistical models will be fitted, with time since 1st March  
-*In each case the model will be fitted without taking shielding into consideration, and then splitting time at 31st March/1st April and including shielding period and any interactions identified by the lasso in the models.  
-* robust std errs
 
 
 * Open a log file
 capture log close
 log using "./output/201_rp_a_roy", text replace
 
-**************************************
-*  Ensure correct files for RP model *
-**************************************
 
-do "analysis/ado/s/stpm2_matacode.mata"
+***************************************
+*  Ensure correct files for RP model  *
+***************************************
 
+capture do "analysis/ado/s/stpm2_matacode.mata"
+
+
+************************************
+*  Open dataset for model fitting  *
+************************************
 
 use "data/cr_casecohort_models.dta", replace
 
-*******************************
-*  Pick up predictor list(s)  *
-*******************************
+
+
+****************************
+*  Pick up predictor list  *
+****************************
 
 do "analysis/101_pr_variable_selection_output.do" 
 noi di "$selected_vars"
+
+
 
 ********************
 *   Royston Model  *
@@ -57,6 +63,7 @@ stpm2 $selected_vars , df(5) scale(hazard) vce(robust)
 estat ic
 timer off 1
 timer list 1
+
 
 ***********************************************
 *  Put coefficients and survival in a matrix  * 
@@ -97,14 +104,13 @@ mat colnames c = `names'
 do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction models
-
 get_coefs, coef_matrix(c) eqname("xb0:") ///
-	dataname("data/model_a_roy_noshield")
+	dataname("data/model_a_roy")
 	
-* remove unnecessary coefficients	
-use "data/model_a_roy_noshield", clear
+* Remove unnecessary coefficients	
+use "data/model_a_roy", clear
 drop if strpos(term,"_s0_")>0
-save "data/model_a_roy_noshield", replace 
+save "data/model_a_roy", replace 
 
 log close
 

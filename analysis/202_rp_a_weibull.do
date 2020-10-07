@@ -6,9 +6,9 @@
 *
 *	Data used:		data/cr_casecohort_models.dta
 *
-*	Data created:	
+*	Data created:	data/model_a_weibull.dta
 *
-*	Other output:	Log file:  203_rp_a_weibull.log
+*	Other output:	Log file:  output/202_rp_a_weibull.log
 *
 ********************************************************************************
 *
@@ -17,19 +17,29 @@
 *  
 ********************************************************************************
 
+
 * Open a log file
 capture log close
 log using "./output/202_rp_a_weibull", text replace
 
+
+
+************************************
+*  Open dataset for model fitting  *
+************************************
+
 use "data/cr_casecohort_models.dta", replace
+
+
 
 *******************************
 *  Pick up predictor list(s)  *
 *******************************
 
-
 do "analysis/101_pr_variable_selection_output.do" 
 noi di "$selected_vars"
+
+
 
 *********************
 *   Weibull Model  *
@@ -41,6 +51,7 @@ streg $selected_vars , dist(weibull) vce(robust)
 estat ic
 timer off 1
 timer list 1
+
 
 ***********************************************
 *  Put coefficients and survival in a matrix  * 
@@ -73,7 +84,7 @@ do "analysis/0000_pick_up_coefficients.do"
 * Save coeficients needed for prediction
 
 get_coefs, coef_matrix(b) eqname("_t") ///
-	dataname("data/model_a_weibull_noshield")
+	dataname("data/model_a_weibull")
 
 
 log close

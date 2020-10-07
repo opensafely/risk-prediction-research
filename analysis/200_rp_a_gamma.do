@@ -6,9 +6,9 @@
 *
 *	Data used:		data/cr_casecohort_models.dta
 *
-*	Data created:	
+*	Data created:	data/model_a_ggamma.dta
 *
-*	Other output:	Log file:  203_rp_a_gamma.log
+*	Other output:	Log file:  output/200_rp_a_gamma.log
 *
 ********************************************************************************
 *
@@ -21,7 +21,14 @@
 capture log close
 log using "./output/200_rp_a_gamma", text replace
 
+
+
+************************************
+*  Open dataset for model fitting  *
+************************************
+
 use "data/cr_casecohort_models.dta", replace
+
 
 *******************************
 *  Pick up predictor list(s)  *
@@ -71,9 +78,7 @@ matrix list b
 do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction
-get_coefs, coef_matrix(b) eqname("_t:") cons_no ///
-	dataname("data/model_a_ggamma_noshield")
-
+get_coefs, coef_matrix(b) eqname("_t:") dataname("data/model_a_ggamma")
 
 log close
 

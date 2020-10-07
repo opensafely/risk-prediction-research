@@ -1,14 +1,18 @@
 ********************************************************************************
 *
-*	Do-file:		rp_a_compare_fit.do
+*	Do-file:		204_rp_a_validation_28day.do
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		
+*	Data used:		data/
+*						model_a_coxPH.dta
+*						model_a_roy.dta
+*						model_a_weibull.dta
+*						model_a_ggamma.dta
 *
-*	Data created:	None
+*	Data created:	data/approach_a_validation.dta
 *
-*	Other output:	Log file:  	rp_a_compare_fit.log
+*	Other output:	Log file:  	output/rp_a_compare_fit.log
 *					
 ********************************************************************************
 *
@@ -25,21 +29,24 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_compare_fit", text replace
+log using "./output/rp_a_validation_28day", text replace
 
 
 * Ensure cc_calib is available
 do "analysis/ado/cc_calib.ado"
 
 
+
 ******************************************************
 *   Pick up coefficients needed to make predictions  *
 ******************************************************
 
+
 /*  Cox model  */
-*** No shielding
-use "data/model_a_coxPH_noshield", clear
+
+use "data/model_a_coxPH", clear
 drop if term == "base_surv100" // remove base_surv100
+
 * Pick up baseline survival
 global bs_a_cox_nos = coef[1]
 
@@ -50,12 +57,12 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 	local k = `j' + 1
 	global coef`j'_a_cox_nos = coef[`k']
 	global varexpress`j'_a_cox_nos = varexpress[`k']
-	
 }
 
+
 /*  Royston Parmar model */
-*** No shielding
-use "data/model_a_roy_noshield", clear
+
+use "data/model_a_roy", clear
 drop if term == "base_surv100" // remove base_surv100
 
 * Pick up baseline survival
@@ -67,13 +74,12 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 	local k = `j' + 1
 	global coef`j'_a_roy_nos = coef[`k']
 	global varexpress`j'_a_roy_nos = varexpress[`k']
-	
 }
 
 
 /*  Weibull model  */
-*** No shielding
-use "data/model_a_weibull_noshield", clear
+
+use "data/model_a_weibull", clear
 drop if term == "base_surv100" // remove base_surv100
 
 * Pick up baseline survival
@@ -86,14 +92,12 @@ forvalues j = 1 (1) $nt_a_weibull_nos {
 	local k = `j' + 1
 	global coef`j'_a_weibull_nos = coef[`k']
 	global varexpress`j'_a_weibull_nos = varexpress[`k']
-	
 }
 
 
 /*  Generalised gamma model  */
 
-*** No shielding
-use "data/model_a_ggamma_noshield", clear
+use "data/model_a_ggamma", clear
 global sigma = coef[1]
 global kappa = coef[2]
 
@@ -109,13 +113,20 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 	
 }
 
-*****************************
-*  Open validation datasets *
-*****************************
+
+
+
+******************************
+*  Open validation datasets  *
+******************************
+
+
 forvalues i = 1/3 {
+
 use "data/cr_cohort_vp`i'.dta", clear
 
 /*   Cox model   */
+
 gen xb = 0
 forvalues j = 1 (1) $nt_a_cox_nos {
 	replace xb = xb + ${coef`j'_a_cox_nos}*${varexpress`j'_a_cox_nos}	
@@ -133,7 +144,7 @@ if `j' != $nt_a_roy_nos {
 	}
 * Add on the constant term	
 if `j' == $nt_a_roy_nos {
-    replace xb = xb + ${coef`j'_a_roy_nos}
+	replace xb = xb + ${coef`j'_a_roy_nos}
 }	
 
 }
@@ -142,6 +153,7 @@ drop xb
 
 
 /*  Weibull */
+
 gen xb = 0
 forvalues j = 1 (1) $nt_a_weibull_nos {
 
@@ -151,7 +163,7 @@ if `j' != $nt_a_weibull_nos {
 	}
 * Add on the constant term	
 if `j' == $nt_a_weibull_nos {
-    replace xb = xb + ${coef`j'_a_weibull_nos}
+	replace xb = xb + ${coef`j'_a_weibull_nos}
 }	
 }
 gen pred_a_weibull_nos = 1 -  (${bs_a_weibull_nos})^exp(xb)
@@ -159,35 +171,40 @@ drop xb
  
  
 /* Gamma */ 
+
 gen xb = 0
 forvalues j = 1 (1) $nt_a_ggamma_nos {
 
-* If coefficient is NOT the constant term
-if `j' != $nt_a_ggamma_nos {
-	replace xb = xb + ${coef`j'_a_ggamma_nos}*${varexpress`j'_a_ggamma_nos}
-	}
-* Add on the constant term	
-if `j' == $nt_a_ggamma_nos {
-    replace xb = xb + ${coef`j'_a_ggamma_nos}
-}	
+	* If coefficient is NOT the constant term
+	if `j' != $nt_a_ggamma_nos {
+		replace xb = xb + ${coef`j'_a_ggamma_nos}*${varexpress`j'_a_ggamma_nos}
+		}
+	* Add on the constant term	
+	if `j' == $nt_a_ggamma_nos {
+		replace xb = xb + ${coef`j'_a_ggamma_nos}
+	}	
 }
 gen sign = cond($kappa < 0,-1,1) 
 gen gamma = abs($kappa )^(-2)
 gen z = sign*(ln(28) - xb)/$sigma
 
 if $kappa == 0 {
-global pred_a_gamma_nos = 1 - normal(z)
-
+	global surv_a_gamma_nos = 1 - normal(z)
 }
 else {
-* s(t) = pred if k < 1
-gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
-* Replace s(t) = 1-pred if k > 1 
-replace pred_a_gamma_nos = cond(sign == 1 , 1 - pred_a_gamma_nos, pred_a_gamma_nos)
+	* s(t) = pred if k < 1
+	gen surv_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
+	* Replace s(t) = 1-pred if k > 1 
+	replace surv_a_gamma_nos = cond(sign == 1 , 1 - surv_a_gamma_nos, surv_a_gamma_nos)
 }
+
+gen pred_a_gamma_nos = 1 - surv_a_gamma_nos
 
 
 drop xb sign gamma z 
+
+
+
 **************************
 *   Validation measures  *
 **************************
@@ -252,13 +269,17 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 postclose `measures'
 }
 
+
+
+
 * Clean up
 use "data/approach_a_1", clear
 forvalues i = 2(1)3 { 
-append using "data/approach_a_`i'" 
-erase "data/approach_a_`i'.dta" 
+	append using "data/approach_a_`i'" 
+	erase "data/approach_a_`i'.dta" 
 }
-save "data/approach_a_validation.dta", replace 
+erase "data/approach_a_1.dta" 
+save "data/approach_a_validation_28day.dta", replace 
 
 
 

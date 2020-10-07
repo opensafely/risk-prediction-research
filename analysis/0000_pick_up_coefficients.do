@@ -169,18 +169,17 @@ program define get_coefs
 	local j = 1
 	while "``i''" != "" {
 
-		   if "`eqname'" == "xb0:" | "`eqname'" == "_t:" | "`eqname'" == "" {
-		* Remove eqname prefix, e.g. "onscoviddeath:
-		local length_prefix = length("`eqname'") + 1
-		local term_`j' = substr("``i''", `length_prefix', .)
+		if "`eqname'" == "xb0:" | "`eqname'" == "_t:" | "`eqname'" == "" {
+			* Remove eqname prefix, e.g. "onscoviddeath:
+			local length_prefix = length("`eqname'") + 1
+			local term_`j' = substr("``i''", `length_prefix', .)
 		}
+		else  {
+			* Remove eqname prefix, e.g. "onscoviddeath:"
+			local length_prefix = length("`eqname'") + 2
+			local term_`j' = substr("``i''", `length_prefix', .)
+		}	
 		
-
-else  {
-		* Remove eqname prefix, e.g. "onscoviddeath:"
-		local length_prefix = length("`eqname'") + 2
-		local term_`j' = substr("``i''", `length_prefix', .)
-	}	
 		* Check for baseline categories in either a single or two terms
 		identify_pairinteract, term("`term_`j''")
 		local ispairinter	= r(ispairinter) 
@@ -207,7 +206,9 @@ else  {
 			* If non-baseline term then save coefficient and expression
 				
 			* Save the value of coefficient
-			if "`term_`j''"!="base_surv28" & "`term_`j''"!="base_surv100" & "`term_`j''"!="sigma" & "`term_`j''"!="kappa" {
+			if "`term_`j''"!="base_surv28" & "`term_`j''"!="base_surv100"  ///
+				& "`term_`j''"!="sigma" & "`term_`j''"!="kappa" {
+				
 				local coef_`j' = _b["`term_`j''"]
 			
 				* Identify the variable expression
@@ -228,23 +229,24 @@ else  {
 			else {
 				local coef_`j' = `coef_matrix'[1,1]
 				local varexpress_`j' = ""
-					* Sigma/Kappa for generalised gamma model 
-			if "`term_`j''" == "sigma" {
-				local coef_`j' = `coef_matrix'[1,1]
-				local varexpress_`j' = ""
-				}
-			if "`term_`j''" == "kappa" {
-				local coef_`j' = `coef_matrix'[1,2]
-				local varexpress_`j' = ""
-				}	
-					if "`term_`j''" == "base_surv28" {
-				local coef_`j' = `coef_matrix'[1,1]
-				local varexpress_`j' = ""
-				}
-			if "`term_`j''" == "base_surv100" {
-				local coef_`j' = `coef_matrix'[1,2]
-				local varexpress_`j' = ""
-				}		
+				
+				* Sigma/Kappa for generalised gamma model 
+				if "`term_`j''" == "sigma" {
+					local coef_`j' = `coef_matrix'[1,1]
+					local varexpress_`j' = ""
+					}
+				if "`term_`j''" == "kappa" {
+					local coef_`j' = `coef_matrix'[1,2]
+					local varexpress_`j' = ""
+					}	
+				if "`term_`j''" == "base_surv28" {
+					local coef_`j' = `coef_matrix'[1,1]
+					local varexpress_`j' = ""
+					}
+				if "`term_`j''" == "base_surv100" {
+					local coef_`j' = `coef_matrix'[1,2]
+					local varexpress_`j' = ""
+					}		
 				
 			}
 			local ++i
