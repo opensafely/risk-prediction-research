@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		203_rp_a_weibull.do
+*	Do-file:		202_rp_a_weibull.do
 *
 *	Programmed by:	Fizz & John
 *

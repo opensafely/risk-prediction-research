@@ -366,7 +366,7 @@ lasso poisson onscoviddeath aerate				///
 							aeqint				///
 							aeqd2				///
 							aeqds2				///
-				, offset(offset) rseed(12378) grid(20) folds(3) 
+				, offset(offset) rseed(12378) grid(30) folds(3) 
 timer off 1
 timer list 1
 
@@ -409,7 +409,7 @@ lasso poisson onscoviddeath susp_rate			///
 							suspqint			///
 							suspqd2				///
 							suspqds2			///
-				, offset(offset) rseed(12378) grid(20) folds(3) 
+				, offset(offset) rseed(12378) grid(30) folds(3) 
 timer off 1
 timer list 1
 
