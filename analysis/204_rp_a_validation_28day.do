@@ -1,8 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_a_compare_fit.do
-*					
-*				CAN WE CHANGE THE NAME TO E>G> 204_rp_a_validation_28day?? 
+*	Do-file:		204_rp_a_validation_28day.do
 *
 *	Programmed by:	Fizz & John
 *
@@ -31,7 +29,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_compare_fit", text replace
+log using "./output/rp_a_vaaidation_28day", text replace
 
 
 * Ensure cc_calib is available
@@ -127,12 +125,6 @@ forvalues i = 1/3 {
 
 use "data/cr_cohort_vp`i'.dta", clear
 
-
-*** COMMENT: I WAS IMAGINING JUST CREATING VARIBALE CONSTANT = 1
-**** THEN YOU WOULDN@T HAVE TO SPLIT BY WHETHER OR NOT CONSTANT BELOW
-
-** *ALSO I WAS VAGUELY TOYING WITH REMOVING THE NOS EVERYWHERE BUT DECIDED NOT TO!!
-
 /*   Cox model   */
 
 gen xb = 0
@@ -197,16 +189,17 @@ gen gamma = abs($kappa )^(-2)
 gen z = sign*(ln(28) - xb)/$sigma
 
 if $kappa == 0 {
-	global pred_a_gamma_nos = 1 - normal(z)
+	global surv_a_gamma_nos = 1 - normal(z)
 }
 else {
 	* s(t) = pred if k < 1
-	gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
+	gen surv_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
 	* Replace s(t) = 1-pred if k > 1 
-	replace pred_a_gamma_nos = cond(sign == 1 , 1 - pred_a_gamma_nos, pred_a_gamma_nos)
+	replace surv_a_gamma_nos = cond(sign == 1 , 1 - surv_a_gamma_nos, surv_a_gamma_nos)
 }
 
-***** FOR THE OTHERS, PRED IS PREDICTED RISK, BUT THIS ONE IS PREDICTED SURVIVAL??
+gen pred_a_gamma_nos = 1 - surv_a_gamma_nos
+
 
 drop xb sign gamma z 
 
@@ -286,7 +279,7 @@ forvalues i = 2(1)3 {
 	erase "data/approach_a_`i'.dta" 
 }
 erase "data/approach_a_1.dta" 
-save "data/approach_a_validation.dta", replace 
+save "data/approach_a_validation_28day.dta", replace 
 
 
 

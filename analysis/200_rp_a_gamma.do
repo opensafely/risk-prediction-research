@@ -78,10 +78,7 @@ matrix list b
 do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction
-get_coefs, coef_matrix(b) eqname("_t:") cons_no ///
-	dataname("data/model_a_ggamma")
-
-	*** DO YOU NEED THE CONSTANT TERM SAVED? SURELY YES (REMOVE CONS_NO ABOVE????)
+get_coefs, coef_matrix(b) eqname("_t:") dataname("data/model_a_ggamma")
 
 log close
 

@@ -210,15 +210,18 @@ gen gamma = abs($kappa )^(-2)
 gen z = sign*(ln(28) - xb)/$sigma
 
 if $kappa == 0 {
-global pred_a_gamma_nos = 1 - normal(z)
+global surv_a_gamma_nos = 1 - normal(z)
 
 }
 else {
 	* s(t) = pred if k < 1
-	gen pred_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
+	gen surv_a_gamma_nos = gammap(gamma, gamma*exp(abs($kappa) *z))
 	* Replace s(t) = 1-pred if k > 1 
-	replace pred_a_gamma_nos = cond(sign == 1 , 1 - pred_a_gamma_nos, pred_a_gamma_nos)
+	replace surv_a_gamma_nos = cond(sign == 1 , 1 - surv_a_gamma_nos, surv_a_gamma_nos)
 }
+
+
+gen pred_a_gamma_nos = 1 - surv_a_gamma_nos
 
 drop xb sign gamma z 
 
