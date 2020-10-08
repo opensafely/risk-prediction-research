@@ -198,6 +198,11 @@ program define get_coefs
 			local isbasecat_2 = r(isbasecat)
 			local isbasecat = max(`isbasecat_1', `isbasecat_2')
 		}
+			if `isbasecat'==1 {
+			* If a baseline term then skip and move on to next term
+			local ++i
+		}
+		else {
 	
 			* If non-baseline term then save coefficient and expression
 				
