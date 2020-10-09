@@ -40,8 +40,6 @@ global selected_vars = ""
 forvalues i = 1 (1) `nparam' {
     local term = variable[`i']
 	noi di "`term'"
-	local term = subinstr("`term'", "bn", "", .)
-	noi di "`term'"
 	global selected_vars = "$selected_vars" + " " + "`term'"
 }
 
