@@ -37,14 +37,21 @@ local nparam = r(N)
 
 
 global selected_vars = ""
+global bn_terms = "" 
 
 forvalues i = 1 (1) `nparam' {
     local term = variable[`i']
 	noi di "`term'"
+	if strpos("`term'", "bn") > 1 {
+	global bn_terms = "$bn_terms" + " " + "`term'"
+	}
+	else{
 	global selected_vars = "$selected_vars" + " " + "`term'"
+	}
 }
 
 noi di "Approach A, Model selected (lasso): " 
 noi di "$selected_vars"
+noi di "$bn_terms"
 restore
 

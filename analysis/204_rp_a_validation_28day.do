@@ -124,6 +124,21 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 forvalues i = 1/3 {
 
 	use "data/cr_cohort_vp`i'.dta", clear
+	
+	* Define the bn terms for Royston parmar model
+	foreach var of global bn_terms {
+	* Remove bn
+	local term = subinstr("`var'", "bn", "", .)
+	* remove "." from name
+	local term = subinstr("`term'", ".", "", .)
+	* Check if its an interaction term and remove # if needed 
+	local term = subinstr("`term'", "#", "", .)
+	* add _
+	local term = "____" + "`term'" 
+	fvrevar `var', stub(`term')
+									}
+
+
 	drop onscoviddeath
 
 	/*   Cox model   */

@@ -263,6 +263,8 @@ program define get_coefs
 				post `coefs_pf' ("`term_`k''") (`coef_`k'') ("(constant==1)")			    
 			}
 		}
+		
+	}
 			
 	postclose `coefs_pf'
 	
