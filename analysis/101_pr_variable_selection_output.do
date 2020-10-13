@@ -36,15 +36,30 @@ qui count
 local nparam = r(N)
 
 
-global selected_vars = ""
+global selected_vars 		= ""
+global selected_vars_nobn 	= ""
+global bn_terms 			= "" 
 
 forvalues i = 1 (1) `nparam' {
     local term = variable[`i']
 	noi di "`term'"
 	global selected_vars = "$selected_vars" + " " + "`term'"
+
+	* Separate out bits with bn in the name
+	if strpos("`term'", "bn") > 1 {
+		global bn_terms = "$bn_terms" + " " + "`term'"
+	}
+	else{
+		global selected_vars_nobn = "$selected_vars_nobn" + " " + "`term'"
+	}	
 }
 
 noi di "Approach A, Model selected (lasso): " 
 noi di "$selected_vars"
+
+noi di "Separated out for Roy-Parmar model fitting:"
+noi di "$selected_vars_nobn"
+noi di "$bn_terms"
 restore
+
 
