@@ -47,25 +47,29 @@ use "data/cr_casecohort_models.dta", replace
 *  Pick up predictor list  *
 ****************************
 
-do "analysis/103_pr_variable_selection_output_royp.do" 
-noi di "$selected_vars"
+do "analysis/101_pr_variable_selection_output.do" 
+noi di "$selected_vars_nobn"
 noi di "$bn_terms"
+
+
 
 *************************************************
 *  Transform selected_vars for Roy Parmar model *
 *************************************************
 
 foreach var of global bn_terms {
-* Remove bn
-local term = subinstr("`var'", "bn", "", .)
-* remove "." from name
-local term = subinstr("`term'", ".", "", .)
-* Check if its an interaction term and remove # if needed 
-local term = subinstr("`term'", "#", "", .)
-* add _
-local term = "____" + "`term'" 
-fvrevar `var', stub(`term')
+	* Remove bn
+	local term = subinstr("`var'", "bn", "", .)
+	* remove "." from name
+	local term = subinstr("`term'", ".", "", .)
+	* Check if its an interaction term and remove # if needed 
+	local term = subinstr("`term'", "#", "", .)
+	* add _
+	local term = "____" + "`term'" 
+	fvrevar `var', stub(`term')
 }
+
+
 
 ********************
 *   Royston Model  *
@@ -74,7 +78,7 @@ fvrevar `var', stub(`term')
 
 timer clear 1
 timer on 1
-stpm2 $selected_vars ____* , df(5) scale(hazard) vce(robust)
+stpm2 $selected_vars_nobn ____* , df(5) scale(hazard) vce(robust)
 estat ic
 timer off 1
 timer list 1
