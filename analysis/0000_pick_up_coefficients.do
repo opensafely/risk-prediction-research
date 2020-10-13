@@ -198,11 +198,7 @@ program define get_coefs
 			local isbasecat_2 = r(isbasecat)
 			local isbasecat = max(`isbasecat_1', `isbasecat_2')
 		}
-		if `isbasecat'==1 {
-			* If a baseline term then skip and move on to next term
-			local ++i
-		}
-		else {
+	
 			* If non-baseline term then save coefficient and expression
 				
 			* Save the value of coefficient
@@ -251,8 +247,8 @@ program define get_coefs
 			}
 			local ++i
 			local ++j
-		}
-	}
+		
+	
 	
 	* Save coefficients and variable expressions into a temporary dataset
 	tempname coefs_pf
@@ -267,6 +263,8 @@ program define get_coefs
 				post `coefs_pf' ("`term_`k''") (`coef_`k'') ("(constant==1)")			    
 			}
 		}
+		
+	}
 			
 	postclose `coefs_pf'
 	
