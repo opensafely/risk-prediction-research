@@ -145,17 +145,21 @@ drop if died_date_onsother < `vp_start'
 * Define covariates as of the start date of the validation period
 define_covs, dateno(`vp_start')
 
+* Pick up list of variables in model
+do "analysis/101_pr_variable_selection_output.do"
+noi di "$bn_terms"
+	
 * Define the bn terms for Royston parmar model
 foreach var of global bn_terms {
-* Remove bn
-local term = subinstr("`var'", "bn", "", .)
-* remove "." from name
-local term = subinstr("`term'", ".", "", .)
-* Check if its an interaction term and remove # if needed 
-local term = subinstr("`term'", "#", "", .)
-* add _
-local term = "____" + "`term'" 
-fvrevar `var', stub(`term')
+	* Remove bn
+	local term = subinstr("`var'", "bn", "", .)
+	* remove "." from name
+	local term = subinstr("`term'", ".", "", .)
+	* Check if its an interaction term and remove # if needed 
+	local term = subinstr("`term'", "#", "", .)
+	* add _
+	local term = "____" + "`term'" 
+	fvrevar `var', stub(`term')
 }
 
 
