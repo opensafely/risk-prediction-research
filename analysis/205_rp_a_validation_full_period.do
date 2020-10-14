@@ -158,7 +158,8 @@ foreach var of global bn_terms {
 	* Check if its an interaction term and remove # if needed 
 	local term = subinstr("`term'", "#", "", .)
 	* add _
-	local term = "____" + "`term'" 
+	local term = "__" + "`term'" 
+	local term = substr("`term'", 1, 15)
 	fvrevar `var', stub(`term')
 }
 

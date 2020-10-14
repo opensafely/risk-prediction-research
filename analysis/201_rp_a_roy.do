@@ -65,7 +65,8 @@ foreach var of global bn_terms {
 	* Check if its an interaction term and remove # if needed 
 	local term = subinstr("`term'", "#", "", .)
 	* add _
-	local term = "____" + "`term'" 
+	local term = "__" + "`term'" 
+	local term = substr("`term'", 1, 15)
 	fvrevar `var', stub(`term')
 }
 
@@ -78,7 +79,7 @@ foreach var of global bn_terms {
 
 timer clear 1
 timer on 1
-stpm2 $selected_vars_nobn ____* , df(5) scale(hazard) vce(robust)
+stpm2 $selected_vars_nobn __* , df(5) scale(hazard) vce(robust)
 estat ic
 timer off 1
 timer list 1

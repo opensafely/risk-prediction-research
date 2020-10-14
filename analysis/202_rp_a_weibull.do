@@ -83,7 +83,7 @@ do "analysis/0000_pick_up_coefficients.do"
 
 * Save coeficients needed for prediction
 
-get_coefs, coef_matrix(b) eqname("_t") ///
+get_coefs, coef_matrix(b) eqname("_t:") ///
 	dataname("data/model_a_weibull")
 
 

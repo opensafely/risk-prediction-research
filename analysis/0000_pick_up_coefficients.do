@@ -22,7 +22,7 @@
 *						and extracts the coefficients and variable expressions
 *						for later use. 
 *
-*	Typical use:		get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
+*	Typical use:		get_coefs, coef_matrix(b) eqname("onscoviddeath:") ///
 *							dataname("temp")
 *
 *
@@ -35,32 +35,6 @@
 *
 ********************************************************************************
 
-
-
-*********************************************
-*  Program to identify baseline categories  *
-*********************************************
-
-capture program drop identify_basecat 
-program define identify_basecat, rclass
-
-	syntax, term(string)
-
-		* Assumes baseline categories are of form
-		*		?b. 
-		*		??b. 
-		*		?o. 
-		*		??o.
-		* (where ? is a number)
-		local isbasecat = 												///
-			substr("`term'", 2, 1)=="b" 						 	| 	///
-			regexm(substr("`term'", 1, 3), "^[0-9]b.") 		 		| 	///
-			regexm(substr("`term'", 1, 4), "^[0-9][0-9]b.") 	 	| 	///
-			regexm(substr("`term'", 1, 3), "^[0-9]o.") 		 		| 	///
-			regexm(substr("`term'", 1, 4), "^[0-9][0-9]o.") 
-
-		return scalar isbasecat = `isbasecat'
-end
 
 
 
@@ -107,11 +81,17 @@ end
 
 * e.g. 3.ethnicity becomes (ethnicity==3)
 * c.age becomes age
+* 3bn.ethnicity becomes (ethnicity==3)
 
 capture program drop identify_varexpress
 program define identify_varexpress, rclass
 
 	syntax, term(string)
+	
+
+			* For terms of the form #bn. convert to #.
+			* e.g. 3bn.ethnicity becomes 3.ethnicity
+			local term = subinstr("`term'", "bn.", ".", 1)
 
 			* Identify terms starting with a category (max cat value = 999)
 			*	(assumes these all start with a number, e.g. 3.ethnicity)
@@ -156,6 +136,7 @@ end
 *  Program to save coefficients and variable expressions from a coefficient matrix  *
 *************************************************************************************
 
+* NB: eqname must include the colon, e.g. onscoviddeath:
 
 capture program drop get_coefs
 program define get_coefs
@@ -169,16 +150,9 @@ program define get_coefs
 	local j = 1
 	while "``i''" != "" {
 
-		if "`eqname'" == "xb0:" | "`eqname'" == "_t:" | "`eqname'" == "" {
-			* Remove eqname prefix, e.g. "onscoviddeath:
-			local length_prefix = length("`eqname'") + 1
-			local term_`j' = substr("``i''", `length_prefix', .)
-		}
-		else  {
-			* Remove eqname prefix, e.g. "onscoviddeath:"
-			local length_prefix = length("`eqname'") + 2
-			local term_`j' = substr("``i''", `length_prefix', .)
-		}	
+		* Remove eqname prefix, e.g. "onscoviddeath:
+		local length_prefix = length("`eqname'") + 1
+		local term_`j' = substr("``i''", `length_prefix', .)
 		
 		* Check for baseline categories in either a single or two terms
 		identify_pairinteract, term("`term_`j''")
@@ -186,68 +160,54 @@ program define get_coefs
 		local firstterm 	= r(firstterm)
 		local secondterm 	= r(secondterm)
 			
-		if `ispairinter' == 0 {	// Not an interaction
-			* Check for baseline
-			identify_basecat, term("`term_`j''")
-			local isbasecat = r(isbasecat)
-		}
-		else {	// An interaction
-			identify_basecat, term("`firstterm'")
-			local isbasecat_1 = r(isbasecat)
-			identify_basecat, term("`firstterm'")
-			local isbasecat_2 = r(isbasecat)
-			local isbasecat = max(`isbasecat_1', `isbasecat_2')
-		}
-	
-			* If non-baseline term then save coefficient and expression
-				
-			* Save the value of coefficient
-			if "`term_`j''"!="base_surv28" & "`term_`j''"!="base_surv100"  ///
-				& "`term_`j''"!="sigma" & "`term_`j''"!="kappa" {
-				
-				local coef_`j' = _b["`term_`j''"]
 			
-				* Identify the variable expression
-				if `ispairinter' == 0 {
-					* Not an interaction
-					identify_varexpress, term("`term_`j''")
-					local varexpress_`j' = r(varexpress)
-				}
-				else {
-					* An interaction
-					identify_varexpress, term("`firstterm'")
-					local varexpress1 = r(varexpress)
-					identify_varexpress, term("`secondterm'")
-					local varexpress2 = r(varexpress)
-					local varexpress_`j' = "`varexpress1'"+"*"+"`varexpress2'"
-				}
-			} 
+		* Save the value of coefficient
+		if "`term_`j''"!="base_surv28" & "`term_`j''"!="base_surv100"  ///
+			& "`term_`j''"!="sigma" & "`term_`j''"!="kappa" {
+			
+			local coef_`j' = _b["`term_`j''"]
+		
+			* Identify the variable expression
+			if `ispairinter' == 0 {
+				* Not an interaction
+				identify_varexpress, term("`term_`j''")
+				local varexpress_`j' = r(varexpress)
+			}
 			else {
+				* An interaction
+				identify_varexpress, term("`firstterm'")
+				local varexpress1 = r(varexpress)
+				identify_varexpress, term("`secondterm'")
+				local varexpress2 = r(varexpress)
+				local varexpress_`j' = "`varexpress1'"+"*"+"`varexpress2'"
+			}
+		} 
+		else {
+			local coef_`j' = `coef_matrix'[1,1]
+			local varexpress_`j' = ""
+			
+			* Sigma/Kappa for generalised gamma model 
+			if "`term_`j''" == "sigma" {
 				local coef_`j' = `coef_matrix'[1,1]
 				local varexpress_`j' = ""
-				
-				* Sigma/Kappa for generalised gamma model 
-				if "`term_`j''" == "sigma" {
-					local coef_`j' = `coef_matrix'[1,1]
-					local varexpress_`j' = ""
-					}
-				if "`term_`j''" == "kappa" {
-					local coef_`j' = `coef_matrix'[1,2]
-					local varexpress_`j' = ""
-					}	
-				if "`term_`j''" == "base_surv28" {
-					local coef_`j' = `coef_matrix'[1,1]
-					local varexpress_`j' = ""
-					}
-				if "`term_`j''" == "base_surv100" {
-					local coef_`j' = `coef_matrix'[1,2]
-					local varexpress_`j' = ""
-					}		
-				
-			}
-			local ++i
-			local ++j
-		
+				}
+			if "`term_`j''" == "kappa" {
+				local coef_`j' = `coef_matrix'[1,2]
+				local varexpress_`j' = ""
+				}	
+			if "`term_`j''" == "base_surv28" {
+				local coef_`j' = `coef_matrix'[1,1]
+				local varexpress_`j' = ""
+				}
+			if "`term_`j''" == "base_surv100" {
+				local coef_`j' = `coef_matrix'[1,2]
+				local varexpress_`j' = ""
+				}		
+			
+		}
+		local ++i
+		local ++j
+
 	
 	
 	* Save coefficients and variable expressions into a temporary dataset
