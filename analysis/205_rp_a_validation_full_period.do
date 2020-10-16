@@ -219,7 +219,7 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 }
 gen sign = cond($kappa < 0,-1,1) 
 gen gamma = abs($kappa )^(-2)
-gen z = sign*(ln(28) - xb)/$sigma
+gen z = sign*(ln(100) - xb)/$sigma
 
 if $kappa == 0 {
 global surv_a_gamma_nos = 1 - normal(z)
