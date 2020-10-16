@@ -64,7 +64,7 @@ forvalues j = 1 (1) $nt_a_cox_nos {
 /*  Royston Parmar model */
 
 use "data/model_a_roy", clear
-drop if term == "base_surv100" // remove base_surv100
+drop if term == "base_surv100"  | term == "_cons" // remove base_surv100
 
 * Pick up baseline survival
 global bs_a_roy_nos = coef[1]
@@ -81,7 +81,7 @@ forvalues j = 1 (1) $nt_a_roy_nos {
 /*  Weibull model  */
 
 use "data/model_a_weibull", clear
-drop if term == "base_surv100" // remove base_surv100
+drop if term == "base_surv100" | term == "_cons" 
 
 * Pick up baseline survival
 global bs_a_weibull_nos = coef[1]
@@ -166,10 +166,6 @@ forvalues i = 1/3 {
 	if `j' != $nt_a_roy_nos {
 		replace xb = xb + ${coef`j'_a_roy_nos}*${varexpress`j'_a_roy_nos}
 		}
-	* Add on the constant term	
-	if `j' == $nt_a_roy_nos {
-		replace xb = xb + ${coef`j'_a_roy_nos}
-	}	
 
 	}
 	gen pred_a_roy_nos = 1 -  (${bs_a_roy_nos})^exp(xb)
@@ -185,10 +181,6 @@ forvalues i = 1/3 {
 	if `j' != $nt_a_weibull_nos {
 		replace xb = xb + ${coef`j'_a_weibull_nos}*${varexpress`j'_a_weibull_nos}
 		}
-	* Add on the constant term	
-	if `j' == $nt_a_weibull_nos {
-		replace xb = xb + ${coef`j'_a_weibull_nos}
-	}	
 	}
 	gen pred_a_weibull_nos = 1 -  (${bs_a_weibull_nos})^exp(xb)
 	drop xb
