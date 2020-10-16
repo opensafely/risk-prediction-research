@@ -196,16 +196,16 @@ noi bysort onscoviddeath: summ stime28
 			
 
 
-************************
-*  Variable Selection  *
-************************
+*******************************
+*  Variable Selection  - FOI  *
+*******************************
 
 
 timer clear 1
 timer on 1
 lasso logit onscoviddeath	 										///
 			(c.agec i.male 											///
-			$tvc)													///
+			$tvc_foi )												///
 			i.rural i.imd i.ethnicity_8 							///
 			i.obesecat i.smoke_nomiss i.bpcat_nomiss 				///
 			i.hypertension i.diabcat i.cardiac 						///
@@ -249,9 +249,88 @@ timer list 1
 
 
 
-*****************************
-*  Save selected variables  *
-*****************************
+/*  Save coefficients of post-lasso   */
+
+lassocoef, display(coef, postselection eform)
+matrix define A = r(coef)
+
+* Selected coefficients
+local  SelectedVars = e(allvars_sel)
+noi di "`SelectedVars'"
+
+
+* Save coefficients of post-lasso 
+tempname coefs
+postfile `coefs' str30(variable) coef using 	///
+	"data\cr_selected_model_coefficients_landmark_foi.dta", replace
+
+local i = 1
+
+foreach v of local SelectedVars {
+	
+	local coef = A[`i',1]
+
+	post `coefs' ("`v'") (`coef')
+    local ++i
+}
+postclose `coefs'
+
+
+
+
+
+
+
+*******************************************
+*  Variable Selection  - A&E attendances  *
+*******************************************
+
+
+timer clear 1
+timer on 1
+lasso logit onscoviddeath	 										///
+			(c.agec i.male 											///
+			$tvc_ae )												///
+			i.rural i.imd i.ethnicity_8 							///
+			i.obesecat i.smoke_nomiss i.bpcat_nomiss 				///
+			i.hypertension i.diabcat i.cardiac 						///
+			i.af i.dvt_pe i.pad 									///
+			i.stroke i.dementia i.neuro 							///
+			i.asthmacat i.cf i.respiratory							///
+			i.cancerExhaem i.cancerHaem 							///
+			i.liver i.dialysis i.transplant i.kidneyfn 				///
+			i.autoimmune i.spleen i.suppression i.hiv i.ibd			///
+			i.ld i.smi i.fracture 									///
+			i.hh_children c.hh_numc c.hh_num2 c.hh_num3				///
+			c.age2 c.age3 											///
+			c.agec#i.male	 										///
+			c.agec#(i.rural i.imd i.ethnicity_8 					///
+				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
+				i.hypertension i.diabcat i.cardiac 					///
+				i.af i.dvt_pe i.pad 								///
+				i.stroke i.dementia i.neuro 						///
+				i.asthmacat i.cf i.respiratory						///
+				i.cancerExhaem i.cancerHaem 						///
+				i.liver i.dialysis i.transplant i.kidneyfn 			///
+				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
+				i.ld i.smi i.fracture 								///
+				i.hh_children)										///
+			i.male#(i.rural i.imd i.ethnicity_8 					///
+				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
+				i.hypertension i.diabcat i.cardiac 					///
+				i.af i.dvt_pe i.pad 								///
+				i.stroke i.dementia i.neuro 						///
+				i.asthmacat i.cf i.respiratory						///
+				i.cancerExhaem i.cancerHaem 						///
+				i.liver i.dialysis i.transplant i.kidneyfn 			///
+				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
+				i.ld i.smi i.fracture 								///
+				i.hh_children)										///
+			 ,  rseed(7248) grid(20) folds(3)
+timer off 1
+timer list 1
+
+
 
 
 /*  Save coefficients of post-lasso   */
@@ -267,7 +346,7 @@ noi di "`SelectedVars'"
 * Save coefficients of post-lasso 
 tempname coefs
 postfile `coefs' str30(variable) coef using 	///
-	"data\cr_selected_model_coefficients_landmark.dta", replace
+	"data\cr_selected_model_coefficients_landmark_ae.dta", replace
 
 local i = 1
 
@@ -280,6 +359,87 @@ foreach v of local SelectedVars {
 }
 postclose `coefs'
 
+
+
+
+
+**********************************************
+*  Variable Selection  - GP suspected cases  *
+**********************************************
+
+
+timer clear 1
+timer on 1
+lasso logit onscoviddeath	 										///
+			(c.agec i.male 											///
+			$tvc_susp )												///
+			i.rural i.imd i.ethnicity_8 							///
+			i.obesecat i.smoke_nomiss i.bpcat_nomiss 				///
+			i.hypertension i.diabcat i.cardiac 						///
+			i.af i.dvt_pe i.pad 									///
+			i.stroke i.dementia i.neuro 							///
+			i.asthmacat i.cf i.respiratory							///
+			i.cancerExhaem i.cancerHaem 							///
+			i.liver i.dialysis i.transplant i.kidneyfn 				///
+			i.autoimmune i.spleen i.suppression i.hiv i.ibd			///
+			i.ld i.smi i.fracture 									///
+			i.hh_children c.hh_numc c.hh_num2 c.hh_num3				///
+			c.age2 c.age3 											///
+			c.agec#i.male	 										///
+			c.agec#(i.rural i.imd i.ethnicity_8 					///
+				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
+				i.hypertension i.diabcat i.cardiac 					///
+				i.af i.dvt_pe i.pad 								///
+				i.stroke i.dementia i.neuro 						///
+				i.asthmacat i.cf i.respiratory						///
+				i.cancerExhaem i.cancerHaem 						///
+				i.liver i.dialysis i.transplant i.kidneyfn 			///
+				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
+				i.ld i.smi i.fracture 								///
+				i.hh_children)										///
+			i.male#(i.rural i.imd i.ethnicity_8 					///
+				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
+				i.hypertension i.diabcat i.cardiac 					///
+				i.af i.dvt_pe i.pad 								///
+				i.stroke i.dementia i.neuro 						///
+				i.asthmacat i.cf i.respiratory						///
+				i.cancerExhaem i.cancerHaem 						///
+				i.liver i.dialysis i.transplant i.kidneyfn 			///
+				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
+				i.ld i.smi i.fracture 								///
+				i.hh_children)										///
+			 ,  rseed(7248) grid(20) folds(3)
+timer off 1
+timer list 1
+
+
+
+
+/*  Save coefficients of post-lasso   */
+
+lassocoef, display(coef, postselection eform)
+matrix define A = r(coef)
+
+* Selected coefficients
+local  SelectedVars = e(allvars_sel)
+noi di "`SelectedVars'"
+
+
+* Save coefficients of post-lasso 
+tempname coefs
+postfile `coefs' str30(variable) coef using 	///
+	"data\cr_selected_model_coefficients_landmark_susp.dta", replace
+
+local i = 1
+
+foreach v of local SelectedVars {
+	
+	local coef = A[`i',1]
+
+	post `coefs' ("`v'") (`coef')
+    local ++i
+}
+postclose `coefs'
 
 
 

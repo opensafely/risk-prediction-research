@@ -102,9 +102,14 @@ replace aepos = aepos + r(min)/2 if aepos==0
 gen logae		= log(aepos)
 gen aeqd		= ae_q_day/ae_q_cons
 gen aeqds 		= ae_q_daysq/ae_q_cons
+
+replace aeqd  = 0 if ae_q_cons==0
+replace aeqds = 0 if ae_q_cons==0
+
 gen aeqint 		= aeqd*aeqds
 gen aeqd2		= aeqd^2
 gen aeqds2		= aeqds^2
+
 
 
 
@@ -119,6 +124,10 @@ replace susppos = susppos + r(min)/2 if susppos==0
 gen logsusp	 	= log(susppos)
 gen suspqd	 	= susp_q_day/susp_q_cons
 gen suspqds 	= susp_q_daysq/susp_q_cons
+
+replace suspqd  = 0 if susp_q_cons==0
+replace suspqds = 0 if susp_q_cons==0
+
 gen suspqint   	= suspqd*suspqds
 gen suspqd2 	= suspqd^2
 gen suspqds2	= suspqds^2
@@ -568,6 +577,7 @@ gen logfoilag12 = log(max(foilag12, r(min)/2))
 
 
 
+
 /*  A&E attendances  */
 
 gen aepos = aerate
@@ -578,9 +588,14 @@ replace aepos = aepos + r(min)/2 if aepos==0
 gen logae		= log(aepos)
 gen aeqd		= ae_q_day/ae_q_cons
 gen aeqds 		= ae_q_daysq/ae_q_cons
+
+replace aeqd  = 0 if ae_q_cons==0
+replace aeqds = 0 if ae_q_cons==0
+
 gen aeqint 		= aeqd*aeqds
 gen aeqd2		= aeqd^2
 gen aeqds2		= aeqds^2
+
 
 
 
@@ -595,6 +610,10 @@ replace susppos = susppos + r(min)/2 if susppos==0
 gen logsusp	 	= log(susppos)
 gen suspqd	 	= susp_q_day/susp_q_cons
 gen suspqds 	= susp_q_daysq/susp_q_cons
+
+replace suspqd  = 0 if susp_q_cons==0
+replace suspqds = 0 if susp_q_cons==0
+
 gen suspqint   	= suspqd*suspqds
 gen suspqd2 	= suspqd^2
 gen suspqds2	= suspqds^2
@@ -602,6 +621,7 @@ gen suspqds2	= suspqds^2
 
 
 
+save funcform_temp, replace
 
 			
 
@@ -633,7 +653,7 @@ lasso poisson onscoviddeath (i.agegroupfoi) 	///
 							logfoilag12			///
 						[fweight=fweight]		///
 				,  rseed(12378) grid(20) folds(3) ///
-				selection(plugin)
+				selection(plugin) serule
 timer off 1
 timer list 1
 
@@ -683,7 +703,7 @@ lasso poisson onscoviddeath (i.agegroupfoi) 	///
 							aeqds2				///
 						[fweight=fweight]		///
 				,  rseed(12378) grid(20) folds(3) ///
-				selection(plugin)
+				selection(plugin) serule
 timer off 1
 timer list 1
 
@@ -731,7 +751,7 @@ lasso poisson onscoviddeath (i.agegroupfoi) 	///
 							suspqds2			///
 						[fweight=fweight]		///
 				,  rseed(12378) grid(20) folds(3) ///
-				selection(plugin)
+				selection(plugin) serule
 timer off 1
 timer list 1
 
