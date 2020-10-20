@@ -7,9 +7,11 @@
 *	Data used:			data/cr_base_cohort.dta
 *
 *	Data created:		Selected variables (Stata dataset): 
-*							data/cr_selected_model_coefficients_landmark.dta
+*							data/cr_selected_model_coefficients_landmark_`tvc'.dta
+*									for tcv = foi, ae and susp
 *
-*	Other output:		Log file:  103_pr_variable_selection_landmark.log
+*	Other output:		Log file:  103_pr_variable_selection_landmark_`tvc'.log
+*									for tcv = foi, ae and susp
 *
 ********************************************************************************
 *
@@ -23,31 +25,32 @@
 ********************************************************************************
 
 
+* Time-varyng variable: either foi (force of infection), ae (A&E attendances)
+*  or susp (GP suspected cases)
 
-
-/******   IMPORTANT NOTE   ******/
-
-* Put in chosen functional form for timevarying variable
-* Check the correct variables forced in below
-
-/******   END IMPORTANT NOTE   ******/
-
-
-global tvc = "logfoi foiqd foiqds" 
-* global tvc = "??? for A&E"
-* global tvc = "??? for GP susp cases"
+local tvc `1' 
+noi di "`tvc'"
 
 
 
+
+/******   Chosen functional form for timevarying variables  ******/
+
+global tvc_foi  = "c.logfoi c.foi_q_day c.foi_q_daysq c.foiqd c.foiqds" 
+global tvc_ae   = "c.logae c.ae_q_day c.ae_q_daysq c.aeqd c.aeqds c.aeqds2"
+global tvc_susp = "c.logsusp c.susp_q_day c.susp_q_daysq c.suspqd c.suspqds c.suspqds2"
+
+* Print out relevant variables
+noi di "${tvc_`tvc'}"
 
 
 * Open a log file
 cap log close
-log using "output/103_pr_variable_selection_landmark", replace t
+log using "output/103_pr_variable_selection_landmark_`tvc'", replace t
 
 
 * Load do-file which extracts covariates 
-do "analysis/0000_cr_define_covariates.do"
+qui do "analysis/0000_cr_define_covariates.do"
 
 
 
@@ -77,6 +80,9 @@ noi tab onscoviddeath
 
 
 /* Take random sample  */ 
+
+set seed 12378009
+
 
 * Each equal to 3% of cohort; non-overlapping
 gen select1 = uniform()<0.03
@@ -156,24 +162,53 @@ merge m:1 time stp_combined using "data/susp_coefs", ///
 drop susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
 
 
-*** DROP ANY TIME VARYING STUFF NOT NEEDED FOR VARIABLE SELECTION
-*** CREATE ANY VARIABLES NEEDED HERE:
-*** ??
+
+/*  Create time-varying variables needed  */
 
 * Variables needed for force of infection data
+
 gen logfoi = log(foi)
 gen foiqd  =  foi_q_day/foi_q_cons
 gen foiqds =  foi_q_daysq/foi_q_cons
-drop foi_q_cons foi_q_day foi_q_daysq
 
 
 * Variables needed for A&E attendance data
+gen aepos = aerate
+qui summ aerate if aerate>0 
+replace aepos = aepos + r(min)/2 if aepos==0
 
+gen logae		= log(aepos)
+gen aeqd		= ae_q_day/ae_q_cons
+gen aeqds 		= ae_q_daysq/ae_q_cons
 
+replace aeqd  = 0 if ae_q_cons==0
+replace aeqds = 0 if ae_q_cons==0
 
+gen aeqint 		= aeqd*aeqds
+gen aeqd2		= aeqd^2
+gen aeqds2		= aeqds^2
 
 
 * Variables needed for GP suspected case data
+
+gen susppos = susp_rate
+qui summ susp_rate if susp_rate>0 
+replace susppos = susppos + r(min)/2 if susppos==0
+
+* Create time variables to be fed into the variable selection process
+gen logsusp	 	= log(susppos)
+gen suspqd	 	= susp_q_day/susp_q_cons
+gen suspqds 	= susp_q_daysq/susp_q_cons
+
+replace suspqd  = 0 if susp_q_cons==0
+replace suspqds = 0 if susp_q_cons==0
+
+gen suspqint   	= suspqd*suspqds
+gen suspqd2 	= suspqd^2
+gen suspqds2	= suspqds^2
+
+
+
 
 
 
@@ -205,7 +240,7 @@ timer clear 1
 timer on 1
 lasso logit onscoviddeath	 										///
 			(c.agec i.male 											///
-			$tvc_foi )												///
+			${tvc_`tvc'} )											///
 			i.rural i.imd i.ethnicity_8 							///
 			i.obesecat i.smoke_nomiss i.bpcat_nomiss 				///
 			i.hypertension i.diabcat i.cardiac 						///
@@ -262,7 +297,7 @@ noi di "`SelectedVars'"
 * Save coefficients of post-lasso 
 tempname coefs
 postfile `coefs' str30(variable) coef using 	///
-	"data\cr_selected_model_coefficients_landmark_foi.dta", replace
+	"data\cr_selected_model_coefficients_landmark_`tvc'.dta", replace
 
 local i = 1
 
@@ -276,170 +311,6 @@ foreach v of local SelectedVars {
 postclose `coefs'
 
 
-
-
-
-
-
-*******************************************
-*  Variable Selection  - A&E attendances  *
-*******************************************
-
-
-timer clear 1
-timer on 1
-lasso logit onscoviddeath	 										///
-			(c.agec i.male 											///
-			$tvc_ae )												///
-			i.rural i.imd i.ethnicity_8 							///
-			i.obesecat i.smoke_nomiss i.bpcat_nomiss 				///
-			i.hypertension i.diabcat i.cardiac 						///
-			i.af i.dvt_pe i.pad 									///
-			i.stroke i.dementia i.neuro 							///
-			i.asthmacat i.cf i.respiratory							///
-			i.cancerExhaem i.cancerHaem 							///
-			i.liver i.dialysis i.transplant i.kidneyfn 				///
-			i.autoimmune i.spleen i.suppression i.hiv i.ibd			///
-			i.ld i.smi i.fracture 									///
-			i.hh_children c.hh_numc c.hh_num2 c.hh_num3				///
-			c.age2 c.age3 											///
-			c.agec#i.male	 										///
-			c.agec#(i.rural i.imd i.ethnicity_8 					///
-				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
-				i.hypertension i.diabcat i.cardiac 					///
-				i.af i.dvt_pe i.pad 								///
-				i.stroke i.dementia i.neuro 						///
-				i.asthmacat i.cf i.respiratory						///
-				i.cancerExhaem i.cancerHaem 						///
-				i.liver i.dialysis i.transplant i.kidneyfn 			///
-				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
-				i.ld i.smi i.fracture 								///
-				i.hh_children)										///
-			i.male#(i.rural i.imd i.ethnicity_8 					///
-				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
-				i.hypertension i.diabcat i.cardiac 					///
-				i.af i.dvt_pe i.pad 								///
-				i.stroke i.dementia i.neuro 						///
-				i.asthmacat i.cf i.respiratory						///
-				i.cancerExhaem i.cancerHaem 						///
-				i.liver i.dialysis i.transplant i.kidneyfn 			///
-				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
-				i.ld i.smi i.fracture 								///
-				i.hh_children)										///
-			 ,  rseed(7248) grid(20) folds(3)
-timer off 1
-timer list 1
-
-
-
-
-/*  Save coefficients of post-lasso   */
-
-lassocoef, display(coef, postselection eform)
-matrix define A = r(coef)
-
-* Selected coefficients
-local  SelectedVars = e(allvars_sel)
-noi di "`SelectedVars'"
-
-
-* Save coefficients of post-lasso 
-tempname coefs
-postfile `coefs' str30(variable) coef using 	///
-	"data\cr_selected_model_coefficients_landmark_ae.dta", replace
-
-local i = 1
-
-foreach v of local SelectedVars {
-	
-	local coef = A[`i',1]
-
-	post `coefs' ("`v'") (`coef')
-    local ++i
-}
-postclose `coefs'
-
-
-
-
-
-**********************************************
-*  Variable Selection  - GP suspected cases  *
-**********************************************
-
-
-timer clear 1
-timer on 1
-lasso logit onscoviddeath	 										///
-			(c.agec i.male 											///
-			$tvc_susp )												///
-			i.rural i.imd i.ethnicity_8 							///
-			i.obesecat i.smoke_nomiss i.bpcat_nomiss 				///
-			i.hypertension i.diabcat i.cardiac 						///
-			i.af i.dvt_pe i.pad 									///
-			i.stroke i.dementia i.neuro 							///
-			i.asthmacat i.cf i.respiratory							///
-			i.cancerExhaem i.cancerHaem 							///
-			i.liver i.dialysis i.transplant i.kidneyfn 				///
-			i.autoimmune i.spleen i.suppression i.hiv i.ibd			///
-			i.ld i.smi i.fracture 									///
-			i.hh_children c.hh_numc c.hh_num2 c.hh_num3				///
-			c.age2 c.age3 											///
-			c.agec#i.male	 										///
-			c.agec#(i.rural i.imd i.ethnicity_8 					///
-				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
-				i.hypertension i.diabcat i.cardiac 					///
-				i.af i.dvt_pe i.pad 								///
-				i.stroke i.dementia i.neuro 						///
-				i.asthmacat i.cf i.respiratory						///
-				i.cancerExhaem i.cancerHaem 						///
-				i.liver i.dialysis i.transplant i.kidneyfn 			///
-				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
-				i.ld i.smi i.fracture 								///
-				i.hh_children)										///
-			i.male#(i.rural i.imd i.ethnicity_8 					///
-				i.obesecat i.smoke_nomiss i.bpcat_nomiss 			///
-				i.hypertension i.diabcat i.cardiac 					///
-				i.af i.dvt_pe i.pad 								///
-				i.stroke i.dementia i.neuro 						///
-				i.asthmacat i.cf i.respiratory						///
-				i.cancerExhaem i.cancerHaem 						///
-				i.liver i.dialysis i.transplant i.kidneyfn 			///
-				i.autoimmune i.spleen i.suppression i.hiv i.ibd		///
-				i.ld i.smi i.fracture 								///
-				i.hh_children)										///
-			 ,  rseed(7248) grid(20) folds(3)
-timer off 1
-timer list 1
-
-
-
-
-/*  Save coefficients of post-lasso   */
-
-lassocoef, display(coef, postselection eform)
-matrix define A = r(coef)
-
-* Selected coefficients
-local  SelectedVars = e(allvars_sel)
-noi di "`SelectedVars'"
-
-
-* Save coefficients of post-lasso 
-tempname coefs
-postfile `coefs' str30(variable) coef using 	///
-	"data\cr_selected_model_coefficients_landmark_susp.dta", replace
-
-local i = 1
-
-foreach v of local SelectedVars {
-	
-	local coef = A[`i',1]
-
-	post `coefs' ("`v'") (`coef')
-    local ++i
-}
-postclose `coefs'
 
 
 
