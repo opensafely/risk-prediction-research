@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_b_poisson.do
+*	Do-file:		301_rp_b_poisson.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
@@ -10,7 +10,7 @@
 *					data/model_b_poisson_shield_foi.dta
 *					data/model_b_poisson_shield_???.dta
 *
-*	Other output:	Log file:  			rp_b_poisson.log
+*	Other output:	Log file:  301_rp_b_poisson.log
 *
 ********************************************************************************
 *
@@ -21,14 +21,36 @@
 
 
 
-**** ALTERNATIVE VERSION OF POISSON USING STREG
+* Time-varying variable: either foi (force of infection), ae (A&E attendances)
+*  or susp (GP suspected cases)
 
+local tvc `1' 
+noi di "`tvc'"
 
 
 * Open a log file
 capture log close
-log using "./output/rp_b_poisson", text replace
+log using "./output/301_rp_b_poisson", text replace
 
+
+
+/******   Chosen functional form for timevarying variables  ******/
+
+global tvc_foi  = "c.logfoi c.foi_q_day c.foi_q_daysq c.foiqd c.foiqds" 
+global tvc_ae   = "c.logae c.ae_q_day c.ae_q_daysq c.aeqd c.aeqds c.aeqds2"
+global tvc_susp = "c.logsusp c.susp_q_day c.susp_q_daysq c.suspqd c.suspqds c.suspqds2"
+
+* Print out relevant variables
+noi di "${tvc_`tvc'}"
+
+
+
+
+************************************
+*  Open dataset for model fitting  *
+************************************
+
+use "data/cr_landmark.dta", clear
 
 
 
@@ -36,27 +58,14 @@ log using "./output/rp_b_poisson", text replace
 *  Pick up predictor list(s)  *
 *******************************
 
-
 do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_preshield"
-
+noi di "$selected_vars"
 
 
 
 ********************************************************
 *   Models not including measures of infection burden  *
 ********************************************************
-
-
-use "data/cr_landmark.dta", clear
-sort patient_id time
-gen newid = _n
-
-stset dayout, fail(onscoviddeath) enter(dayin) id(newid)
-
-* Barlow weights used as an offset, alongside the usual offset (exposure time)
-gen offset = log(sf_wts)
-
 
 
 * Model details
@@ -68,11 +77,11 @@ gen offset = log(sf_wts)
 * Fit model
 timer clear 1
 timer on 1
-streg $predictors_preshield,	/// 
-	dist(exp) robust cluster(patient_id) offset(offset)
+streg ${tvc_`tvc'} $selected_vars, dist(exp) robust cluster(patient_id)
 timer off 1
 timer list 1
 estat ic
+
 
 
 
