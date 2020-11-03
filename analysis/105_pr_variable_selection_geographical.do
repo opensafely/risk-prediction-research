@@ -1,15 +1,16 @@
 ********************************************************************************
 *
-*	Do-file:			107_pr_variable_selection_time.do
+*	Do-file:			105_pr_variable_selection_geographical.do
 *
 *	Written by:			Fizz & John
 *
 *	Data used:			data/cr_base_cohort.dta
 *
 *	Data created:		Selected variables (Stata dataset): 
-*							data/cr_selected_model_coefficients_time.dta
+*							data/cr_selected_model_coefficients_`i'.dta
+*									(i=1,2,...,7 - region omitted)
 *
-*	Other output:		Log file:  107_pr_variable_selection_time.log
+*	Other output:		Log file:  104_pr_variable_selection_`i'.log
 *
 ********************************************************************************
 *
@@ -25,9 +26,12 @@
 
 
 
+local region `1' 
+noi di "`region'"
+
 * Open a log file
 cap log close
-log using "output/107_pr_variable_selection_time", replace
+log using "output/105_pr_variable_selection_`region'", replace
 
 
 
@@ -48,18 +52,8 @@ qui do "analysis/0000_cr_define_covariates.do"
 	
 use "data/cr_base_cohort.dta", replace
 
-
-* Censor at 11 May (including 11 May)
-drop onscoviddeath stime
-
-*   Outcome = COVID-19 death between cohort first date and 11 May
-gen onscoviddeath = (died_date_onscovid <= d(11/05/2020))
-
-* Survival time
-gen 	stime = (died_date_onscovid - d(1/03/2020) + 1) if onscoviddeath==1
-replace stime = (d(11/05/2020)      - d(1/03/2020) + 1)	if onscoviddeath==0
-
-
+* Drop data from one region
+drop if region_7==`region'
 
 * Take random sample (5%) to account for smaller initial cohort
 noi count
@@ -68,7 +62,6 @@ set seed 724891
 sample 5
 noi count
 noi tab onscoviddeath
-
 
 	
 /* Complete case for ethnicity   */ 
@@ -172,7 +165,7 @@ noi di "`SelectedVars'"
 * Save coefficients of post-lasso 
 tempname coefs
 postfile `coefs' str30(variable) coef using 	///
-	"data\cr_selected_model_coefficients_time.dta", replace
+	"data\cr_selected_model_coefficients_`region'.dta", replace
 
 local i = 1
 

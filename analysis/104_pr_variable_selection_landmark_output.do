@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			104_pr_variable_selection_output.do
+*	Do-file:			104_pr_variable_selection_landmark_output.do
 *
 *	Written by:			Fizz & John
 *
@@ -26,7 +26,7 @@ local ae_title   = "A&E attendance data"
 local susp_title = "GP suspected case data"
 
 
-foreach tvc of foi ae susp {
+foreach tvc in foi ae susp {
 
 	preserve
 	use "data/cr_selected_model_coefficients_landmark_`tvc'.dta", replace
@@ -39,7 +39,6 @@ foreach tvc of foi ae susp {
 
 	forvalues i = 1 (1) `nparam' {
 		local term = variable[`i']
-		noi di "`term'"
 		global selected_vars = "$selected_vars" + " " + "`term'"
 	}
 

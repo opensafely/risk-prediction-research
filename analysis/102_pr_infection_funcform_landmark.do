@@ -384,7 +384,6 @@ log close
 
 
 
-/*
 
 
 
@@ -621,8 +620,6 @@ gen suspqds2	= suspqds^2
 
 
 
-save funcform_temp, replace
-
 			
 
 
@@ -786,6 +783,5 @@ postclose `coefs'
 log close
 
 
-*/
 
 

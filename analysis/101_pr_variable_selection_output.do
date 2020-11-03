@@ -42,7 +42,6 @@ global bn_terms 			= ""
 
 forvalues i = 1 (1) `nparam' {
     local term = variable[`i']
-	noi di "`term'"
 	global selected_vars = "$selected_vars" + " " + "`term'"
 
 	* Separate out bits with bn in the name
