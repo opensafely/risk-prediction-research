@@ -34,6 +34,7 @@
 
 * Overall approach A
 use "data/cr_selected_model_coefficients.dta", clear
+gen order = _n
 gen select = 1
 gen poscoef = (coef>0)
 drop coef
@@ -46,6 +47,7 @@ forvalues i = 1 (1) 8 {
 	if `i'==8 {
 		merge 1:1 variable using "data/cr_selected_model_coefficients_time.dta"
 	}
+	replace order =_n if order==.
 	recode _m 2/3=1 1=0, gen(select_geog`i')
 	drop _m
 	gen poscoef_geog`i' = (coef>0)
@@ -61,6 +63,7 @@ rename poscoef_geog8 poscoef_time
 * Landmark
 foreach tvc in foi ae susp {
 	merge 1:1 variable using "data/cr_selected_model_coefficients_landmark_`tvc'.dta"
+	replace order =_n if order==.
 	recode _m 2/3=1 1=0, gen(select_`tvc')
 	drop _m
 	gen poscoef_`tvc' = (coef>0)
