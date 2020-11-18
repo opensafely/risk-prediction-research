@@ -93,6 +93,16 @@ program define identify_varexpress, rclass
 			* e.g. 3bn.ethnicity becomes 3.ethnicity
 			local term = subinstr("`term'", "bn.", ".", 1)
 
+			* For terms of the form #o. convert to #.
+			* e.g. 3o.ethnicity becomes 3.ethnicity
+			* These terms are omitted - the associated coefficient is zero
+			local term = subinstr("`term'", "o.", ".", 1)
+
+			* Omitted continuous variables then become .varname; remove .
+			if substr("`term'", 1, 1)=="." {
+				local term = substr("`term'", 2, length("`term'"))
+			}
+			
 			* Identify terms starting with a category (max cat value = 999)
 			*	(assumes these all start with a number, e.g. 3.ethnicity)
 			if  regexm(substr("`term'", 1, 2), "^[0-9].")  			| 	///
