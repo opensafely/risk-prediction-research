@@ -41,19 +41,21 @@ drop coef
 
 * Internal-external
 forvalues i = 1 (1) 8 {
-    if `i'<8 {
-		merge 1:1 variable using "data/cr_selected_model_coefficients_`i'.dta"
-	}
-	if `i'==8 {
-		merge 1:1 variable using "data/cr_selected_model_coefficients_time.dta"
-	}
-	replace order =_n if order==.
-	recode _m 2/3=1 1=0, gen(select_geog`i')
-	drop _m
-	gen poscoef_geog`i' = (coef>0)
-	drop coef
-	foreach var of varlist select* {
-		recode `var' .=0
+	if `i' != 3 {
+		if `i'<8 {
+			merge 1:1 variable using "data/cr_selected_model_coefficients_`i'.dta"
+		}
+		if `i'==8 {
+			merge 1:1 variable using "data/cr_selected_model_coefficients_time.dta"
+		}
+		replace order =_n if order==.
+		recode _m 2/3=1 1=0, gen(select_geog`i')
+		drop _m
+		gen poscoef_geog`i' = (coef>0)
+		drop coef
+		foreach var of varlist select* {
+			recode `var' .=0
+		}
 	}
 }
 rename select_geog8 select_time
