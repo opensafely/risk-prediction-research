@@ -35,15 +35,15 @@ foreach tvc in foi ae susp {
 	local nparam = r(N)
 
 
-	global selected_vars_tvc = ""
+	global selected_vars_landmark_`tvc' = ""
 
 	forvalues i = 1 (1) `nparam' {
 		local term = variable[`i']
-		global selected_vars = "$selected_vars" + " " + "`term'"
+		global selected_vars_landmark_`tvc' = "${selected_vars_landmark_`tvc'}" + " " + "`term'"
 	}
 
 	noi di "Approach B, Model selected (lasso) for models using ``tvc'_title': " 
-	noi di "$selected_vars_landmark_`tvc'"
+	noi di "${selected_vars_landmark_`tvc'}"
 	restore
 
 }
