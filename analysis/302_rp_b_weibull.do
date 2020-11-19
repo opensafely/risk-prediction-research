@@ -104,16 +104,11 @@ gen suspqds2	= suspqds^2
 ********************
 
 
-
-* Create offset term (log of the sampling fraction)
-gen offset = log(sf_wts)
-
-
 * Fit model
 timer clear 1
 timer on 1
 streg ${selected_vars_landmark_`tvc'}, dist(weibull) ///
-	robust cluster(patient_id) offset(offset)
+	robust cluster(patient_id) 
 estat ic
 timer off 1
 timer list 1
