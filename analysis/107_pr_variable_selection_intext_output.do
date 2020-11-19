@@ -34,14 +34,18 @@ preserve
 
 forvalues r = 1 (1) 8 {
 
-	if `r'< 8 {
+	if `r'< 8 & `r'!=3 {
 	    * Leave-one-out: regional
 		use "data/cr_selected_model_coefficients_`r'.dta", clear
+	}
+	else if `r'==3 {		// Use overall model since lasso did not converge
+		use "data/cr_selected_model_coefficients.dta", clear
 	}
 	else if `r'==8 {
 		* Leave-one-out: temporal
 		use "data/cr_selected_model_coefficients_time.dta", clear	    
 	}
+	
 	qui count
 	local nparam_`r' = r(N)
 
