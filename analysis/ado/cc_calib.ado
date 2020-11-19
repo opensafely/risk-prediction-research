@@ -50,7 +50,7 @@
 capture program drop cc_calib
 program define cc_calib, rclass
 
-	syntax varlist(min=2 max=2), 				///
+	syntax varlist(min=2 max=2) [if/], 			///
 		[weight(varname) pctile nq(integer 10)] ///
 		data(string)
 	
@@ -74,8 +74,16 @@ program define cc_calib, rclass
 		local weightoptp = " "		
 	}
 	
+	if "`if'"!= "" {
+		local andif = "& " + "`if'"
+	    local ifif = "if "+"`if'"
+	}
+	else {
+		local andif = " "
+	    local ifif = " "
+	}
 	
-	
+
 	
 	**************************
 	*  Obtain GOF statistic  *
@@ -83,7 +91,7 @@ program define cc_calib, rclass
 	
 	* Obtain groups by deciles (in orig cohort, i.e. weighted)
 	tempvar gp_coh 
-	qui xtile `gp_coh' = `predicted' `weightoptp', nq(`nq')
+	qui xtile `gp_coh' = `predicted' `weightoptp' `ifif', nq(`nq')
 
 	*  Obtain estimates of observed and expected in each group in orig cohort (weighted)
 	qui tempvar obs_events exp_events pbar n cons
@@ -94,23 +102,23 @@ program define cc_calib, rclass
 	qui gen `cons' 			= 1
 
 	forvalues i = 1 (1) 10 {
-		qui summ `predicted' if `gp_coh'==`i' `weightopti'
-		qui replace `exp_events' = r(sum)  if `gp_coh'==`i'
-		qui replace `pbar'       = r(mean) if `gp_coh'==`i'
+		qui summ `predicted' if `gp_coh'==`i' `andif' `weightopti' 
+		qui replace `exp_events' = r(sum)  if `gp_coh'==`i' `andif' 
+		qui replace `pbar'       = r(mean) if `gp_coh'==`i' `andif' 
 		
-		qui summ `observed' if `gp_coh'==`i' `weightopti'
-		qui replace `obs_events' = r(sum) if `gp_coh'==`i'
+		qui summ `observed' if `gp_coh'==`i' `andif' `weightopti'
+		qui replace `obs_events' = r(sum) if `gp_coh'==`i' `andif' 
 		
-		qui summ `cons' if `gp_coh'==`i' `weightopti'
-		qui replace `n' = r(sum) if `gp_coh'==`i'
+		qui summ `cons' if `gp_coh'==`i' `andif' `weightopti' 
+		qui replace `n' = r(sum) if `gp_coh'==`i' `andif' 
 	}
 	tempvar tag chi_term
 	
 	* Sum chi-squared (O-E)^2/p(1-p) over groups
-	qui egen `tag' = tag(`gp_coh')
+	qui egen `tag' = tag(`gp_coh') `ifif'
 	qui gen `chi_term' = (`obs_events' - `exp_events')^2/(`n'*`pbar'*(1-`pbar'))	///
-		if `tag'==1 
-	qui summ `chi_term'
+		if `tag'==1 `andif' 
+	qui summ `chi_term' `ifif'
 	local chi = r(sum)
 		
 
@@ -131,11 +139,11 @@ program define cc_calib, rclass
 	**********************
 
 	* Overall mean outcome (weighted back to original cohort)
-	qui summ `observed' `weightopti'
+	qui summ `observed' `ifif' `weightopti'
 	local mean_obs = r(mean)
 	
 	* Overall mean prediction (weighted back to original cohort)
-	qui summ `predicted' `weightopti'
+	qui summ `predicted' `ifif' `weightopti'
 	local mean_pred = r(mean)
 		
 	
@@ -146,8 +154,8 @@ program define cc_calib, rclass
 
 	* Intercept (include logit of predicted risk as intercept)
 	tempvar lp
-	qui gen `lp' = ln(`predicted'/(1 - `predicted'))
-	qui logit `observed' `weightoptp', offset(`lp')
+	qui gen `lp' = ln(`predicted'/(1 - `predicted')) `ifif'
+	qui logit `observed' `ifif' `weightoptp', offset(`lp') 
 	local calib_inter = _b[_cons]
 	local calib_inter_se = _se[_cons]
 	local calib_inter_cl = `calib_inter' - invnormal(0.975)*`calib_inter_se'
@@ -155,7 +163,7 @@ program define cc_calib, rclass
 	local calib_inter_p  = 2*(1-normal(abs(`calib_inter')/`calib_inter_se')) 
 	
 	* Slope 
-	qui logit `observed' `lp' `weightoptp'
+	qui logit `observed' `lp' `ifif' `weightoptp'
 	local calib_slope = _b[`lp']
 	local calib_slope_se = _se[_cons]
 	local calib_slope_cl = `calib_slope' - invnormal(0.975)*`calib_inter_se'
