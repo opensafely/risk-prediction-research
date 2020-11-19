@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		rp_b_predict_all.do
+*	Do-file:		303_rp_b_validation_28day.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
@@ -8,12 +8,12 @@
 *
 *	Data created:	data/approach_b_1
 *
-*	Other output:	Log file:  	rp_b_predict_all.log
+*	Other output:	Log file:  	output/303_rp_b_validation_28day.log
 *
 ********************************************************************************
 *
-*	Purpose:		This do-file fits logistic regression models to the landmark
-*					substudies to predict 28-day COVID-19 death. 
+*	Purpose:		This do-file compares Design B (landmark) models in terms 
+*					of their predictive ability.
 *
 ********************************************************************************
 
@@ -21,7 +21,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_b_predict_all", text replace
+log using "./output/303_rp_b_validation_28day", text replace
 
 
 
@@ -33,119 +33,58 @@ log using "./output/rp_b_predict_all", text replace
 
 /*  Logistic regression models  */
 
+foreach tvc of foi ae susp {
 
-*** No shielding, no infectious disease measures
-use "data/model_b_logistic_noshield", clear
+	use "data/model_b_logistic_`tvc'.dta", clear
 
-qui count
-global nt_b_logit_nos = r(N)
-forvalues j = 1 (1) $no_terms {
-	global coef`j'_b_logit_nos = coef[`j']
-	global varexpress`j'_b_logit_nos = varexpress[`j']
-	
+	qui count
+	global nt_b_logit_`tvc' = r(N)
+	forvalues j = 1 (1) ${nt_b_logit_`tvc'} {
+		global coef`j'_b_logit_`tvc' 		= coef[`j']
+		global varexpress`j'_b_logit_`tvc' 	= varexpress[`j']	
+	}
 }
-
-
-*** Shielding, infectious disease measure = force of infection
-
-
-
-
-*** Shielding, infectious disease measure = ???
-
-
-
 
 
 
 
 /*  Poisson regression models  */
 
-*** No shielding, no infectious disease measures
-use "data/model_b_poisson_noshield", clear
 
-qui count
-global nt_b_pois_nos = r(N)
-forvalues j = 1 (1) $no_terms {
-	global coef`j'_b_pois_nos = coef[`j']
-	global varexpress`j'_b_pois_nos = varexpress[`j']
-	
+foreach tvc of foi ae susp {
+
+	use "data/model_b_poisson_`tvc'.dta", clear
+
+	qui count
+	global nt_b_pois_`tvc' = r(N)
+	forvalues j = 1 (1) ${nt_b_pois_`tvc'} {
+		global coef`j'_b_pois_`tvc' 		= coef[`j']
+		global varexpress`j'_b_pois_`tvc' 	= varexpress[`j']	
+	}
 }
-
-
-*** Shielding, infectious disease measure = force of infection
-
-
-
-
-*** Shielding, infectious disease measure = ???
-
-
-
-
-
-
-
-
-/*  Poisson regression models USING STREG  */
-
-*** No shielding, no infectious disease measures
-use "data/model_b_poisson2_noshield", clear
-
-* Pick up baseline survival
-global bs_b_pois2_nos = coef[1]
-
-* Pick up HRs
-qui count
-global nt_b_pois2_nos = r(N) - 1
-forvalues j = 1 (1) $nt_b_pois2_nos {
-	local k = `j' + 1
-	global coef`j'_b_pois2_nos = coef[`k']
-	global varexpress`j'_b_pois2_nos = varexpress[`k']
-	
-}
-
-
-*** Shielding, infectious disease measure = force of infection
-
-
-
-
-*** Shielding, infectious disease measure = ???
-
-
-
 
 
 
 
 /*  Weibull regression models  */
 
-*** No shielding, no infectious disease measures
-use "data/model_b_weibull_noshield", clear
 
-* Pick up baseline survival
-global bs_b_weib_nos = coef[1]
+foreach tvc of foi ae susp {
 
-* Pick up HRs
-qui count
-global nt_b_weib_nos = r(N) - 1
-forvalues j = 1 (1) $nt_b_weib_nos {
-	local k = `j' + 1
-	global coef`j'_b_weib_nos = coef[`k']
-	global varexpress`j'_b_weib_nos = varexpress[`k']
-	
+	use "data/model_b_weibull_`tvc'.dta", clear
+ 
+	* Pick up baseline survival
+	global bs_b_weib_`tvc' = coef[1]
+
+	* Pick up HRs
+	qui count
+	global nt_b_weib_nos = r(N) - 1
+	forvalues j = 1 (1) ${nt_b_weib_`tvc'} {
+		local k = `j' + 1
+		global coef`j'_b_weib_`tvc' 		= coef[`k']
+		global varexpress`j'_b_weib_`tvc' 	= varexpress[`k']
+	}
 }
-
-
-*** Shielding, infectious disease measure = force of infection
-
-
-
-
-*** Shielding, infectious disease measure = ???
-
-
 
 
 

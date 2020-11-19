@@ -119,7 +119,8 @@ forvalues j = 1 (1) $nt_a_ggamma_nos {
 ***********************************
 
 local vp_start 	= d(01/03/2020)
-local vp_end 	= d(28/03/2020) 
+
+
 		
 /* Open base cohort   */ 
 	

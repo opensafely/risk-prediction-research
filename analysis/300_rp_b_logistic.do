@@ -1,30 +1,35 @@
 ********************************************************************************
 *
-*	Do-file:		300_rp_b_logistic_regression_models.do
+*	Do-file:		300_rp_b_logistic.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
 *	Data used:		data/cr_landmark.dta
 *
-*	Data created:	data/model_b_logistic_noshield.dta
-*					data/model_b_logistic_shield_foi.dta
-*					data/model_b_logistic_shield_???.dta
+*	Data created:	data/model_b_logistic_`tvc'.dta, where tvc=foi, ae, susp
 *
-*	Other output:	Log file:  	rp_b_logistic.log
+*	Other output:	Log file:  	output/300_rp_b_logistic.log
 *
 ********************************************************************************
 *
 *	Purpose:		This do-file fits logistic regression models to the landmark
-*					substudies to predict 28-day COVID-19 death. 
+*					substudies to predict 28-day COVID-19 death incorporating
+*					3 different measures of time-varying measures of disease:
+*					force of infection estimates, A&E attendances for COVID, 
+*					and suspected GP COVID cases. 
 *
 ********************************************************************************
 
+
+* Specify the time-varying measures: foi, ae or susp
+local tvc `1' 
+noi di "`tvc'"
 
 
 
 * Open a log file
 capture log close
-log using "./output/rp_b_logistic", text replace
+log using "./output/300_rp_b_logistic", text replace
 
 
 
@@ -33,8 +38,65 @@ log using "./output/rp_b_logistic", text replace
 *  Pick up predictor list(s)  *
 *******************************
 
-do "analysis/101_pr_variable_selection_output.do" 
-noi di "$predictors_preshield"
+
+qui do "analysis/104_pr_variable_selection_landmark_output.do" 
+noi di "${selected_vars_landmark_`tvc'}"
+
+
+
+
+***************
+*  Open data  *
+***************
+
+* Open landmark data
+use "data/cr_landmark.dta", clear
+
+
+/*  Create time-varying variables needed  */
+
+* Variables needed for force of infection data
+
+gen logfoi = log(foi)
+gen foiqd  =  foi_q_day/foi_q_cons
+gen foiqds =  foi_q_daysq/foi_q_cons
+
+
+* Variables needed for A&E attendance data
+gen aepos = aerate
+qui summ aerate if aerate>0 
+replace aepos = aepos + r(min)/2 if aepos==0
+
+gen logae		= log(aepos)
+gen aeqd		= ae_q_day/ae_q_cons
+gen aeqds 		= ae_q_daysq/ae_q_cons
+
+replace aeqd  = 0 if ae_q_cons==0
+replace aeqds = 0 if ae_q_cons==0
+
+gen aeqint 		= aeqd*aeqds
+gen aeqd2		= aeqd^2
+gen aeqds2		= aeqds^2
+
+
+* Variables needed for GP suspected case data
+
+gen susppos = susp_rate
+qui summ susp_rate if susp_rate>0 
+replace susppos = susppos + r(min)/2 if susppos==0
+
+* Create time variables to be fed into the variable selection process
+gen logsusp	 	= log(susppos)
+gen suspqd	 	= susp_q_day/susp_q_cons
+gen suspqds 	= susp_q_daysq/susp_q_cons
+
+replace suspqd  = 0 if susp_q_cons==0
+replace suspqds = 0 if susp_q_cons==0
+
+gen suspqint   	= suspqd*suspqds
+gen suspqd2 	= suspqd^2
+gen suspqds2	= suspqds^2
+
 
 
 
@@ -44,21 +106,15 @@ noi di "$predictors_preshield"
 ****************************************
 
 
-use "data/cr_landmark.dta", clear
-
 * The dataset has multiple rows:
-* 	Shielding 
-*		two rows for pre and post
-*		 - same weight in each
-*		 - outcome in last row
 * 	Cases in subchohort 
 *		one extra row
-* 		all but last row, not case, weight=1/sf
+* 		first row, not case, weight=1/sf
 * 		last row, case, weight=1
 
 * We want to have 
 *	a binary outcome (case in 28 days vs not)
-* 	sampling frations:  1/sf for non-cases; 1 for cases
+* 	sampling fractions:  1/sf for non-cases; 1 for cases
 
 * So... 
 * Take maximum of outcome across rows within the same landmark substudy
@@ -72,7 +128,8 @@ rename case onscoviddeath
 rename weight sf_wts
 
 * Drop variables related to time within the landmark substudy
-drop days_until_coviddeath days_until_otherdeath shield dayin dayout
+drop days_until_coviddeath days_until_otherdeath dayin dayout _* ///
+	died_date_onsother newid
 
 * Keep one row per patient per landmark substudy
 duplicates drop
@@ -83,16 +140,11 @@ bysort onscoviddeath: summ sf_wts
 gen offset = log(sf_wts)
 
 
-* Create term to indicate "sielded" time periods
-recode time 1/17=0 18/73=1, gen(shield)
-label var shield "Shielded time periods (shielding assumed to have effect)" 
 
- 
- 
+***************
+*  Fit model  *
+***************
 
-********************************************************
-*   Models not including measures of infection burden  *
-********************************************************
 
 * Model details
 *	Model type: Logistic
@@ -103,7 +155,7 @@ label var shield "Shielded time periods (shielding assumed to have effect)"
 * Fit model
 timer clear 1
 timer on 1
-logistic onscoviddeath $predictors_preshield, 	///
+noi logistic onscoviddeath ${selected_vars_landmark_`tvc'}, 	///
 	robust cluster(patient_id) offset(offset)
 timer off 1
 timer list 1
@@ -117,92 +169,8 @@ matrix b = e(b)
 /*  Save coefficients to Stata dataset  */
 
 do "analysis/0000_pick_up_coefficients.do"
-get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
-	dataname("data/model_b_logistic_noshield")
-
-
-
-
-****************************************************
-*   Models including measures of infection burden  *
-****************************************************
-
-* WITH SHIELDING
-* Substudies 1-17 considered “pre-shielding” and 18-73 “shielding” 
-*  (as identified by "shield" variable created above)
-* Use post-shielding set of predictors (shielding indicator + any interactions) 
-
-
-
-
-/*  Measure of burden of infection:  Force of infection  */
-
-* Measure of force of infection on the previous day
-timer clear 1
-timer on 1
-logistic onscoviddeath $predictors		///
-	foi, 											///
-	robust cluster(patient_id) offset(offset)
-timer off 1
-timer list 1
-estat ic
-
-
-* Measure of force of infection - quadratic model of last 3 weeks
-timer clear 1
-timer on 1
-logistic onscoviddeath $predictors		///
-	foi_q_cons foi_q_day foi_q_daysq,				///
-	robust cluster(patient_id) offset(offset)
-timer off 1
-timer list 1
-estat ic
-
-gen logfoi = log(foi)
-
-* Measure of force of infection on the previous day
-timer clear 1
-timer on 1
-logistic onscoviddeath $predictors		///
-	logfoi, 											///
-	robust cluster(patient_id) offset(offset)
-timer off 1
-timer list 1
-estat ic
-
-gen logfoi_q_cons 	= log(foi_q_cons)
-gen logfoi_q_day  	= log(foi_q_day)
-gen logfoi_q_daysq 	= log(foi_q_daysq)
-
-
-* Measure of force of infection - quadratic model of last 3 weeks
-timer clear 1
-timer on 1
-logistic onscoviddeath $predictors		///
-	logfoi_q_cons logfoi_q_day logfoi_q_daysq,		///
-	robust cluster(patient_id) offset(offset)
-timer off 1
-timer list 1
-estat ic
-
-
-/*
-* Pick up coefficient matrix
-matrix b = e(b)
-
-
-/*  Save coefficients to Stata dataset  */
-
-do "analysis/0000_pick_up_coefficients.do"
-get_coefs, coef_matrix(b) eqname("onscoviddeath") ///
-	dataname("data/model_b_logistic_noshield")
-
-*/
-	
-	
-	
-
-/*  Measure of burden of infection:  (?????)  */
+get_coefs, coef_matrix(b) eqname("onscoviddeath:") ///
+	dataname("data/model_b_logistic_`tvc'")
 
 
 

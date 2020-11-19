@@ -4,7 +4,11 @@
 *
 *	Programmed by:	Fizz & John
 *
-*	Data used:		data/cr_base_cohort.dta
+*	Data used:		data/
+*						cr_base_cohort.dta
+*						foi_coefs.dta
+*						ae_coefs.dta
+*						susp_coefs.dta
 *
 *	Data created:	
 *					output/cr_cohort_vp1.dta (validation period 1)
@@ -98,6 +102,40 @@ forvalues i = 1/3 {
 	gen onscoviddeath28 = (days_until_coviddeath <=28)
 	label var onscoviddeath28 "Observed 28-day COVID-19 death, validation period `i'"
 	
+	
+	
+	
+	
+	************************************************
+	*  Add in time-varying measures of infection   *
+	************************************************
+
+	gen time = `vp_start' - d(1/03/2020) + 1
+
+	* Age grouping used in FOI data
+	recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
+		50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 		///
+		gen(agegroupfoi)
+		
+	* Merge in the force of infection data
+	merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
+		assert(match using) keep(match) nogen 
+	drop agegroupfoi
+	drop foi_c_cons foi_c_day foi_c_daysq foi_c_daycu
+
+	* Merge in the A&E STP count data
+	merge m:1 time stp_combined using "data/ae_coefs", ///
+		assert(match using) keep(match) nogen
+	drop ae_c_cons ae_c_day ae_c_daysq ae_c_daycu
+
+
+	* Merge in the GP suspected COVID case data
+	merge m:1 time stp_combined using "data/susp_coefs", ///
+		assert(match using) keep(match) nogen
+	drop susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
+	drop time
+
+
 	
 
 	*******************
