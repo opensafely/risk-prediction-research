@@ -8,7 +8,7 @@
 *
 *	Data created:	data/model_b_logistic_`tvc'.dta, where tvc=foi, ae, susp
 *
-*	Other output:	Log file:  	output/300_rp_b_logistic.log
+*	Other output:	Log file:  	output/300_rp_b_logistic_`tvc'.log
 *
 ********************************************************************************
 *
@@ -29,7 +29,7 @@ noi di "`tvc'"
 
 * Open a log file
 capture log close
-log using "./output/300_rp_b_logistic", text replace
+log using "./output/300_rp_b_logistic_`tvc'", text replace
 
 
 
@@ -136,9 +136,6 @@ duplicates drop
 isid patient_id time 
 bysort onscoviddeath: summ sf_wts
 
-* Create offset term (log of the sampling fraction)
-gen offset = log(sf_wts)
-
 
 
 ***************
@@ -155,7 +152,8 @@ gen offset = log(sf_wts)
 * Fit model
 timer clear 1
 timer on 1
-noi logistic onscoviddeath ${selected_vars_landmark_`tvc'}, 	///
+noi logistic onscoviddeath ${selected_vars_landmark_`tvc'}		///
+	[pweight=sf_wts], 											///
 	robust cluster(patient_id) offset(offset)
 timer off 1
 timer list 1
