@@ -285,4 +285,9 @@ log close
 
 
 
+* Export a text version of the output
+use "data/approach_b_validation_28day.dta", clear
+outsheet using "output/approach_b_validation_28day.out", replace
+
+
 

@@ -308,7 +308,9 @@ postclose `measures'
 log close
 
 
-
+* Export a text version of the output
+use "data/approach_a_validation_full_period.dta", clear
+outsheet using "output/approach_a_validation_full_period.out", replace
 
 
 

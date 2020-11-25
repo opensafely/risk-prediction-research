@@ -4,7 +4,7 @@
 *
 *	Written by:			Fizz & John
 *
-*	Data used:			released_analysis_results\cr_all_selected_models.out.dta (??)
+*	Data used:			output/cr_all_selected_models.out
 * 
 *	Data created:		output/graphs/
 *							.../varselect_all.png
@@ -41,7 +41,7 @@ ssc install heatplot, replace
 clear
 
 * Read in the data
-import delimited "released_analysis_results\cr_all_selected_models.out", ///
+import delimited "output/cr_all_selected_models.out", ///
 	encoding(ISO-8859-2) 
 
 

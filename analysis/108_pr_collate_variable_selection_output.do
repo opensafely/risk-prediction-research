@@ -78,4 +78,5 @@ foreach tvc in foi ae susp {
 
 * Save data
 save "data/cr_all_selected_models.dta", replace 
+outsheet using "output/cr_all_selected_models.out", replace
 

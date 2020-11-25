@@ -305,6 +305,15 @@ log close
 
 
 
+* Export a text version of the output
+use "data/approach_a_validation_28day.dta", clear
+outsheet using "output/approach_a_validation_28day.out", replace
+
+
+
+
+
+
 
 
 
