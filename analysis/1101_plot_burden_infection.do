@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			902_an_plot_burden_infection.do
+*	Do-file:			1101_plot_burden_infection.do
 *
 *	Written by:			Fizz
 *
@@ -10,7 +10,7 @@
 *
 *	Data created:		None
 *
-*	Other output:		Log file:  902_an_plot_burden_infection.log
+*	Other output:		Log file:  1101_plot_burden_infection.log
 *						SVG graphs: output/graphs/...
 *											.../ae_reg`i'.svg      (i=1...7)
 *											.../susp_reg`i'.svg    (i=1...7)
@@ -28,7 +28,7 @@
 
 * Open a log file
 capture log close
-log using "output/902_an_plot_burden_infection", text replace
+log using "output/1101_plot_burden_infection", text replace
 
 
 
