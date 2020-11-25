@@ -1,21 +1,19 @@
 ********************************************************************************
 *
-*	Do-file:		901_an_describe_cohort.do
+*	Do-file:		1002_an_describe_cohort.do
 *
 *	Programmed by:	Fizz & John
 *
 *	Data used:		data/cr_base_cohort.dta
 *
-*	Data created:	
-*					output/cr_cohort_vp1.dta (validation period 1)
-*					output/cr_cohort_vp2.dta (validation period 2) 
-*					output/cr_cohort_vp3.dta (validation period 3) 
+*	Data created:	None
 *
-*	Other output:	Log file:  901_an_describe_cohort.log
+*	Other output:	Log file:  output/1002_an_describe_cohort.log
 *
 ********************************************************************************
 *
-*	Purpose:		This do-file describes the data in the base cohort.
+*	Purpose:		This do-file describes the data in the base cohort and 
+*					puts the output in a log file.
 *
 *	NOTES: 			1) Stata do-file called internally:
 *							analysis/0000_cr_define_covariates.do
@@ -26,11 +24,11 @@
 
 * Open a log file
 cap log close
-log using "output/901_an_describe_cohort", replace t
+log using "output/1002_an_describe_cohort", replace t
 
 
 * Load do-file which extracts covariates 
-do "analysis/0000_cr_define_covariates.do"
+qui do "analysis/0000_cr_define_covariates.do"
 
 
 

@@ -8,7 +8,7 @@
 *
 *	Data created:	data/model_b_weibull_`tvc'.dta, where tvc=foi, ae, susp
 *
-*	Other output:	Log file:  		output/302_rp_b_weibull.log
+*	Other output:	Log file:  		output/302_rp_b_weibull_`tvc'.log
 *
 ********************************************************************************
 *
@@ -29,7 +29,7 @@ noi di "`tvc'"
 
 * Open a log file
 capture log close
-log using "./output/302_rp_b_weibull", text replace
+log using "./output/302_rp_b_weibull_`tvc'", text replace
 
 
 

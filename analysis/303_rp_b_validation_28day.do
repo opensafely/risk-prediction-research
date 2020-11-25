@@ -115,6 +115,7 @@ forvalues i = 1/3 {
 
 	* Variables needed for force of infection data
 
+	assert foi>0
 	gen logfoi = log(foi)
 	gen foiqd  =  foi_q_day/foi_q_cons
 	gen foiqds =  foi_q_daysq/foi_q_cons
@@ -123,7 +124,7 @@ forvalues i = 1/3 {
 	* Variables needed for A&E attendance data
 	gen aepos = aerate
 	qui summ aerate if aerate>0 
-	replace aepos = aepos + r(min)/2 if aepos==0
+	replace aepos = 0.06279008 if aepos==0
 
 	gen logae		= log(aepos)
 	gen aeqd		= ae_q_day/ae_q_cons
@@ -141,8 +142,8 @@ forvalues i = 1/3 {
 
 	gen susppos = susp_rate
 	qui summ susp_rate if susp_rate>0 
-	replace susppos = susppos + r(min)/2 if susppos==0
-
+	assert susppos > 0 
+	
 	* Create time variables to be fed into the variable selection process
 	gen logsusp	 	= log(susppos)
 	gen suspqd	 	= susp_q_day/susp_q_cons

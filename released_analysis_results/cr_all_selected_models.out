@@ -1,0 +1,201 @@
+variable	order	select	poscoef	select_geog1	poscoef_geog1	select_geog2	poscoef_geog2	select_geog4	poscoef_geog4	select_geog5	poscoef_geog5	select_geog6	poscoef_geog6	select_geog7	poscoef_geog7	select_time	poscoef_time	select_foi	poscoef_foi	select_ae	poscoef_ae	select_susp	poscoef_susp
+"0bn.af"	85	0		0		1	1	1	1	1	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.cardiac"	58	0		1	1	1	1	1	1	1	1	0	1	1	1	0	1	1	1	1	1	1	1
+"0bn.cf"	86	0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.dementia"	12	1	1	0	1	1	1	1	1	0	1	1	1	1	1	1	1	0	1	1	1	0	1
+"0bn.dialysis"	87	0		0		1	1	1	1	0	1	1	1	1	1	1	1	0	1	1	1	0	1
+"0bn.dvt_pe"	59	0		1	1	1	1	0	1	1	1	1	1	0	1	0	1	1	1	1	1	1	1
+"0bn.fracture"	60	0		1	1	1	1	0	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1
+"0bn.ld"	127	0		0		0		0		1	1	0	1	1	1	0	1	1	1	0	1	1	1
+"0bn.liver"	18	1	1	1	1	0	1	0	1	0	1	1	1	1	1	1	1	0	1	1	1	0	1
+"0bn.male#1bn.af"	41	1	1	0	1	0	1	0	1	1	1	0	1	1	1	0	1	1	1	1	1	1	1
+"0bn.male#1bn.autoimmune"	165	0		0		0		0		0		0		0		1	1	0	1	0	1	0	1
+"0bn.male#1bn.bpcat_nomiss"	150	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"0bn.male#1bn.cardiac"	40	1	1	1	1	1	1	1	1	1	1	1	1	0	1	1	1	0	1	0	1	0	1
+"0bn.male#1bn.cf"	128	0		0		0		0		1	1	0	1	1	1	0	1	0	1	0	1	0	1
+"0bn.male#1bn.dementia"	99	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.male#1bn.dialysis"	53	1	1	0	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1	0	1	1	1
+"0bn.male#1bn.dvt_pe"	100	0		0		0		1	1	1	1	1	1	0	1	0	1	0	1	1	1	0	1
+"0bn.male#1bn.fracture"	143	0		0		0		0		0		1	1	0	1	1	1	0	1	0	1	0	1
+"0bn.male#1bn.hiv"	129	0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.male#1bn.hypertension"	151	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"0bn.male#1bn.ibd"	152	0		0		0		0		0		0		1	1	0	1	1	1	0	1	1	1
+"0bn.male#1bn.ld"	101	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.male#1bn.liver"	52	1	1	0	1	1	1	0	1	0	1	1	1	0	1	1	1	0	1	0	1	0	1
+"0bn.male#1bn.neuro"	61	0		1	1	0	1	0	1	0	1	1	1	1	1	0	1	1	1	0	1	1	1
+"0bn.male#1bn.pad"	130	0		0		0		0		1	1	1	1	1	1	1	1	0	1	0	1	0	1
+"0bn.male#1bn.respiratory"	46	1	1	1	1	0	1	0	1	1	1	1	1	1	1	1	1	1	1	0	1	1	1
+"0bn.male#1bn.smi"	174	0		0		0		0		0		0		0		0		1	1	0	1	1	1
+"0bn.male#1bn.stroke"	102	0		0		0		1	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1
+"0bn.male#1bn.suppression"	166	0		0		0		0		0		0		0		1	1	0	1	0	1	0	1
+"0bn.male#1bn.transplant"	103	0		0		0		1	1	0	1	0	1	0	1	1	1	0	1	1	1	0	1
+"0bn.male#2bn.asthmacat"	45	1	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1
+"0bn.male#2bn.cancerExhaem"	47	1	1	1	1	1	1	1	1	0	1	0	1	0	1	1	1	1	1	1	1	1	1
+"0bn.male#2bn.cancerHaem"	50	1	1	1	1	0	1	0	1	0	1	0	1	1	1	1	1	0	1	1	1	0	1
+"0bn.male#2bn.diabcat"	153	0		0		0		0		0		0		1	1	0	1	0	1	1	1	0	1
+"0bn.male#2bn.kidneyfn"	104	0		0		0		1	1	0	1	1	1	0	1	0	1	0	1	1	1	0	1
+"0bn.male#2bn.smoke_nomiss"	167	0		0		0		0		0		0		0		1	1	0	1	0	1	0	1
+"0bn.male#3bn.asthmacat"	175	0		0		0		0		0		0		0		0		1	1	0	1	0	1
+"0bn.male#3bn.bpcat_nomiss"	154	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"0bn.male#3bn.cancerExhaem"	131	0		0		0		0		1	1	1	1	0	1	0	1	0	1	0	1	0	1
+"0bn.male#3bn.cancerHaem"	105	0		0		0		1	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1
+"0bn.male#3bn.diabcat"	106	0		0		0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"0bn.male#3bn.ethnicity_8"	168	0		0		0		0		0		0		0		1	1	0	1	0	1	0	1
+"0bn.male#3bn.kidneyfn"	54	1	1	0	1	1	1	1	1	0	1	1	1	0	1	1	1	0	1	0	1	0	1
+"0bn.male#4bn.cancerHaem"	155	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"0bn.male#4bn.diabcat"	132	0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.male#5bn.ethnicity_8"	107	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.male#5bn.imd"	156	0		0		0		0		0		0		1	1	0	1	1	1	0	1	1	1
+"0bn.male#5bn.obesecat"	38	1	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	1	1	0	1	1	1
+"0bn.male#6bn.ethnicity_8"	169	0		0		0		0		0		0		0		1	1	0	1	1	1	0	1
+"0bn.neuro"	13	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"0bn.pad"	88	0		0		1	1	1	1	1	1	0	1	0	1	1	1	0	1	0	1	0	1
+"0bn.respiratory"	15	1	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1	1	1	1	1	1	1
+"0bn.rural"	3	1	1	0	1	0	1	1	1	0	1	0	1	1	1	1	1	1	1	1	1	1	1
+"0bn.smi"	22	1	1	1	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	0	1	0	1
+"0bn.spleen"	108	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"0bn.stroke"	11	1	1	1	1	1	1	0	1	1	1	1	1	0	1	0	1	0	1	0	1	0	1
+"0bn.suppression"	21	1	1	0	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	0	1	0	1
+"0bn.transplant"	89	0		0		1	1	1	1	0	1	0	1	0	1	0	1	1	1	1	1	1	1
+"1.male"	2	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"1bn.af#c.agec"	133	0		0		0		0		1	1	1	1	0	1	0	1	1	1	0	1	1	1
+"1bn.asthmacat"	170	0		0		0		0		0		0		0		1	1	0	1	0	1	0	1
+"1bn.autoimmune#c.agec"	62	0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1
+"1bn.bpcat_nomiss#c.agec"	90	0		0		1	1	1	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1
+"1bn.cancerExhaem"	109	0		0		0		1	1	1	1	1	1	0	1	0	1	0	1	0	1	0	1
+"1bn.cancerHaem"	17	1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.cardiac#c.agec"	63	0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.cf#c.agec"	134	0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.dementia#c.agec"	64	0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"1bn.diabcat"	9	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"1bn.dialysis#c.agec"	32	1	1	1	1	0	1	1	1	1	1	1	1	1	1	0	1	1	1	0	1	1	1
+"1bn.dvt_pe#c.agec"	110	0		0		0		1	1	0	1	0	1	1	1	1	1	0	1	1	1	1	1
+"1bn.ethnicity_8"	6	1	1	0	1	0	1	0	1	1	1	0	1	1	1	1	1	0	1	0	1	0	1
+"1bn.fracture#c.agec"	36	1	1	0	1	0	1	1	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1
+"1bn.hh_children#c.agec"	157	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"1bn.hiv#c.agec"	65	0		1	1	0	1	0	1	1	1	1	1	0	1	0	1	0	1	1	1	0	1
+"1bn.hypertension#c.agec"	26	1	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.ibd#c.agec"	35	1	1	1	1	1	1	0	1	1	1	0	1	0	1	1	1	0	1	1	1	0	1
+"1bn.imd"	4	1	1	0	1	0	1	0	1	1	1	0	1	0	1	1	1	1	1	0	1	1	1
+"1bn.imd#c.agec"	66	0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1	0	1	1	1
+"1bn.kidneyfn"	19	1	1	0	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"1bn.ld#c.agec"	111	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.liver#c.agec"	31	1	1	1	1	1	1	1	1	0	1	0	1	1	1	1	1	0	1	1	1	0	1
+"1bn.male#1bn.af"	67	0		1	1	1	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.autoimmune"	56	1	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.dementia"	44	1	1	1	1	1	1	0	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"1bn.male#1bn.dialysis"	144	0		0		0		0		0		1	1	0	1	0	1	1	1	1	1	1	1
+"1bn.male#1bn.dvt_pe"	68	0		1	1	1	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.ethnicity_8"	158	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.fracture"	57	1	1	1	1	1	1	1	1	0	1	0	1	1	1	0	1	1	1	1	1	1	1
+"1bn.male#1bn.hiv"	159	0		0		0		0		0		0		1	1	0	1	0	1	1	1	0	1
+"1bn.male#1bn.imd"	112	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.ld"	145	0		0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.liver"	69	0		1	1	0	1	1	1	1	1	0	1	1	1	0	1	0	1	1	1	0	1
+"1bn.male#1bn.neuro"	91	0		0		1	1	1	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1
+"1bn.male#1bn.pad"	42	1	1	1	1	0	1	0	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1
+"1bn.male#1bn.rural"	92	0		0		1	1	0	1	0	1	0	1	0	1	0	1	1	1	1	1	1	1
+"1bn.male#1bn.smi"	70	0		1	1	0	1	0	1	1	1	1	1	1	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.spleen"	113	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#1bn.stroke"	43	1	1	1	1	0	1	1	1	0	1	0	1	1	1	1	1	0	1	0	1	0	1
+"1bn.male#1bn.transplant"	93	0		0		1	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#2bn.bpcat_nomiss"	135	0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#2bn.cancerHaem"	114	0		0		0		1	1	1	1	0	1	1	1	0	1	1	1	0	1	1	1
+"1bn.male#2bn.diabcat"	115	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#2bn.ethnicity_8"	71	0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.male#2bn.kidneyfn"	55	1	1	1	1	0	1	0	1	0	1	0	1	0	1	1	1	1	1	0	1	1	1
+"1bn.male#2bn.obesecat"	160	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"1bn.male#3bn.cancerExhaem"	48	1	1	0	1	1	1	0	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1
+"1bn.male#3bn.cancerHaem"	136	0		0		0		0		1	1	0	1	1	1	0	1	1	1	1	1	1	1
+"1bn.male#3bn.diabcat"	39	1	1	0	1	0	1	0	1	1	1	0	1	1	1	0	1	0	1	0	1	0	1
+"1bn.male#3bn.ethnicity_8"	184	0		0		0		0		0		0		0		0		0		1	1	0	1
+"1bn.male#3bn.kidneyfn"	72	0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1	1	1	1	1
+"1bn.male#4bn.bpcat_nomiss"	171	0		0		0		0		0		0		0		1	1	0	1	0	1	0	1
+"1bn.male#4bn.cancerExhaem"	49	1	1	0	1	0	1	0	1	0	1	0	1	1	1	1	1	0	1	1	1	0	1
+"1bn.male#4bn.cancerHaem"	51	1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1	0	1	0	1	0	1
+"1bn.male#4bn.ethnicity_8"	146	0		0		0		0		0		1	1	1	1	0	1	0	1	0	1	0	1
+"1bn.male#4bn.obesecat"	116	0		0		0		1	1	1	1	0	1	1	1	0	1	0	1	0	1	0	1
+"1bn.male#5bn.ethnicity_8"	185	0		0		0		0		0		0		0		0		0		1	1	0	1
+"1bn.male#5bn.imd"	37	1	1	0	1	0	1	1	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1
+"1bn.male#5bn.obesecat"	73	0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1
+"1bn.male#8bn.ethnicity_8"	161	0		0		0		0		0		0		1	1	0	1	0	1	0	1	1	1
+"1bn.neuro#c.agec"	28	1	1	0	1	1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.obesecat"	7	1	1	0	1	0	1	0	1	1	1	0	1	1	1	1	1	0	1	0	1	0	1
+"1bn.obesecat#c.agec"	74	0		1	1	0	1	1	1	0	1	1	1	0	1	0	1	0	1	0	1	0	1
+"1bn.pad#c.agec"	75	0		1	1	0	1	0	1	1	1	1	1	0	1	1	1	1	1	1	1	1	1
+"1bn.respiratory#c.agec"	29	1	1	1	1	0	1	0	1	1	1	0	1	1	1	0	1	0	1	0	1	0	1
+"1bn.rural#c.agec"	76	0		1	1	1	1	0	1	1	1	1	1	1	1	0	1	0	1	1	1	0	1
+"1bn.smi#c.agec"	77	0		1	1	1	1	1	1	1	1	0	1	0	1	0	1	1	1	1	1	1	1
+"1bn.smoke_nomiss#c.agec"	137	0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1
+"1bn.spleen#c.agec"	34	1	1	1	1	1	1	0	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"1bn.stroke#c.agec"	117	0		0		0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"1bn.suppression#c.agec"	118	0		0		0		1	1	0	1	0	1	1	1	1	1	0	1	0	1	0	1
+"1bn.transplant"	176	0		0		0		0		0		0		0		0		1	1	0	1	1	1
+"1bn.transplant#c.agec"	138	0		0		0		0		1	1	1	1	1	1	0	1	0	1	1	1	0	1
+"2bn.asthmacat#c.agec"	147	0		0		0		0		0		1	1	1	1	0	1	1	1	0	1	1	1
+"2bn.bpcat_nomiss#c.agec"	139	0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1
+"2bn.cancerExhaem"	16	1	1	0	1	0	1	0	1	1	1	0	1	1	1	1	1	1	1	1	1	1	1
+"2bn.cancerExhaem#c.agec"	172	0		0		0		0		0		0		0		1	1	1	1	0	1	1	1
+"2bn.cancerHaem#c.agec"	30	1	1	0	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	1	1	0	1
+"2bn.ethnicity_8#c.agec"	94	0		0		1	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"2bn.imd#c.agec"	140	0		0		0		0		1	1	0	1	1	1	0	1	0	1	1	1	0	1
+"2bn.kidneyfn#c.agec"	162	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"2bn.obesecat"	8	1	1	0	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	0	1	0	1
+"2bn.smoke_nomiss"	95	0		0		1	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1
+"2bn.smoke_nomiss#c.agec"	119	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"3bn.asthmacat"	14	1	1	0	1	0	1	1	1	1	1	0	1	1	1	1	1	0	1	0	1	0	1
+"3bn.asthmacat#c.agec"	120	0		0		0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"3bn.bpcat_nomiss#c.agec"	78	0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"3bn.cancerExhaem"	148	0		0		0		0		0		1	1	0	1	0	1	0	1	0	1	0	1
+"3bn.cancerExhaem#c.agec"	121	0		0		0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"3bn.cancerHaem"	79	0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1
+"3bn.cancerHaem#c.agec"	122	0		0		0		1	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1
+"3bn.diabcat"	80	0		1	1	1	1	1	1	0	1	1	1	0	1	1	1	1	1	1	1	1	1
+"3bn.diabcat#c.agec"	27	1	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1
+"3bn.ethnicity_8"	186	0		0		0		0		0		0		0		0		0		1	1	0	1
+"3bn.ethnicity_8#c.agec"	149	0		0		0		0		0		1	1	1	1	0	1	1	1	0	1	1	1
+"3bn.imd#c.agec"	123	0		0		0		1	1	0	1	1	1	0	1	0	1	0	1	0	1	0	1
+"3bn.kidneyfn"	20	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"3bn.kidneyfn#c.agec"	33	1	1	0	1	0	1	1	1	0	1	0	1	0	1	1	1	0	1	0	1	0	1
+"3bn.smoke_nomiss#c.agec"	25	1	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1	0	1
+"4bn.bpcat_nomiss#c.agec"	96	0		0		1	1	1	1	1	1	0	1	1	1	0	1	0	1	1	1	0	1
+"4bn.cancerExhaem#c.agec"	81	0		1	1	1	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1	0	1
+"4bn.cancerHaem"	163	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"4bn.cancerHaem#c.agec"	97	0		0		1	1	0	1	0	1	1	1	0	1	0	1	1	1	0	1	1	1
+"4bn.diabcat"	10	1	1	0	1	0	1	1	1	0	1	0	1	1	1	1	1	0	1	0	1	0	1
+"4bn.diabcat#c.agec"	82	0		1	1	0	1	0	1	1	1	1	1	1	1	0	1	0	1	0	1	0	1
+"4bn.ethnicity_8#c.agec"	83	0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	1	1	0	1
+"4bn.imd"	164	0		0		0		0		0		0		1	1	0	1	0	1	0	1	0	1
+"4bn.imd#c.agec"	98	0		0		1	1	1	1	0	1	0	1	1	1	0	1	0	1	0	1	0	1
+"4bn.obesecat"	124	0		0		0		1	1	0	1	0	1	0	1	0	1	1	1	0	1	1	1
+"4bn.obesecat#c.agec"	23	1	1	0	1	0	1	1	1	0	1	0	1	1	1	1	1	1	1	1	1	1	1
+"5bn.ethnicity_8"	141	0		0		0		0		1	1	0	1	1	1	0	1	0	1	0	1	0	1
+"5bn.ethnicity_8#c.agec"	125	0		0		0		1	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1
+"5bn.imd"	5	1	1	1	1	1	1	0	1	0	1	1	1	0	1	1	1	0	1	0	1	0	1
+"5bn.imd#c.agec"	126	0		0		0		1	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1
+"5bn.obesecat"	173	0		0		0		0		0		0		0		1	1	0	1	0	1	0	1
+"5bn.obesecat#c.agec"	24	1	1	0	1	1	1	1	1	0	1	0	1	1	1	1	1	1	1	0	1	1	1
+"6bn.ethnicity_8#c.agec"	142	0		0		0		0		1	1	0	1	1	1	0	1	0	1	0	1	0	1
+"8bn.ethnicity_8"	177	0		0		0		0		0		0		0		0		1	1	0	1	0	1
+"ae_q_day"	187	0		0		0		0		0		0		0		0		0		1	1	0	1
+"ae_q_daysq"	188	0		0		0		0		0		0		0		0		0		1	1	0	1
+"aeqd"	189	0		0		0		0		0		0		0		0		0		1	1	0	1
+"aeqds"	190	0		0		0		0		0		0		0		0		0		1	0	0	1
+"aeqds2"	191	0		0		0		0		0		0		0		0		0		1	1	0	1
+"agec"	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+"foi_q_day"	178	0		0		0		0		0		0		0		0		1	0	0	1	0	1
+"foi_q_daysq"	179	0		0		0		0		0		0		0		0		1	1	0	1	0	1
+"foiqd"	180	0		0		0		0		0		0		0		0		1	1	0	1	0	1
+"foiqds"	181	0		0		0		0		0		0		0		0		1	0	0	1	0	1
+"hh_num2"	84	0		1	1	1	1	1	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1
+"hh_num3"	182	0		0		0		0		0		0		0		0		1	1	0	1	1	1
+"logae"	192	0		0		0		0		0		0		0		0		0		1	1	0	1
+"logfoi"	183	0		0		0		0		0		0		0		0		1	1	0	1	0	1
+"4bn.cancerExhaem"	193	0		0		0		0		0		0		0		0		0		0		1	1
+"8bn.ethnicity_8#c.agec"	194	0		0		0		0		0		0		0		0		0		0		1	1
+"logsusp"	195	0		0		0		0		0		0		0		0		0		0		1	1
+"susp_q_day"	196	0		0		0		0		0		0		0		0		0		0		1	1
+"susp_q_daysq"	197	0		0		0		0		0		0		0		0		0		0		1	1
+"suspqd"	198	0		0		0		0		0		0		0		0		0		0		1	1
+"suspqds"	199	0		0		0		0		0		0		0		0		0		0		1	0
+"suspqds2"	200	0		0		0		0		0		0		0		0		0		0		1	1

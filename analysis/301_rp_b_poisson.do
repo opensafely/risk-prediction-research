@@ -8,7 +8,7 @@
 *
 *	Data created:	data/model_b_poisson_`tvc'.dta, where tvc=foi, ae, susp
 *
-*	Other output:	Log file:  			output/301_rp_b_poisson.log
+*	Other output:	Log file:  			output/301_rp_b_poisson_`tvc'.log
 *
 ********************************************************************************
 *
@@ -29,7 +29,7 @@ noi di "`tvc'"
 
 * Open a log file
 capture log close
-log using "./output/301_rp_b_poisson", text replace
+log using "./output/301_rp_b_poisson_`tvc'", text replace
 
 
 
