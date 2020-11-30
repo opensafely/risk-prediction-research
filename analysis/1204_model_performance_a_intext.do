@@ -1,21 +1,21 @@
 ********************************************************************************
 *
-*	Do-file:			1201_model_performance_a.do
+*	Do-file:			1204_model_performance_a_intext.do
 *
 *	Written by:			Fizz & John
 *
 *	Data used:			output/
-*							approach_a_validation_28day.out
+*							approach_a_validation_28day_intext.out
 *
 *	Data created:		output/
-*							approach_a_validation_full_period_tidy.out
+*							approach_a_validation_28day_intext_tidy.out
 *
 *	Other output:		Dataset left in memory
 
 ********************************************************************************
 *
-*	Purpose:			This do-file tidies the validation data for approach A
-*						models to copy and paste to Word.
+*	Purpose:			This do-file tidies the internal-external validation 
+*						data for approach A models to copy and paste to Word.
 *
 ********************************************************************************
 
@@ -121,14 +121,20 @@ end
 ************************************
 
 
-model_meas_tidy, inputdata("output\approach_a_validation_28day.out")  
+model_meas_tidy, inputdata("output\approach_a_validation_28day_intext.out")  
 		
+gen calib_no_converge = 1 if regexm(calib_inter_all_str, "9999")
+replace calib_inter_all_str = "(no convergence)" if  calib_no_converge==1
+replace calib_slope_all_str = "(no convergence)" if  calib_no_converge==1
+drop calib_no_converge
+
+
 /*  Tidy dataset  */
 
-gen 	model = 1 if prediction=="pred_a_cox_nos"
-replace model = 2 if prediction=="pred_a_roy_nos"
-replace model = 3 if prediction=="pred_a_weibull_nos"
-replace model = 4 if prediction=="pred_a_gamma_nos"
+gen 	model = 1 if regexm(prediction, "pred_a_cox")
+replace model = 2 if regexm(prediction, "pred_a_roy")
+replace model = 3 if regexm(prediction, "pred_a_weibull")
+replace model = 4 if regexm(prediction, "pred_a_gamma")
 label define model 1 "Cox" 2 "Royston-Parmar" 3 "Weibull" 4 "Gamma"
 label values model model
 drop prediction
@@ -138,9 +144,27 @@ replace vp = 2 if period=="vp2"
 replace vp = 3 if period=="vp3"
 drop period
 	  
-	  
-sort vp model
-order 	approach vp model		 	///
+gen 	omitted = 1 if loo=="Region 1 omitted"
+replace omitted = 2 if loo=="Region 2 omitted"
+replace omitted = 3 if loo=="Region 3 omitted"
+replace omitted = 4 if loo=="Region 4 omitted"
+replace omitted = 5 if loo=="Region 5 omitted"
+replace omitted = 6 if loo=="Region 6 omitted"
+replace omitted = 7 if loo=="Region 7 omitted"
+replace omitted = 8 if loo=="Later time omitted"
+label define omitted 	1 "Region 1"	///
+						2 "Region 2"	///
+						3 "Region 3"	///
+						4 "Region 4"	///
+						5 "Region 5"	///
+						6 "Region 6"	///
+						7 "Region 7"	///
+						8 "Later time"
+label values omitted omitted
+drop loo
+  
+sort omitted vp model 
+order 	approach vp omitted model 	///
 		brier_str 					///
 		cstat_str					///
 		pc_obs_risk pc_pred_risk 	///
@@ -148,39 +172,8 @@ order 	approach vp model		 	///
 		calib_inter_all_str			///
 		calib_slope_all_str			
 
-outsheet using "output/approach_a_validation_28day_tidy.out", replace
+outsheet using "output/approach_a_validation_28day_intext_tidy.out", replace
 
 
 
 
-
-
-*****************************************
-*  Approach A: Full period validation   *
-*****************************************
-
-
-model_meas_tidy, inputdata("output\approach_a_validation_full_period.out")  
-
-		
-/*  Tidy dataset  */
-
-gen 	model = 1 if prediction=="pred_a_cox_nos"
-replace model = 2 if prediction=="pred_a_roy_nos"
-replace model = 3 if prediction=="pred_a_weibull_nos"
-replace model = 4 if prediction=="pred_a_gamma_nos"
-label define model 1 "Cox" 2 "Royston-Parmar" 3 "Weibull" 4 "Gamma"
-label values model model
-drop prediction
-drop period
-
-sort model
-order 	approach model			 	///
-		brier_str 					///
-		cstat_str					///
-		pc_obs_risk pc_pred_risk 	///
-		hl_str 			 			///
-		calib_inter_all_str			///
-		calib_slope_all_str			
-
-outsheet using "output/approach_a_validation_full_period_tidy.out", replace

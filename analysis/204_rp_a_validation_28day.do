@@ -11,8 +11,9 @@
 *						model_a_ggamma.dta
 *
 *	Data created:	data/approach_a_validation.dta
+*					output/approach_a_validation_28day.out
 *
-*	Other output:	Log file:  	output/rp_a_compare_fit.log
+*	Other output:	Log file:  	output/204_rp_a_validation_28day.log
 *					
 ********************************************************************************
 *
@@ -299,17 +300,15 @@ save "data/approach_a_validation_28day.dta", replace
 
 
 
-* Close log file
-log close
-
-
-
-
 * Export a text version of the output
 use "data/approach_a_validation_28day.dta", clear
 outsheet using "output/approach_a_validation_28day.out", replace
 
 
+
+
+* Close log file
+log close
 
 
 

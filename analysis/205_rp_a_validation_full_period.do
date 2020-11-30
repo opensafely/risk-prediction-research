@@ -11,6 +11,7 @@
 *						model_a_ggamma.dta
 *
 *	Data created:	data/approach_a_validation_full_period
+*					output/approach_a_validation_full_period.out
 *
 *	Other output:	Log file:  	205_rp_a_validation_full_period.log
 *					
@@ -304,14 +305,14 @@ postfile `measures' str5(approach) str30(prediction) str3(period)			///
 postclose `measures'
 
 
-* Close log file
-log close
-
 
 * Export a text version of the output
 use "data/approach_a_validation_full_period.dta", clear
 outsheet using "output/approach_a_validation_full_period.out", replace
 
 
+
+* Close log file
+log close
 
 

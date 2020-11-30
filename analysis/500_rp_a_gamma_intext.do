@@ -21,7 +21,7 @@
 
 * Open a log file
 capture log close
-log using "./output/200_rp_a_gamma", text replace
+log using "./output/500_rp_a_gamma", text replace
 
 
 * Cycle over regions & time

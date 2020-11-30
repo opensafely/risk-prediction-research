@@ -12,6 +12,7 @@
 *					(for r=1,2,...,8; 7 leave-one-out regions & time)
 *
 *	Data created:	data/approach_a_validation_28day_intext.dta
+*					output/approach_a_validation_28day_intext.out
 *
 *	Other output:	Log file:  	output/504_rp_a_validation_28day_intext.log
 *					
@@ -27,7 +28,6 @@
 ********************************************************************************
 
 
-* Read in output from each model
 
 * Open a log file
 capture log close
@@ -59,7 +59,6 @@ forvalues r = 1 (1) 8 {
 	global nt_a_cox_`r' = r(N) - 1
 	local t = ${nt_a_cox_`r'}
 	forvalues j = 1 (1) `t' {
-		
 		local k = `j' + 1
 		global coef`j'_a_cox_`r' 		= coef[`k']
 		global varexpress`j'_a_cox_`r' 	= varexpress[`k']
@@ -370,6 +369,10 @@ label define loo 	1 "Region 1 omitted"	///
 label values loo loo
 
 save "data/approach_a_validation_28day_intext.dta", replace 
+
+* Export a text version of the output
+use "data/approach_a_validation_28day_intext.dta", clear
+outsheet using "output/approach_a_validation_28day_intext.out", replace
 
 
 

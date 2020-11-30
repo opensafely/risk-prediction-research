@@ -12,6 +12,7 @@
 *					(for r=1,2,...,7; 7 leave-one-out regions)
 *
 *	Data created:	data/approach_a_validation_full_period_intext.dta
+*					output/approach_a_validation_full_period_intext.out
 *
 *	Other output:	Log file:  	output/505_rp_a_validation_full_period_intext.log
 *					
@@ -371,6 +372,13 @@ label define loo 	1 "Region 1 omitted"	///
 label values loo loo
 
 save "data/approach_a_validation_full_period_intext.dta", replace 
+
+
+
+
+* Export a text version of the output
+use "data/approach_a_validation_full_period_intext.dta", clear
+outsheet using "output/approach_a_validation_full_period_intext.out", replace
 
 
 

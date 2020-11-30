@@ -7,7 +7,8 @@
 *	Data used:			output/
 *							approach_b_validation_28day.out
 *
-*	Data created:		None
+*	Data created:		output/
+*							approach_b_validation_28day_tidy.out
 *
 *	Other output:		Dataset left in memory
 

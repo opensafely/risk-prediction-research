@@ -1,15 +1,14 @@
 ********************************************************************************
 *
-*	Do-file:		303_rp_b_validation_28day.do
+*	Do-file:		603_rp_b_validation_28day_intext.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
 *	Data used:		data/cr_landmark.dta
 *
-*	Data created:	data/approach_b_1
-*					output/approach_b_validation_28day.out
+*	Data created:	data/approach_b_1_intext.dta
 *
-*	Other output:	Log file:  	output/303_rp_b_validation_28day.log
+*	Other output:	Log file:  	output/603_rp_b_validation_28day_intext.log
 *
 ********************************************************************************
 *
@@ -22,8 +21,11 @@
 
 * Open a log file
 capture log close
-log using "./output/303_rp_b_validation_28day", text replace
+log using "./output/603_rp_b_validation_28day_intext", text replace
 
+
+* Ensure cc_calib is available
+qui do "analysis/ado/cc_calib.ado"
 
 
 
@@ -32,70 +34,72 @@ log using "./output/303_rp_b_validation_28day", text replace
 ******************************************************
 
 
-/*  Logistic regression models  */
+forvalues r = 1 (1) 8 {
 
-foreach tvc in foi ae susp {
+	/*  Logistic regression models  */
 
-	use "data/model_b_logistic_`tvc'.dta", clear
+	foreach tvc in foi ae susp {
 
-	qui count
-	global nt_b_logit_`tvc' = r(N)
-	local t = 	${nt_b_logit_`tvc'} 
-	forvalues j = 1 (1) `t' {
-		global coef`j'_b_logit_`tvc' 		= coef[`j']
-		global varexpress`j'_b_logit_`tvc' 	= varexpress[`j']	
+		use "data/model_b_logistic_`tvc'_`r'.dta", clear
+
+		qui count
+		global nt_b_logit_`tvc'_`r' = r(N)
+		local t = ${nt_b_logit_`tvc'_`r'} 
+		forvalues j = 1 (1) `t' {		
+			global coef`j'_b_logit_`tvc'_`r' 		= coef[`j']
+			global varexpress`j'_b_logit_`tvc'_`r' 	= varexpress[`j']	
+		}
 	}
-}
 
 
 
 
-/*  Poisson regression models  */
+	/*  Poisson regression models  */
 
 
-foreach tvc in foi ae susp {
+	foreach tvc in foi ae susp {
 
-	use "data/model_b_poisson_`tvc'.dta", clear
+		use "data/model_b_poisson_`tvc'_`r'.dta", clear
 
-	* Pick up baseline survival
-	global bs_b_pois_`tvc' = coef[1]
-	
-	* Pick up IRRs
-	qui count
-	global nt_b_pois_`tvc' = r(N) - 1
-	local t = 	${nt_b_pois_`tvc'} 
-	forvalues j = 1 (1) `t' {
-		local k = `j' + 1
-		global coef`j'_b_pois_`tvc' 		= coef[`k']
-		global varexpress`j'_b_pois_`tvc' 	= varexpress[`k']	
+		* Pick up baseline survival
+		global bs_b_pois_`tvc'_`r' = coef[1]
+		
+		* Pick up IRRs
+		qui count
+		global nt_b_pois_`tvc'_`r' = r(N) - 1
+		local t = ${nt_b_pois_`tvc'_`r'}
+		forvalues j = 1 (1) `t' {	
+			local k = `j' + 1
+			global coef`j'_b_pois_`tvc'_`r' 		= coef[`k']
+			global varexpress`j'_b_pois_`tvc'_`r' 	= varexpress[`k']	
+		}
 	}
-}
 
 
 
 
-/*  Weibull regression models  */
+	/*  Weibull regression models  */
 
 
-foreach tvc in foi ae susp {
+	foreach tvc in foi ae susp {
 
-	use "data/model_b_weibull_`tvc'.dta", clear
- 
-	* Pick up baseline survival
-	global bs_b_weib_`tvc' = coef[1]
+		use "data/model_b_weibull_`tvc'_`r'.dta", clear
+	 
+		* Pick up baseline survival
+		global bs_b_weib_`tvc'_`r' = coef[1]
 
-	* Pick up HRs
-	qui count
-	global nt_b_weib_`tvc' = r(N) - 1
-	local t = 	${nt_b_weib_`tvc'} 
-	forvalues j = 1 (1) `t' {
-		local k = `j' + 1
-		global coef`j'_b_weib_`tvc' 		= coef[`k']
-		global varexpress`j'_b_weib_`tvc' 	= varexpress[`k']
+		* Pick up HRs
+		qui count
+		global nt_b_weib_`tvc'_`r' = r(N) - 1
+		local t = ${nt_b_weib_`tvc'_`r'}
+		forvalues j = 1 (1) `t' {	
+			local k = `j' + 1
+			global coef`j'_b_weib_`tvc'_`r' 		= coef[`k']
+			global varexpress`j'_b_weib_`tvc'_`r' 	= varexpress[`k']
+		}
 	}
+
 }
-
-
 
 
 
@@ -114,7 +118,6 @@ forvalues i = 1/3 {
 	drop onscoviddeath
 	
 	
-
 	/*  Create time-varying variables needed  */
 
 	* Variables needed for force of infection data
@@ -167,43 +170,49 @@ forvalues i = 1/3 {
 
 	
 	
-	/*  Obtain predicted risks from each model  */
-	
-	foreach tvc in foi ae susp {
-
-		/*  Logistic  */
-
-		gen constant = 1
-		gen xb = 0
-		local t = ${nt_b_logit_`tvc'}
-		forvalues j = 1 (1) `t' {
-			replace xb = xb + ${coef`j'_b_logit_`tvc'}*${varexpress`j'_b_logit_`tvc'}
-		}
-		gen pred_b_logit_`tvc' = exp(xb)/(1 + exp(xb))   
-		drop xb cons
-
-
-		/*  Poisson  */
-
-		gen xb = 0
-		local t = ${nt_b_pois_`tvc'}
-		forvalues j = 1 (1) `t' {
-			replace xb = xb + ${coef`j'_b_pois_`tvc'}*${varexpress`j'_b_pois_`tvc'}
-		}
-		gen pred_b_pois_`tvc' = 1 -  (${bs_b_pois_`tvc'})^exp(xb)
-		drop xb
-
-
-		/*  Weibull */
-
-		gen xb = 0
-		local t = ${nt_b_weib_`tvc'}
-		forvalues j = 1 (1) `t' {
-			replace xb = xb + ${coef`j'_b_weib_`tvc'}*${varexpress`j'_b_weib_`tvc'}
-		}
-		gen pred_b_weib_`tvc' = 1 -  (${bs_b_weib_`tvc'})^exp(xb)
-		drop xb
 		
+	* Cycle over regions/time periods
+	forvalues r = 1 (1) 8 {
+		if !(`r'==8 & `i'<3) {				
+					
+			
+			/*  Obtain predicted risks from each model  */
+			
+			foreach tvc in foi ae susp {
+
+				/*  Logistic  */
+
+				gen constant = 1
+				gen xb = 0
+				local t = ${nt_b_logit_`tvc'_`r'} 
+				forvalues j = 1 (1) `t' {
+					replace xb = xb + ${coef`j'_b_logit_`tvc'_`r'}*${varexpress`j'_b_logit_`tvc'_`r'}
+				}
+				gen pred_b_logit_`tvc' = exp(xb)/(1 + exp(xb))   
+				drop xb cons
+
+
+				/*  Poisson  */
+
+				gen xb = 0
+				local t = ${nt_b_pois_`tvc'_`r'}
+				forvalues j = 1 (1) `t' {
+					replace xb = xb + ${coef`j'_b_pois_`tvc'_`r'}*${varexpress`j'_b_pois_`tvc'_`r'}
+				}
+				gen pred_b_pois_`tvc'_`r' = 1 -  (${bs_b_pois_`tvc'_`r'})^exp(xb)
+				drop xb
+
+
+				/*  Weibull */
+
+				gen xb = 0
+				local t = ${nt_b_weib_`tvc'_`r'}
+				forvalues j = 1 (1) `t' {
+					replace xb = xb + ${coef`j'_b_weib_`tvc'_`r'}*${varexpress`j'_b_weib_`tvc'_`r'}
+				}
+				gen pred_b_weib_`tvc'_`r' = 1 -  (${bs_b_weib_`tvc'_`r'})^exp(xb)
+				drop xb
+			
 
 	}
 
@@ -218,7 +227,7 @@ forvalues i = 1/3 {
 		brier brier_p c_stat c_stat_p hl hl_p mean_obs mean_pred 				///
 		calib_inter calib_inter_se calib_inter_cl calib_inter_cu calib_inter_p 	///
 		calib_slope calib_slope_se calib_slope_cl calib_slope_cu calib_slope_p 	///
-		using "data/approach_b_`i'", replace
+		using "data/approach_b_`i'_intext", replace
 
 		foreach var of varlist pred* {
 			
@@ -276,24 +285,25 @@ forvalues i = 1/3 {
 
 
 * Clean up
-use "data/approach_b_1", clear
+use "data/approach_b_1_intext", clear
 forvalues i = 2(1)3 { 
-	append using "data/approach_b_`i'" 
-	erase "data/approach_b_`i'.dta" 
+	append using "data/approach_b_`i'_intext" 
+	erase "data/approach_b_`i'_intext.dta" 
 }
-erase "data/approach_b_1.dta" 
-save "data/approach_b_validation_28day.dta", replace 
-
-
-
-
-* Export a text version of the output
-use "data/approach_b_validation_28day.dta", clear
-outsheet using "output/approach_b_validation_28day.out", replace
-
+erase "data/approach_b_1_intext.dta" 
+save "data/approach_b_validation_28day_intext.dta", replace 
 
 
 
 * Close log file
 log close
+
+
+
+
+* Export a text version of the output
+use "data/approach_b_validation_28day_intext.dta", clear
+outsheet using "output/approach_b_validation_28day_intext.out", replace
+
+
 
