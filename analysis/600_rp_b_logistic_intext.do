@@ -167,14 +167,14 @@ forvalues r = 1 (1) 8 {
 	*	Model type: Logistic
 	*	Predictors: As selected by lasso etc.
 	*	SEs: Robust to account for patients being in multiple sub-studies
-	*	Sampling: Offset (log-sampling fraction) to incorporate sampling weights
+	*	Sampling: Sampling weights
 
 	* Fit model
 	timer clear 1
 	timer on 1
 	noi logistic onscoviddeath ${selected_vars_landmark_`tvc'}		///
 		[pweight=sf_wts], 											///
-		robust cluster(patient_id) offset(offset)
+		robust cluster(patient_id) 
 	timer off 1
 	timer list 1
 	estat ic

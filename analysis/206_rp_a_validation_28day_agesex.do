@@ -319,11 +319,6 @@ save "data/approach_a_validation_28day_agesex.dta", replace
 
 
 
-* Close log file
-log close
-
-
-
 
 * Export a text version of the output
 use "data/approach_a_validation_28day_agesex.dta", clear
@@ -332,6 +327,8 @@ outsheet using "output/approach_a_validation_28day_agesex.out", replace
 
 
 
+* Close log file
+log close
 
 
 

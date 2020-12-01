@@ -1,20 +1,20 @@
 ********************************************************************************
 *
-*	Do-file:		303_rp_b_validation_28day.do
+*	Do-file:		304_rp_b_validation_28day_agesex.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
 *	Data used:		data/cr_landmark.dta
 *
-*	Data created:	data/approach_b_1
-*					output/approach_b_validation_28day.out
+*	Data created:	data/approach_b_validation_28day_agesex.dta
+*					output/approach_b_validation_28day_agesex.out
 *
-*	Other output:	Log file:  	output/303_rp_b_validation_28day.log
+*	Other output:	Log file:  	output/304_rp_b_validation_28day_agesex.log
 *
 ********************************************************************************
 *
-*	Purpose:		This do-file compares Design B (landmark) models in terms 
-*					of their predictive ability.
+*	Purpose:		This do-file compares Design B (landmark) models within  
+*					groups defined by age and sex.
 *
 ********************************************************************************
 
@@ -22,7 +22,7 @@
 
 * Open a log file
 capture log close
-log using "./output/303_rp_b_validation_28day", text replace
+log using "./output/304_rp_b_validation_28day_agesex", text replace
 
 
 
