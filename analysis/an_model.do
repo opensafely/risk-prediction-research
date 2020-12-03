@@ -61,6 +61,7 @@ do "`c(pwd)'/analysis/202_rp_a_weibull.do"
 do "`c(pwd)'/analysis/203_rp_a_coxPH.do"
 do "`c(pwd)'/analysis/204_rp_a_validation_28day.do"
 do "`c(pwd)'/analysis/205_rp_a_validation_full_period.do"
+do "`c(pwd)'/analysis/206_rp_a_validation_28day_agesex.do"
 
 
 /*  APPROACH B: Landmark models  */
@@ -69,6 +70,7 @@ do "`c(pwd)'/analysis/300_rp_b_logistic.do"
 do "`c(pwd)'/analysis/301_rp_b_poisson.do"
 do "`c(pwd)'/analysis/302_rp_b_weibull.do"
 do "`c(pwd)'/analysis/303_rp_b_validation_28day.do"
+do "`c(pwd)'/analysis/304_rp_b_validation_28day_agesex.do"
 
 
 /*  APPROACH C: Landmark models  */
@@ -97,6 +99,11 @@ do "`c(pwd)'/analysis/505_rp_a_validation_full_period_intext.do"
 /*  APPROACH B: Landmark models  */
 
 * 600
+600_rp_b_logistic_intext
+601_rp_b_poisson_intext
+602_rp_b_weibull_intext
+603_rp_b_validation_28day_intext
+
 
 /*  APPROACH C: Landmark models  */
 
