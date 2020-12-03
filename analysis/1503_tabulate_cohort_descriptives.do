@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		1003_tabulate_cohort_descriptives.do
+*	Do-file:		1503_tabulate_cohort_descriptives.do
 *
 *	Programmed by:	Krishnan (edited by Fizz)
 *
@@ -9,7 +9,7 @@
 *	Data created:	None
 *
 *	Other output:	Table: 		output/table1.txt
-*					Log file: 	output/1003_an_describe_cohort.log
+*					Log file: 	output/1503_an_describe_cohort.log
 *
 ********************************************************************************
 *
@@ -25,7 +25,7 @@
 
 * Open a log file
 cap log close
-log using "output/1003_an_describe_cohort", replace t
+log using "output/1503_an_describe_cohort", text replace 
 
 
 * Load do-file which extracts covariates 

@@ -66,9 +66,18 @@ do "`c(pwd)'/analysis/206_rp_a_validation_28day_agesex.do"
 
 /*  APPROACH B: Landmark models  */
 
-do "`c(pwd)'/analysis/300_rp_b_logistic.do"
-do "`c(pwd)'/analysis/301_rp_b_poisson.do"
-do "`c(pwd)'/analysis/302_rp_b_weibull.do"
+do "`c(pwd)'/analysis/300_rp_b_logistic.do" foi
+do "`c(pwd)'/analysis/300_rp_b_logistic.do"	ae
+do "`c(pwd)'/analysis/300_rp_b_logistic.do"	susp
+
+do "`c(pwd)'/analysis/301_rp_b_poisson.do"	foi
+do "`c(pwd)'/analysis/301_rp_b_poisson.do"	ae
+do "`c(pwd)'/analysis/301_rp_b_poisson.do"	susp
+
+do "`c(pwd)'/analysis/302_rp_b_weibull.do"	foi
+do "`c(pwd)'/analysis/302_rp_b_weibull.do"	ae
+do "`c(pwd)'/analysis/302_rp_b_weibull.do"	susp
+
 do "`c(pwd)'/analysis/303_rp_b_validation_28day.do"
 do "`c(pwd)'/analysis/304_rp_b_validation_28day_agesex.do"
 
@@ -98,11 +107,19 @@ do "`c(pwd)'/analysis/505_rp_a_validation_full_period_intext.do"
 
 /*  APPROACH B: Landmark models  */
 
-* 600
-600_rp_b_logistic_intext
-601_rp_b_poisson_intext
-602_rp_b_weibull_intext
-603_rp_b_validation_28day_intext
+do "`c(pwd)'/analysis/600_rp_b_logistic_intext.do" 	foi
+do "`c(pwd)'/analysis/600_rp_b_logistic_intext.do" 	ae
+do "`c(pwd)'/analysis/600_rp_b_logistic_intext.do"	susp
+
+do "`c(pwd)'/analysis/601_rp_b_poisson_intext.do"	foi
+do "`c(pwd)'/analysis/601_rp_b_poisson_intext.do"	ae
+do "`c(pwd)'/analysis/601_rp_b_poisson_intext.do"	susp
+
+do "`c(pwd)'/analysis/602_rp_b_weibull_intext.do"	foi
+do "`c(pwd)'/analysis/602_rp_b_weibull_intext.do"	ae
+do "`c(pwd)'/analysis/602_rp_b_weibull_intext.do"	susp
+
+do "`c(pwd)'/analysis/603_rp_b_validation_28day_intext.do"
 
 
 /*  APPROACH C: Landmark models  */
@@ -124,7 +141,12 @@ do "`c(pwd)'/analysis/505_rp_a_validation_full_period_intext.do"
 
 /*  Other  */
 
-* 900
+* 900 - Simpler models (900i 900iii if necc)
+* 1000 - More complex models (as above)
+* 1100 - Approach B (no TVC, no updating, fit model + assess)
+* 1200 - Approach B (both A&E+GP, and all together)
+* 1300 - Region - affect things?
+
 
  
 ***********************************************
@@ -134,23 +156,26 @@ do "`c(pwd)'/analysis/505_rp_a_validation_full_period_intext.do"
 
 /*  Describe data  */
 
-do "`c(pwd)'/analysis/1001_variables_selected.do"
-do "`c(pwd)'/analysis/1002_describe_cohort.do"
-do "`c(pwd)'/analysis/1003_tabulate_cohort_descriptives.do" 
+do "`c(pwd)'/analysis/1501_variables_selected.do"
+do "`c(pwd)'/analysis/1502_describe_cohort.do"
+do "`c(pwd)'/analysis/1503_tabulate_cohort_descriptives.do" 
 
 
 /*  Describe models for infection rate over time  */
 
-do "`c(pwd)'/analysis/1101_an_plot_burden_infection.do"
-do "`c(pwd)'/analysis/1102_an_plot_baseline_rate.do"
+do "`c(pwd)'/analysis/1601_an_plot_burden_infection.do"
+do "`c(pwd)'/analysis/1602_an_plot_baseline_rate.do"
  
+
+/*  Tables of measures of model performance   */
+
+
+do "`c(pwd)'/analysis/1701_model_performance_a.do"
+do "`c(pwd)'/analysis/1702_model_performance_b.do"
+do "`c(pwd)'/analysis/1704_model_performance_a_intext.do"
+
 
 /*  Extract model coefficients??   */
 
 
-* 12
-
-
-/*  Tables of measures of model performance   */
-
-* 13
+* 18

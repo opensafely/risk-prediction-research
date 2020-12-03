@@ -121,52 +121,6 @@ forvalues i = 1/3 {
 	label values agegroup_small agegroup_small
 	
 	
-
-	/*  Create time-varying variables needed  */
-
-	* Variables needed for force of infection data
-
-	assert foi>0
-	gen logfoi = log(foi)
-	gen foiqd  =  foi_q_day/foi_q_cons
-	gen foiqds =  foi_q_daysq/foi_q_cons
-
-
-	* Variables needed for A&E attendance data
-	gen aepos = aerate
-	qui summ aerate if aerate>0 
-	replace aepos = 0.06279008 if aepos==0
-
-	gen logae		= log(aepos)
-	gen aeqd		= ae_q_day/ae_q_cons
-	gen aeqds 		= ae_q_daysq/ae_q_cons
-
-	replace aeqd  = 0 if ae_q_cons==0
-	replace aeqds = 0 if ae_q_cons==0
-
-	gen aeqint 		= aeqd*aeqds
-	gen aeqd2		= aeqd^2
-	gen aeqds2		= aeqds^2
-
-
-	* Variables needed for GP suspected case data
-
-	gen susppos = susp_rate
-	qui summ susp_rate if susp_rate>0 
-	assert susppos > 0 
-	
-	* Create time variables to be fed into the variable selection process
-	gen logsusp	 	= log(susppos)
-	gen suspqd	 	= susp_q_day/susp_q_cons
-	gen suspqds 	= susp_q_daysq/susp_q_cons
-
-	replace suspqd  = 0 if susp_q_cons==0
-	replace suspqds = 0 if susp_q_cons==0
-
-	gen suspqint   	= suspqd*suspqds
-	gen suspqd2 	= suspqd^2
-	gen suspqds2	= suspqds^2
-
 	
 	/*  Pick up list of variables in model  */
 	

@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			1101_plot_burden_infection.do
+*	Do-file:			1601_plot_burden_infection.do
 *
 *	Written by:			Fizz
 *

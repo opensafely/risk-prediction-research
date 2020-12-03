@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		1002_an_describe_cohort.do
+*	Do-file:		1502_an_describe_cohort.do
 *
 *	Programmed by:	Fizz & John
 *
@@ -8,7 +8,7 @@
 *
 *	Data created:	None
 *
-*	Other output:	Log file:  output/1002_an_describe_cohort.log
+*	Other output:	Log file:  output/1502_an_describe_cohort.log
 *
 ********************************************************************************
 *
@@ -24,7 +24,7 @@
 
 * Open a log file
 cap log close
-log using "output/1002_an_describe_cohort", replace t
+log using "output/1502_an_describe_cohort", replace text
 
 
 * Load do-file which extracts covariates 

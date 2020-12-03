@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			1102_an_plot_baseline_rate.do
+*	Do-file:			1602_an_plot_baseline_rate.do
 *
 *	Written by:			Fizz & John
 *
