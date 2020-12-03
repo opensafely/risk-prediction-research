@@ -276,7 +276,7 @@ forvalues i = 1/3 {
 			if (`r'<8 | `i'==3) {
 				foreach model in cox roy weibull gamma {
 				
-					* 
+					* Note which loop is being done
 					noi di "DOING model  `model'  for region  `r'"
 					
 					* Pick up relevant prediction
