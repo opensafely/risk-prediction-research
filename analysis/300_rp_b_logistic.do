@@ -9,6 +9,7 @@
 *	Data created:	data/model_b_logistic_`tvc'.dta, where tvc=foi, ae, susp
 *
 *	Other output:	Log file:  	output/300_rp_b_logistic_`tvc'.log
+*					Estimates:	output/models/coefs_b_logit_`tvc'.ster
 *
 ********************************************************************************
 *
@@ -149,6 +150,8 @@ bysort onscoviddeath: summ sf_wts
 *	SEs: Robust to account for patients being in multiple sub-studies
 *	Sampling: Sampling weights
 
+capture erase output/models/coefs_b_logit.ster
+
 * Fit model
 timer clear 1
 timer on 1
@@ -158,6 +161,8 @@ noi logistic onscoviddeath ${selected_vars_landmark_`tvc'}		///
 timer off 1
 timer list 1
 estat ic
+
+estimates save output/models/coefs_b_logit, replace
 
 
 * Pick up coefficient matrix

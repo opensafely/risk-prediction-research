@@ -8,7 +8,8 @@
 *
 *	Data created:	data/model_a_roy.dta
 *
-*	Other output:	Log file:  output/201_rp_a_roy.log
+*	Other output:	Log file:  	output/201_rp_a_roy.log
+*					Estimates:	output/models/coefs_a_roy.ster
 *
 ********************************************************************************
 *
@@ -77,12 +78,17 @@ foreach var of global bn_terms {
 ********************
 * df(5) -> 4 knots at centile positions 20 40 60 80
 
+capture erase output/models/coefs_a_roy.ster
+
 timer clear 1
 timer on 1
 stpm2 $selected_vars_nobn __* , df(5) scale(hazard) vce(robust)
 estat ic
 timer off 1
 timer list 1
+
+estimates save output/models/coefs_a_roy, replace
+
 
 
 ***********************************************

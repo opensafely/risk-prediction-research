@@ -8,7 +8,8 @@
 *
 *	Data created:	data/model_b_weibull_`tvc'.dta, where tvc=foi, ae, susp
 *
-*	Other output:	Log file:  		output/302_rp_b_weibull_`tvc'.log
+*	Other output:	Log file:  	output/302_rp_b_weibull_`tvc'.log
+*					Estimates:	output/models/coefs_b_weib_`tvc'.ster
 *
 ********************************************************************************
 *
@@ -103,6 +104,7 @@ gen suspqds2	= suspqds^2
 *   Weibull Model  *
 ********************
 
+capture erase output/models/coefs_b_weib.ster
 
 * Fit model
 timer clear 1
@@ -113,6 +115,7 @@ estat ic
 timer off 1
 timer list 1
 
+estimates save output/models/coefs_b_weib, replace
 
 
 

@@ -8,7 +8,8 @@
 *
 *	Data created:	data/model_a_weibull.dta
 *
-*	Other output:	Log file:  output/202_rp_a_weibull.log
+*	Other output:	Log file:  	output/202_rp_a_weibull.log
+*					Estimates:	output/models/coefs_a_weib.ster
 *
 ********************************************************************************
 *
@@ -45,12 +46,17 @@ noi di "$selected_vars"
 *   Weibull Model  *
 *********************
 
+capture erase output/models/coefs_a_weib.ster
+
 timer clear 1
 timer on 1
 streg $selected_vars , dist(weibull) vce(robust)
 estat ic
 timer off 1
 timer list 1
+
+estimates save output/models/coefs_a_weib, replace
+
 
 
 ***********************************************

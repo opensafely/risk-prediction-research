@@ -8,7 +8,8 @@
 *
 *	Data created:	data/model_a_ggamma.dta
 *
-*	Other output:	Log file:  output/200_rp_a_gamma.log
+*	Other output:	Log file:  	output/200_rp_a_gamma.log
+*					Estimates:	output/models/coefs_a_gamma.ster
 *
 ********************************************************************************
 *
@@ -37,9 +38,12 @@ use "data/cr_casecohort_models.dta", replace
 do "analysis/101_pr_variable_selection_output.do" 
 noi di "$selected_vars"
 
+
 ***********************
 *   Generalised gamma *
 ***********************
+
+capture  erase output/models/coefs_a_gamma.ster
 
 timer clear 1
 timer on 1
@@ -47,6 +51,10 @@ streg $selected_vars , dist(ggamma) vce(robust) difficult
 estat ic
 timer off 1
 timer list 1
+
+estimates save output/models/coefs_a_gamma, replace
+
+
 
 ***********************************************
 *  Put coefficients and survival in a matrix  * 
