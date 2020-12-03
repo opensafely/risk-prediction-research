@@ -113,6 +113,13 @@ forvalues i = 1/3 {
 	* Delete 100-day outcome to avoid potential confusion
 	drop onscoviddeath
 	
+
+	/*  Re-group age  */
+	
+	recode agegroup 1/4=1 5=2 6=3, gen(agegroup_small)
+	label define agegroup_small 1 "<70" 2 "70-<80" 3 "80+"
+	label values agegroup_small agegroup_small
+	
 	
 
 	/*  Create time-varying variables needed  */
@@ -222,12 +229,12 @@ forvalues i = 1/3 {
 		using "data/approach_b_`i'_agesex", replace
 
 		forvalues j = 0 (1) 1 {		// Sex
-			forvalues k = 1 (1) 6 { 	// Age-group
+			forvalues k = 1 (1) 3 { 	// Age-group
 				foreach var of varlist pred* {
 			
 				* Overall performance: Brier score
 				noi brier onscoviddeath28 `var'	///
-					if agegroup==`j' & male==`j', group(10)
+					if agegroup_small==`k' & male==`j', group(10)
 				local brier 	= r(brier) 
 				local brier_p 	= r(p) 
 
@@ -237,7 +244,7 @@ forvalues i = 1/3 {
 				 
 				* Calibration
 				noi cc_calib onscoviddeath28  `var'	///
-					if agegroup==`j' & male==`j', data(internal) 
+					if agegroup_small==`k' & male==`j', data(internal) 
 
 				* Hosmer-Lemeshow
 				local hl 		= r(chi)  
@@ -292,12 +299,9 @@ forvalues i = 2(1)3 {
 erase "data/approach_b_1_agesex.dta" 
 
 capture label drop agegroup
-label define agegroup 	1 "18-<40"	///
-						2 "40-<50"	///
-						3 "50-<60"	///
-						4 "60-<70"	///
-						5 "70-<80"	///
-						6 "80+"
+label define agegroup 	1 "18-<70"	///
+						2 "70-<80"	///
+						3 "80+"
 label values agegroup agegroup
 
 save "data/approach_b_validation_28day_agesex.dta", replace 
