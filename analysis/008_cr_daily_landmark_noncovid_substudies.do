@@ -170,20 +170,6 @@ forvalues i = 1 (1) 100 {
 drop days_until_coviddeath days_until_otherdeath
 
 
-/*
-
-***** NEED TO DEAL WITH THE SHIELDING SOMEHOW
-
-***********************************************
-*  Split pre-shielding and shielding periods  *
-***********************************************
-
-
-*/
-
-
-
-
 
 
 ******************

@@ -164,35 +164,27 @@ drop days_until_coviddeath days_until_otherdeath
 
 
 
-
-
 ****************************************
 *  Add in time-varying infection data  *
 ****************************************
-
-
-/*  Force of infection data  */ 
 
 recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 		50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 	///
 		gen(agegroupfoi)
 
+
 * Merge in the force of infection data
 merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
 	assert(match using) keep(match) nogen 
 drop agegroupfoi
-drop foi_c*
 
 * Merge in the A&E STP count data
-merge m:1 time stpcode using "data/ae_coefs", keep(master match)
-* CHANGE TO:  /// 	assert(match using) keep(match) nogen
-* AND THEN REMOVE LINE BELOW
-drop _m
-drop ae_c*
+merge m:1 time stp_combined using "data/ae_coefs", ///
+	assert(match using) keep(match) nogen
 
 * Merge in the GP suspected COVID case data
-*merge m:1 time stpcode using "data/gp_coefs", 	
-* AS ABOVE...
+merge m:1 time stp_combined using "data/susp_coefs", ///
+	assert(match using) keep(match) nogen
 
 
 
