@@ -319,7 +319,7 @@ capture label drop agegroup
 label define agegroup 	1 "18-<70"	///
 						2 "70-<80"	///
 						3 "80+"
-label values agegroup agegroup
+label values age agegroup
 
 save "data/approach_a_validation_28day_agesex.dta", replace 
 
