@@ -141,13 +141,44 @@ do "`c(pwd)'/analysis/603_rp_b_validation_28day_intext.do"
 
 /*  Other  */
 
-* 900 - Simpler models (900i 900iii if necc)
-* 1000 - More complex models (as above)
-* 1100 - Approach B (no TVC, no updating, fit model + assess)
-* 1200 - Approach B (both A&E+GP, and all together)
-* 1300 - Region - affect things?
+*** Sensitivity analyses for Approach A ***
+
+* 900  
+* Simpler model
+* COVID-AGE (as written)
+* New COVID-AGE (i.e. COVID-AGE coefs estimated on our case-cohort A) 
+
+* 1000
+* More complex model (union of all selected vars/covs?) 
+* Also add one with all full vars?? (i.e. strip off numbers and replace with i.)?
+
+* 1100 - How much does region add to predictiveness (for A and B) 
 
 
+*** Sensitivity analyses for Approach B ***
+
+* 1200
+* COVID-AGE variables with TVC
+
+
+* Combining TVC (all three, or the two objective measures)
+do "`c(pwd)'/analysis/1300_rp_b_logistic_combined.do" 	all
+do "`c(pwd)'/analysis/1300_rp_b_logistic_combined.do" 	objective
+
+do "`c(pwd)'/analysis/1301_rp_b_poisson_combined.do" 	all
+do "`c(pwd)'/analysis/1301_rp_b_poisson_combined.do" 	objective
+
+do "`c(pwd)'/analysis/1302_rp_b_weibull_combined.do"	all
+do "`c(pwd)'/analysis/1302_rp_b_weibull_combined.do"	objective
+
+do "`c(pwd)'/analysis/1303_rp_b_validation_28day_combined.do"
+
+
+* 1400 - Approach B (no TVC, no updating, fit model + assess)
+* Not updating TVC or omitting
+ 
+ 
+ 
  
 ***********************************************
 *          Presentation of results            *
