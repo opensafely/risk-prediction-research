@@ -203,7 +203,11 @@ do "`c(pwd)'/analysis/1602_an_plot_baseline_rate.do"
 
 do "`c(pwd)'/analysis/1701_model_performance_a.do"
 do "`c(pwd)'/analysis/1702_model_performance_b.do"
+*do "`c(pwd)'/analysis/1703_model_performance_c.do"
 do "`c(pwd)'/analysis/1704_model_performance_a_intext.do"
+*do "`c(pwd)'/analysis/1705_model_performance_b_intext.do"
+*do "`c(pwd)'/analysis/1706_model_performance_c_intext.do"
+* age/sex?
 
 
 /*  Extract model coefficients??   */

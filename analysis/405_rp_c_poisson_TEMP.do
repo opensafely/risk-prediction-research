@@ -28,7 +28,7 @@ log using "output/rp_c_dynamic_poisson", text replace
 * Add relevant files to adopath
 adopath ++ "`c(pwd)'/analysis/ado"
 
-* Run do-file just in case
+* Run do-file 
 do "analysis/ado/daypois.ado"
 
 
