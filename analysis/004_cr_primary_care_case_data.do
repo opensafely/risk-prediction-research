@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		005_cr_primary_care_case_data.do
+*	Do-file:		004_cr_primary_care_case_data.do
 *
 *	Programmed by:	Alex & Fizz & John
 *
@@ -12,7 +12,7 @@
 *	Data created:	data/susp_rates.dta (smoothed rates over time)
 *					data/susp_coefs.dta (current rate and coefficients)
 *
-*	Other output:	Log file:  005_cr_primary_care_case_data.log
+*	Other output:	Log file:  004_cr_primary_care_case_data.log
 *
 ********************************************************************************
 *
@@ -25,11 +25,16 @@
 
 * Open a log file
 cap log close
-log using "output/005_cr_primary_care_case_data", replace t
+log using "output/004_cr_primary_care_case_data", replace t
 
 *** PARAMETER NEEDED:  max days from infection to death
 global maxlag = 21
 
+
+
+********************************
+*  GP suspected COVID-19 data  *
+********************************
 
 
 /*  Import denominator data  */
@@ -200,6 +205,10 @@ save "data/susp_rates", replace
 
 
 
+****************************************
+*  Quadratic coefficients for GP data  *
+****************************************
+
 
 /*  Create lagged GP suspected cases  */
 
@@ -231,59 +240,85 @@ gen susp_rate_init = susp_rate_lag0
 reshape long susp_rate_lag, i(date stp_combined) j(lag)
 replace lag = -lag
 
-preserve
 statsby susp_q_cons	=_b[_cons] 									///
 		susp_q_day	=_b[lag] 									///
 		susp_q_daysq	=_b[c.lag#c.lag]	 					///
 		, by(stp_combined stpname date susp_rate_init) clear: 	///
 	regress susp_rate_lag c.lag##c.lag
-save "quadratic", replace
-restore
-statsby susp_c_cons	=_b[_cons] 									///
-		susp_c_day	=_b[lag] 									///
-		susp_c_daysq	=_b[c.lag#c.lag]	 					///
-		susp_c_daycu	=_b[c.lag#c.lag#c.lag]					///
-		, by(stp_combined stpname date susp_rate_init) clear: 	///
-	regress susp_rate_lag c.lag##c.lag##c.lag
-merge 1:1 stp_combined date using "quadratic", assert(match) nogen
-rename susp_rate_init susp_rate
 
-* Delete data not needed
-erase "quadratic.dta"
+	
+	
 
+******************************
+*  Keep only 100 days data   *
+******************************
 
-/*  Days since cohort start date  */
-
+*  Days since cohort start date  
 gen time = date - d(1mar2020) + 2
 drop date
 
+* Keep days 1-100
+keep if inrange(time, 1, 100)
 
 
-/*  Tidy and save data  */
+
+***************************************************
+*  Create required functions of A&E coefficients  *
+***************************************************
+
+gen susppos = susp_rate
+noi summ susp_rate if susp_rate>0 
+replace susppos = susppos + r(min)/2 if susppos==0
+noi di "CORRECTION FACTOR (for zero GP case rates) USED:   " r(min)/2
+
+* Create time variables to be fed into the variable selection process
+gen logsusp	 	= log(susppos)
+gen suspqd	 	= susp_q_day/susp_q_cons
+gen suspqds 	= susp_q_daysq/susp_q_cons
+
+replace suspqd  = 0 if susp_q_cons==0
+replace suspqds = 0 if susp_q_cons==0
+
+gen suspqint   	= suspqd*suspqds
+gen suspqd2 	= suspqd^2
+gen suspqds2	= suspqds^2
+	
+	
+
+
+*************************
+*  Tidy and save data   *
+*************************
 
 
 * Label variables
 label var time 			"From 1 (29Feb, data for predicting 1Mar) to 100 (7Jun for predicting 8Jun)"
+label var stpname 		"Sustainability and Transformation Partnership"
+label var stp_combined 	"STP combined for smaller areas"
 label var susp_rate		"Suspected GP case rate (mean daily rate over last 7 days)"
+label var susppos		"Primary care (GP) suspected COVID-19 rate (no zeros)"
+label var logsusp		"Log of the primary care (GP) suspected COVID-19 rate" 
 label var susp_q_cons 	"Quadratic model of suspected GP cases: constant coefficient"
 label var susp_q_day	"Quadratic model of suspected GP cases: linear coefficient"
 label var susp_q_daysq	"Quadratic model of suspected GP cases: squared coefficient"
-label var susp_c_cons 	"Cubic model of suspected GP cases: constant coefficient"
-label var susp_c_day	"Cubic model of suspected GP cases: linear coefficient"
-label var susp_c_daysq	"Cubic model of suspected GP cases: squared coefficient"
-label var susp_c_daycu	"Cubic model of suspected GP cases: cubed coefficient"
-label var stpname 		"Sustainability and Transformation Partnership"
-label var stp_combined 	"STP combined for smaller areas"
+label var suspqd		"Standardised quadratic term, day, GP"
+label var suspqds 		"Standardised quadratic term, day-squared, GP"
+label var suspqint  	"Standardised quadratic term, interaction, GP"
+label var suspqd2 		"Standardised quadratic term, day^2, GP"
+label var suspqds2		"Standardised quadratic term, day-squared^2, GP"
 
 
 * Order and sort variables
-order time stp* susp_rate susp_q_cons susp_q_day susp_q_daysq	///
-		susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
+order time stp* susp_rate susppos logsusp susp_q_cons susp_q_day susp_q_daysq	///
+	suspqd suspqds suspqint suspqd2 suspqds2
 sort stp_combined time
 
 * Label and save dataset
-label data "GP suspected COVID-19 cases, rate over last week and quadratic/cubic model"
+label data "GP suspected COVID-19 cases, rate over last week and quadratic model"
 save "data/susp_coefs", replace
 
 * Close the log file
 log close
+
+
+

@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			003_cr_dynamic_modelling_output.do
+*	Do-file:			002_cr_dynamic_modelling_output.do
 *
 *	Written by:			Fizz
 *
@@ -9,7 +9,7 @@
 *	Data created:		data/foi_rates.dta  (force of infection over time)
 *						data/foi_coefs.dta  (coefficients modelling FOI over time)
 *
-*	Other output:		Log file:  003_cr_dynamic_modelling_output.log
+*	Other output:		Log file:  002_cr_dynamic_modelling_output.log
 *
 ********************************************************************************
 *
@@ -23,7 +23,7 @@
 
 * Open a log file
 capture log close
-log using "output/003_cr_dynamic_modelling_output", text replace
+log using "output/002_cr_dynamic_modelling_output", text replace
 
 
 *** PARAMETER NEEDED:  max days from infection to death
@@ -121,6 +121,9 @@ save "data/foi_rates", replace
 
 
 
+********************************************************
+*  Quadratic coefficients for force of infection data  *
+********************************************************
 
 
 /*  Create lagged force of infection variables  */
@@ -150,56 +153,64 @@ gen foi_init = foi_lag0
 reshape long foi_lag, i(date region_7 agegroupfoi foi_init) j(lag)
 
 replace lag = -lag
-preserve
 statsby foi_q_cons	= _b[_cons] 							///
 		foi_q_day	=_b[lag] 								///
 		foi_q_daysq	=_b[c.lag#c.lag]	 					///
 		, by(region_7 agegroupfoi date foi_init) clear: 	///
 	regress foi_lag c.lag##c.lag	
-save "quadratic", replace
-restore
-statsby foi_c_cons	= _b[_cons] 							///
-		foi_c_day	=_b[lag] 								///
-		foi_c_daysq	=_b[c.lag#c.lag]	 					///
-		foi_c_daycu	=_b[c.lag#c.lag#c.lag]	 				///
-		, by(region_7 agegroupfoi date foi_init) clear: 	///
-	regress foi_lag c.lag##c.lag##c.lag	
-merge 1:1 region_7 agegroupfoi date using "quadratic", assert(match) nogen
 rename foi_init foi
 
 
-* Delete data not needed
-erase "quadratic.dta"
 
 
-/*  Days since cohort start date  */
+******************************
+*  Keep only 100 days data   *
+******************************
 
+*  Days since cohort start date  
 gen time = date - d(1mar2020) + 2
 drop date
 
+* Keep days 1 to 100
+keep if inrange(time, 1, 100)
 
 
-/*  Tidy and save data  */
 
-	
+
+*************************************************
+*  Create required functions of FOI variables   *
+*************************************************
+
+gen logfoi = log(foi)
+gen foiqd  =  foi_q_day/foi_q_cons
+gen foiqds =  foi_q_daysq/foi_q_cons
+
+
+
+
+*************************
+*  Tidy and save data   *
+*************************
+
+
 * Label variables
 label var time 			"Days since 1 March 2020 (inclusive)"
 label var foi 			"Estimated force of infection"
+label var logfoi		"Log of the estimated force of infection" 
 label var foi_q_cons 	"Quadratic model of force of infection: constant coefficient"
 label var foi_q_day		"Quadratic model of force of infection: linear coefficient"
 label var foi_q_daysq	"Quadratic model of force of infection: squared coefficient"
-label var foi_c_cons 	"Cubic model of force of infection: constant coefficient"
-label var foi_c_day		"Cubic model of force of infection: linear coefficient"
-label var foi_c_daysq	"Cubic model of force of infection: squared coefficient"
-label var foi_c_daycu	"Cubic model of force of infection: cubed coefficient"
+label var foiqd  		"Standardised quadratic term, day, FOI"
+label var foiqds		"Standardised quadratic term, day-squared, FOI"
+
 
 * Order and sort variables
-order time region_7 agegroupfoi foi			///
-		foi_q_cons foi_q_day foi_q_daysq	///
-		foi_c_cons foi_c_day foi_c_daysq foi_c_daycu
+order time region_7 agegroupfoi foi	logfoi		///
+		foi_q_cons foi_q_day foi_q_daysq		///
+		foiqd foiqds
 sort region_7 agegroupfoi time
 
-label data "Force of infection data, estimate and quadratic and cubic models"
+label data "Force of infection data, estimate and quadratic models"
 save "data/foi_coefs", replace
 
 

@@ -198,88 +198,16 @@ recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
 	assert(match using) keep(match) nogen 
 drop agegroupfoi
-drop foi_c_cons foi_c_day foi_c_daysq foi_c_daycu
-
 
 * Merge in the A&E STP count data
 merge m:1 time stp_combined using "data/ae_coefs", ///
 	assert(match using) keep(match) nogen
-drop ae_c_cons ae_c_day ae_c_daysq ae_c_daycu
-
 
 * Merge in the GP suspected COVID case data
 merge m:1 time stp_combined using "data/susp_coefs", ///
 	assert(match using) keep(match) nogen
-drop susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
 
 
-
-
-/*  Create time-varying variables needed  */
-
-* Variables needed for force of infection data
-
-gen logfoi = log(foi)
-gen foiqd  =  foi_q_day/foi_q_cons
-gen foiqds =  foi_q_daysq/foi_q_cons
-
-
-* Variables needed for A&E attendance data
-gen aepos = aerate
-noi summ aerate if aerate>0 
-replace aepos = aepos + r(min)/2 if aepos==0
-
-gen logae		= log(aepos)
-gen aeqd		= ae_q_day/ae_q_cons
-gen aeqds 		= ae_q_daysq/ae_q_cons
-
-replace aeqd  = 0 if ae_q_cons==0
-replace aeqds = 0 if ae_q_cons==0
-
-gen aeqint 		= aeqd*aeqds
-gen aeqd2		= aeqd^2
-gen aeqds2		= aeqds^2
-
-
-* Variables needed for GP suspected case data
-
-gen susppos = susp_rate
-noi summ susp_rate if susp_rate>0 
-replace susppos = susppos + r(min)/2 if susppos==0
-
-* Create time variables to be fed into the variable selection process
-gen logsusp	 	= log(susppos)
-gen suspqd	 	= susp_q_day/susp_q_cons
-gen suspqds 	= susp_q_daysq/susp_q_cons
-
-replace suspqd  = 0 if susp_q_cons==0
-replace suspqds = 0 if susp_q_cons==0
-
-gen suspqint   	= suspqd*suspqds
-gen suspqd2 	= suspqd^2
-gen suspqds2	= suspqds^2
-
-
-* Label time-varying variables
-label var logfoi	"Log of the estimated force of infection" 
-label var foiqd  	"Standardised quadratic term, day, FOI"
-label var foiqds	"Standardised quadratic term, day-squared, FOI"
-	
-label var aepos		"A&E COVID-19 rate (no zeros)"
-label var logae		"Log of the A&E COVID-19 rate" 
-label var aeqd		"Standardised quadratic term, day, A&E"
-label var aeqds 	"Standardised quadratic term, day-squared, A&E"
-label var aeqint 	"Standardised quadratic term, interaction, A&E"
-label var aeqd2		"Standardised quadratic term, day^2, A&E"
-label var aeqds2	"Standardised quadratic term, day-squared^2, A&E"	
-
-label var susppos	"Primary care (GP) suspected COVID-19 rate (no zeros)"
-label var logsusp	"Log of the primary care (GP) suspected COVID-19 rate" 
-label var suspqd	"Standardised quadratic term, day, GP"
-label var suspqds 	"Standardised quadratic term, day-squared, GP"
-label var suspqint  "Standardised quadratic term, interaction, GP"
-label var suspqd2 	"Standardised quadratic term, day^2, GP"
-label var suspqds2	"Standardised quadratic term, day-squared^2, GP"
 
 
 
@@ -535,89 +463,15 @@ recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
 	assert(match using) keep(match) nogen 
 drop agegroupfoi
-drop foi_c_cons foi_c_day foi_c_daysq foi_c_daycu
-
 
 * Merge in the A&E STP count data
 merge m:1 time stp_combined using "data/ae_coefs", ///
 	assert(match using) keep(match) nogen
-drop ae_c_cons ae_c_day ae_c_daysq ae_c_daycu
-
 
 * Merge in the GP suspected COVID case data
 merge m:1 time stp_combined using "data/susp_coefs", ///
 	assert(match using) keep(match) nogen
-drop susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
 
-
-
-
-
-/*  Create time-varying variables needed  */
-
-* Variables needed for force of infection data
-
-gen logfoi = log(foi)
-gen foiqd  =  foi_q_day/foi_q_cons
-gen foiqds =  foi_q_daysq/foi_q_cons
-
-
-* Variables needed for A&E attendance data
-gen aepos = aerate
-noi summ aerate if aerate>0 
-replace aepos = aepos + r(min)/2 if aepos==0
-
-gen logae		= log(aepos)
-gen aeqd		= ae_q_day/ae_q_cons
-gen aeqds 		= ae_q_daysq/ae_q_cons
-
-replace aeqd  = 0 if ae_q_cons==0
-replace aeqds = 0 if ae_q_cons==0
-
-gen aeqint 		= aeqd*aeqds
-gen aeqd2		= aeqd^2
-gen aeqds2		= aeqds^2
-
-
-* Variables needed for GP suspected case data
-
-gen susppos = susp_rate
-noi summ susp_rate if susp_rate>0 
-replace susppos = susppos + r(min)/2 if susppos==0
-
-* Create time variables to be fed into the variable selection process
-gen logsusp	 	= log(susppos)
-gen suspqd	 	= susp_q_day/susp_q_cons
-gen suspqds 	= susp_q_daysq/susp_q_cons
-
-replace suspqd  = 0 if susp_q_cons==0
-replace suspqds = 0 if susp_q_cons==0
-
-gen suspqint   	= suspqd*suspqds
-gen suspqd2 	= suspqd^2
-gen suspqds2	= suspqds^2
-
-
-* Label time-varying variables
-label var logfoi	"Log of the estimated force of infection" 
-label var foiqd  	"Standardised quadratic term, day, FOI"
-label var foiqds	"Standardised quadratic term, day-squared, FOI"
-	
-label var aepos		"A&E COVID-19 rate (no zeros)"
-label var logae		"Log of the A&E COVID-19 rate" 
-label var aeqd		"Standardised quadratic term, day, A&E"
-label var aeqds 	"Standardised quadratic term, day-squared, A&E"
-label var aeqint 	"Standardised quadratic term, interaction, A&E"
-label var aeqd2		"Standardised quadratic term, day^2, A&E"
-label var aeqds2	"Standardised quadratic term, day-squared^2, A&E"	
-
-label var susppos	"Primary care (GP) suspected COVID-19 rate (no zeros)"
-label var logsusp	"Log of the primary care (GP) suspected COVID-19 rate" 
-label var suspqd	"Standardised quadratic term, day, GP"
-label var suspqds 	"Standardised quadratic term, day-squared, GP"
-label var suspqint  "Standardised quadratic term, interaction, GP"
-label var suspqd2 	"Standardised quadratic term, day^2, GP"
-label var suspqds2	"Standardised quadratic term, day-squared^2, GP"
 
 
 

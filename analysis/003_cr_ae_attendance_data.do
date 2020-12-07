@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			004_cr_ae_attendance_data.do
+*	Do-file:			003_cr_ae_attendance_data.do
 *
 *	Written by:			Fizz
 *
@@ -9,7 +9,7 @@
 *	Data created:		data/ae_rates.dta (smoothed rates over time)
 *						data/ae_coefs.dta (current rate and coefficients)
 *
-*	Other output:		Log file:  004_cr_ae_attendance_data.log
+*	Other output:		Log file:  003_cr_ae_attendance_data.log
 *
 ********************************************************************************
 *
@@ -22,17 +22,19 @@
 
 * Open a log file
 capture log close
-log using "output/004_cr_ae_attendance_data", text replace
+log using "output/003_cr_ae_attendance_data", text replace
 
 *** PARAMETER NEEDED:  max days from infection to death
 global maxlag = 21
 
 
 
+***********************
+*  A&E COVID-19 data  *
+***********************
 
 
 /*  Import AE denominator data  */
-
 
 import delimited "data/ae_stp_pop.csv", clear varnames(1)
 egen pop = rowtotal(v2 v3 v4 v5 unknown)
@@ -130,10 +132,10 @@ order stpcode stpname region_7 pop
 /*  Combine smaller STPs wth neighbouring areas  */
 
 replace stpcode ="E54000007/E54000008" if inlist(stpcode, "E54000007", "E54000008")
-replace stpname = "Manchester/Cheshire/Merseyside"  if stpcode=="E54000007/E54000008" 
+replace stpname = "Manchester/Cheshire/Merseyside" if stpcode=="E54000007/E54000008" 
 
 replace stpcode ="E54000010/E54000012" if inlist(stpcode, "E54000010", "E54000012")
-replace stpname = "Staffordshire/Derbyshire"  if stpcode=="E54000010/E54000012" 
+replace stpname = "Staffordshire/Derbyshire" if stpcode=="E54000010/E54000012" 
 
 replace stpcode ="E54000027/E54000029" if inlist(stpcode, "E54000027", "E54000029")
 replace stpname = "London"  if stpcode=="E54000027/E54000029" 
@@ -215,7 +217,11 @@ save "data/ae_rates", replace
 
 
 
-	
+
+*****************************************
+*  Quadratic coefficients for A&E data  *
+*****************************************
+
 	
 /*  Create lagged A&E attendance variables  */
 
@@ -251,60 +257,90 @@ gen aerate_init = aerate_lag0
 reshape long aerate_lag, i(date stp_combined) j(lag)
 replace lag = -lag
 
-preserve
 statsby ae_q_cons	=_b[_cons] 									///
 		ae_q_day	=_b[lag] 									///
 		ae_q_daysq	=_b[c.lag#c.lag]	 						///
 		, by(stp_combined stpname date aerate_init) clear: 		///
 	regress aerate_lag c.lag##c.lag
-save "quadratic", replace
-restore
-statsby ae_c_cons	=_b[_cons] 									///
-		ae_c_day	=_b[lag] 									///
-		ae_c_daysq	=_b[c.lag#c.lag]	 						///
-		ae_c_daycu	=_b[c.lag#c.lag#c.lag]						///
-		, by(stp_combined stpname date aerate_init) clear: 		///
-	regress aerate_lag c.lag##c.lag##c.lag
-merge 1:1 stp_combined date using "quadratic", assert(match) nogen
 rename aerate_init aerate
 
-* Delete data not needed
-erase "quadratic.dta"
 
 
-/*  Days since cohort start date  */
 
+
+******************************
+*  Keep only 100 days data   *
+******************************
+
+*  Days since cohort start date  
 gen time = date - d(1mar2020) + 2
 drop date
 
+* Keep days 1-100
+keep if inrange(time, 1, 100)
 
 
-/*  Tidy and save data  */
 
+***************************************************
+*  Create required functions of A&E coefficients  *
+***************************************************
+
+gen aepos = aerate
+noi summ aerate if aerate>0 
+replace aepos = aepos + r(min)/2 if aepos==0
+
+noi di "CORRECTION FACTOR (for zero A&E rates) USED:   " r(min)/2
+
+gen logae		= log(aepos)
+gen aeqd		= ae_q_day/ae_q_cons
+gen aeqds 		= ae_q_daysq/ae_q_cons
+
+replace aeqd  = 0 if ae_q_cons==0
+replace aeqds = 0 if ae_q_cons==0
+
+gen aeqint 		= aeqd*aeqds
+gen aeqd2		= aeqd^2
+gen aeqds2		= aeqds^2
+
+
+
+
+*************************
+*  Tidy and save data   *
+*************************
 
 * Label variables
 label var time 			"From 1 (29Feb, data for predicting 1Mar) to 100 (7Jun for predicting 8Jun)"
+label var stpname 		"Sustainability and Transformation Partnership"
+label var stp_combined 	"STP combined for smaller areas"
 label var aerate		"A&E attendances (mean daily rate over last 7 days)"
+label var aepos			"A&E COVID-19 rate (no zeros)"
+label var logae			"Log of the A&E COVID-19 rate" 
 label var ae_q_cons 	"Quadratic model of A&E attendances: constant coefficient"
 label var ae_q_day		"Quadratic model of A&E attendances: linear coefficient"
 label var ae_q_daysq	"Quadratic model of A&E attendances: squared coefficient"
-label var ae_c_cons 	"Cubic model of A&E attendances: constant coefficient"
-label var ae_c_day		"Cubic model of A&E attendances: linear coefficient"
-label var ae_c_daysq	"Cubic model of A&E attendances: squared coefficient"
-label var ae_c_daycu	"Cubic model of A&E attendances: cubed coefficient"
-label var stpname 		"Sustainability and Transformation Partnership"
-label var stp_combined 	"STP combined for smaller areas"
-
+label var aeqd			"Standardised quadratic term, day, A&E"
+label var aeqds 		"Standardised quadratic term, day-squared, A&E"
+label var aeqint 		"Standardised quadratic term, interaction, A&E"
+label var aeqd2			"Standardised quadratic term, day^2, A&E"
+label var aeqds2		"Standardised quadratic term, day-squared^2, A&E"	
 
 * Order and sort variables
-order time stp* aerate ae_q_cons ae_q_day ae_q_daysq	///
-		ae_c_cons ae_c_day ae_c_daysq ae_c_daycu
+order time stp* aerate aepos logae ae_q_cons ae_q_day ae_q_daysq	///
+			aeqd aeqds aeqint aeqd2 aeqds2
 sort stp_combined time
 
 * Label and save dataset
-label data "A&E attendance data, rate over last week and quadratic/cubic model"
+label data "A&E attendance data, rate over last week and quadratic model"
 save "data/ae_coefs", replace
 
 
 * Close the log file
 log close
+
+
+
+
+
+
+
