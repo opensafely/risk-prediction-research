@@ -44,18 +44,19 @@ use "data/cr_base_cohort.dta", replace
 	
 /* Complete case for ethnicity   */ 
 
+tab onscoviddeath
 tab ethnicity_8
 tab ethnicity_8, m
 drop ethnicity_5 ethnicity_16
 drop if ethnicity_8>=.
-	
+tab onscoviddeath
 
 
 /*  Extract relevant covariates  */
 	
 * Define covariates as of the start date of the validation period
 local start = d(01/03/2020)
-define_covs, dateno(`start')
+qui define_covs, dateno(`start')
 
 	
 
@@ -114,6 +115,29 @@ summ stime
 summ days_until_coviddeath days_until_otherdeath
 
 
+
+************************
+*  Landmark substudy   *
+************************
+
+use "data/cr_casecohort_models.dta", clear
+tab onscoviddeath subcohort
+tab sf_wts
+
+
+
+************************
+*  Landmark substudy   *
+************************
+
+use "data/cr_landmark.dta", clear
+tab onscoviddeath subcohort
+tab sf_wts
+
+
+********************************
+*  Describe outcome variables  *
+********************************
 
 * Close log file
 log close
