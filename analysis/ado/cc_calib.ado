@@ -39,6 +39,8 @@
 *				nq is an integer - number of groups used for Hosmer-Lemeshow GOF (default 10)
 *				pctile is an option which keeps a copy of the variables used to create the HL (mostly for debugging)
 *
+*				If the calibration regression models do not converge, values
+*				of 9999 are recorded. 
 *
 ********************************************************************************
 
@@ -155,21 +157,39 @@ program define cc_calib, rclass
 	* Intercept (include logit of predicted risk as intercept)
 	tempvar lp
 	qui gen `lp' = ln(`predicted'/(1 - `predicted')) `ifif'
-	qui logit `observed' `ifif' `weightoptp', offset(`lp') 
-	local calib_inter = _b[_cons]
-	local calib_inter_se = _se[_cons]
-	local calib_inter_cl = `calib_inter' - invnormal(0.975)*`calib_inter_se'
-	local calib_inter_cu = `calib_inter' + invnormal(0.975)*`calib_inter_se'
-	local calib_inter_p  = 2*(1-normal(abs(`calib_inter')/`calib_inter_se')) 
+	qui capture logit `observed' `ifif' `weightoptp', offset(`lp') iterate(25)
+	if e(converged)==1 {
+		local calib_inter 	 = _b[_cons]
+		local calib_inter_se = _se[_cons]
+		local calib_inter_cl = `calib_inter' - invnormal(0.975)*`calib_inter_se'
+		local calib_inter_cu = `calib_inter' + invnormal(0.975)*`calib_inter_se'
+		local calib_inter_p  = 2*(1-normal(abs(`calib_inter')/`calib_inter_se')) 
+	}
+	else {
+		local calib_inter 		= 9999
+		local calib_inter_se 	= 9999
+		local calib_inter_cl 	= 9999
+		local calib_inter_cu 	= 9999
+		local calib_inter_p  	= 9999
+	}
+		
 	
 	* Slope 
-	qui logit `observed' `lp' `ifif' `weightoptp'
-	local calib_slope = _b[`lp']
-	local calib_slope_se = _se[_cons]
-	local calib_slope_cl = `calib_slope' - invnormal(0.975)*`calib_inter_se'
-	local calib_slope_cu = `calib_slope' + invnormal(0.975)*`calib_inter_se'
-	local calib_slope_p  = 2*(1-normal(abs(`calib_slope')/`calib_inter_se')) 
-	
+	qui capture logit `observed' `lp' `ifif' `weightoptp', iterate(25)
+	if e(converged)==1 {
+		local calib_slope = _b[`lp']
+		local calib_slope_se = _se[_cons]
+		local calib_slope_cl = `calib_slope' - invnormal(0.975)*`calib_inter_se'
+		local calib_slope_cu = `calib_slope' + invnormal(0.975)*`calib_inter_se'
+		local calib_slope_p  = 2*(1-normal(abs(`calib_slope')/`calib_inter_se')) 
+	}
+	else {
+		local calib_slope 		= 9999
+		local calib_slope_se 	= 9999
+		local calib_slope_cl 	= 9999
+		local calib_slope_cu 	= 9999
+		local calib_slope_p  	= 9999		
+	}
 	
 	
 	*********************
