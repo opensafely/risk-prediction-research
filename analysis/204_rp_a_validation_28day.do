@@ -127,9 +127,6 @@ forvalues i = 1/3 {
 
 	use "data/cr_cohort_vp`i'.dta", clear
 	
-	* Delete 100-day outcome to avoid potential confusion
-	drop onscoviddeath
-	
 	* Pick up list of variables in model
 	do "analysis/101_pr_variable_selection_output.do"
 	noi di "$bn_terms"

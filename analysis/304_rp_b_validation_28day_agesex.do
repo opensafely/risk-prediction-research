@@ -109,10 +109,7 @@ foreach tvc in foi ae susp {
 forvalues i = 1/3 {
 
 	use "data/cr_cohort_vp`i'.dta", clear
-	
-	* Delete 100-day outcome to avoid potential confusion
-	drop onscoviddeath
-	
+
 
 	/*  Re-group age  */
 	
