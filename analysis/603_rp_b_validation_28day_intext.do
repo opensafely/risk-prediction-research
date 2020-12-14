@@ -180,9 +180,9 @@ forvalues i = 1/3 {
 	*   Validation measures  *
 	**************************
 
-
 	tempname measures
-	postfile `measures' str5(approach) str30(prediction) str3(period)			///
+	postfile `measures' str5(approach) str30(prediction) 						///
+		str30(tvc) str3(period) loo												///
 		brier brier_p c_stat c_stat_p hl hl_p mean_obs mean_pred 				///
 		calib_inter calib_inter_se calib_inter_cl calib_inter_cu calib_inter_p 	///
 		calib_slope calib_slope_se calib_slope_cl calib_slope_cu calib_slope_p 	///
@@ -239,7 +239,7 @@ forvalues i = 1/3 {
 			
 					
 					* Save measures
-					post `measures' ("B") ("`var'") ("vp`i'") 						///
+					post `measures' ("B") ("`model'") ("`tvc'") ("vp`i'") (`r') 	///
 									(`brier') (`brier_p') 							///
 									(`cstat') (`cstat_p') 							///
 									(`hl') (`hl_p') 								///
@@ -256,8 +256,8 @@ forvalues i = 1/3 {
 		}
 	postclose `measures'
 }
-
-
+									
+						
 
 
 * Clean up
