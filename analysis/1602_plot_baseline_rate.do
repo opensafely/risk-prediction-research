@@ -34,13 +34,52 @@
 *  Count COVID-19 deaths over time   *
 **************************************
 	
-/* Open base cohort   */ 
 	
 use "data/cr_base_cohort.dta", replace
 
-* Only keep cases (COVID-19 mortality)
-keep if onscoviddeath==1
+* Complete case for ethnicity 
+drop ethnicity_5 ethnicity_16
+drop if ethnicity_8>=.
 
+
+* Just keep required variables 
+keep patient_id died_date_onscovid age ///
+	 stp_combined 
+
+* 28-day COVID mortality crude count by day
+forvalues i = 1 (1) 73 {
+	gen onscoviddeath28_`i' = 			///
+		inrange(died_date_onscovid, 	///
+		d(1mar2020)-1+`i', 				///
+		d(1mar2020)+27-1+`i')
+}
+
+* Recode agegroup
+recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
+		50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 	///
+		gen(agegroupfoi)
+drop age
+drop died_date_
+drop patient_id
+
+* Count COVID-19 cases by agegroup and STP 
+collapse (sum) ons*, by(agegroupfoi stp_combined)
+reshape long onscoviddeath28_, i(stp_combined agegroupfoi) j(time)
+rename onscoviddeath28_ crude_coviddeath28
+
+label var crude_coviddeath28 "Crude number of COVID-19 deaths by age-group, STP and time"
+
+save "covid_temp", replace
+
+
+
+
+*****************************
+*  Count people over time   *
+*****************************
+	
+
+use "data/cr_base_cohort.dta", replace
 
 * Complete case for ethnicity 
 drop ethnicity_5 ethnicity_16
@@ -52,31 +91,27 @@ recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 		gen(agegroupfoi)
 drop age
 
-* Day of death (due to COVID-19)
-gen time = died_date_onscovid - d(1mar2020) + 1
-
 
 /* Just keep required variables  */ 
 
-keep patient_id time agegroupfoi stp_combined region_7 onscoviddeath
-tab onscoviddeath
+keep patient_id agegroupfoi stp_combined region_7 
 
 * Count COVID-19 cases by agegroup and STP 
-bysort agegroupfoi stp_combined time: egen total=sum(onscoviddeath)
-keep time agegroupfoi stp_combined total
+gen cons = 1
+bysort agegroupfoi stp_combined: egen pop=sum(cons)
+keep agegroupfoi stp_combined pop
 duplicates drop 
 
-qui summ total
+qui summ pop
 noi di r(sum)
 
-rename total crude_coviddeath 
-label var crude_coviddeath "Crude number of COVID-19 deaths by age-group, STP and time"
+label var pop "Population size by age-group and STP"
 
-save "covid_temp", replace
+save "covid_temp2", replace
 
-
-
-
+	
+	
+	
 
 
 *******************************
@@ -179,6 +214,7 @@ forvalues i = 1 (1) 73 {
 }
 
 erase "cohort_temp.dta"
+save "cohort_temp2.dta", replace
 
 
 
@@ -187,6 +223,8 @@ erase "cohort_temp.dta"
 *******************
 *  Collapse data  *
 *******************
+
+use "cohort_temp2.dta", clear
 
 collapse (sum) patient_id, 			///
 	by(agegroupfoi region_7 		///
@@ -204,103 +242,28 @@ rename patient_id fweight
 * Merge in the force of infection data
 merge m:1 time agegroupfoi region_7 using "data/foi_coefs", ///
 	assert(match using) keep(match) nogen 
-drop foi_c_cons foi_c_day foi_c_daysq foi_c_daycu
 
 
 * Merge in the A&E STP count data
 merge m:1 time stp_combined using "data/ae_coefs", ///
 	assert(match using) keep(match) nogen
-drop ae_c_cons ae_c_day ae_c_daysq ae_c_daycu
 
 
 * Merge in the GP suspected COVID case data
 merge m:1 time stp_combined using "data/susp_coefs", ///
 	assert(match using) keep(match) nogen
-drop susp_c_cons susp_c_day susp_c_daysq susp_c_daycu
 
 
 * Merge in the time series of COVID-19 deaths
 merge m:1 time stp_combined agegroupfoi using "covid_temp", nogen
-erase "covid_temp.dta"
+*erase "covid_temp.dta"
 order crude_coviddeath, after(onscoviddeath) 
 
 
-
-******************************************
-*  Create time-varying variables needed  *
-******************************************
-
-
-/*  FOI  */
-
-* Create time variables to be fed into the variable selection process
-gen logfoi		= log(foi)
-gen foiqd		= foi_q_day/foi_q_cons
-gen foiqds		= foi_q_daysq/foi_q_cons
-gen foiqint		= foiqd*foiqds
-gen foiqd2		= foiqd^2
-gen foiqds2		= foiqds^2
-
-
-* Create lagged measures of FOI
-bysort agegroupfoi region_7 (time): gen foilag7 = foi[_n-7]
-replace foilag7 = 0 if foilag7>=.
-
-bysort agegroupfoi region_7 (time): gen foilag10= foi[_n-10]
-replace foilag10 = 0 if foilag10>=.
-
-bysort agegroupfoi region_7 (time): gen foilag12 = foi[_n-12]
-replace foilag12 = 0 if foilag12>=.
-
-* Take logged lagged measures
-qui summ foi if foi>0
-gen logfoilag7  = log(max(foilag7, r(min)/2))
-gen logfoilag10 = log(max(foilag10, r(min)/2))
-gen logfoilag12 = log(max(foilag12, r(min)/2))
-
-
-
-
-
-/*  A&E attendances  */
-
-gen aepos = aerate
-qui summ aerate if aerate>0 
-replace aepos = aepos + r(min)/2 if aepos==0
-
-* Create time variables to be fed into the variable selection process
-gen logae		= log(aepos)
-gen aeqd		= ae_q_day/ae_q_cons
-gen aeqds 		= ae_q_daysq/ae_q_cons
-
-replace aeqd  = 0 if ae_q_cons==0
-replace aeqds = 0 if ae_q_cons==0
-
-gen aeqint 		= aeqd*aeqds
-gen aeqd2		= aeqd^2
-gen aeqds2		= aeqds^2
-
-
-
-
-/*  GP suspected cases  */
-
-
-gen susppos = susp_rate
-qui summ susp_rate if susp_rate>0 
-replace susppos = susppos + r(min)/2 if susppos==0
-
-* Create time variables to be fed into the variable selection process
-gen logsusp	 	= log(susppos)
-gen suspqd	 	= susp_q_day/susp_q_cons
-gen suspqds 	= susp_q_daysq/susp_q_cons
-
-replace suspqd  = 0 if susp_q_cons==0
-replace suspqds = 0 if susp_q_cons==0
-
-gen suspqint   	= suspqd*suspqds
-gen suspqd2 	= suspqd^2
-gen suspqds2	= suspqds^2
+* Merge in the time series of COVID-19 deaths
+merge m:1 stp_combined agegroupfoi using "covid_temp2", nogen
+*erase "covid_temp2.dta"
+order crude_coviddeath, after(onscoviddeath) 
 
 
 * Save temporary copy of data
@@ -320,19 +283,7 @@ use funcform_temp, clear
 * Create numerical version of stp
 encode stp_combined, gen(stp)
 
-* Count numbers of people in each agegroup and stp
-bysort stp time agegroupfoi: egen obs_covid=sum(onscoviddeath)
-bysort stp time agegroupfoi: egen fweightsum=sum(fweight)
-bysort stp time agegroupfoi: replace fweightsum = . if _n>1 
-mkmat 	stp region_7 											///
-		time agegroupfoi fweightsum								///
-		logfoi foi_q_day foi_q_daysq foiqd foiqds				///
-		logae ae_q_day ae_q_daysq aeqd aeqds aeqds2				///
-		logsusp susp_q_day susp_q_daysq suspqd suspqds suspqds2	///
-	, nomissing matrix(pop)
 
-
-	
 	
 	
 *************************************************************
@@ -388,32 +339,12 @@ matrix susp_cons = b[1, 19]
 ********************************************************************
 
 
-clear
-svmat pop
-
-rename pop1 stp
-rename pop2 region_7 
-rename pop3 time 
-rename pop4 agegroupfoi 
-rename pop5 popsize 
-rename pop6 logfoi 
-rename pop7 foi_q_day 
-rename pop8 foi_q_daysq 
-rename pop9 foiqd 
-rename pop10 foiqds
-rename pop11 logae 
-rename pop12 ae_q_day 
-rename pop13 ae_q_daysq 
-rename pop14 aeqd 
-rename pop15 aeqds 
-rename pop16 aeqds2
-rename pop17 logsusp 
-rename pop18 susp_q_day 
-rename pop19 susp_q_daysq 
-rename pop20 suspqd 
-rename pop21 suspqds 
-rename pop22 suspqds2	
+*** THESE UNIQUELY DEFINE ROW:  isid stp agegroupfoi time onscoviddeath
+drop fweight onscoviddeath
+duplicates drop 
+isid stp agegroupfoi time
 		
+
 
 label define age 	1 "18-24" 	///
 					2 "25-29" 	///
@@ -429,61 +360,9 @@ label define age 	1 "18-24" 	///
 					21 "75+" 
 label values agegroupfoi age
 					
-label define stp 	1  "E54000005"				///
-					2  "E54000006"				///
-					3  "E54000007/E54000008"	///
-					4  "E54000009"				///
-					5  "E54000010/E54000012"	///
-					6  "E54000013"				///
-					7  "E54000014"				///
-					8  "E54000015"				///
-					9  "E54000016"				///
-					10 "E54000017"				///
-					11 "E54000020"				///
-					12 "E54000021"				///
-					13 "E54000022"				///
-					14 "E54000023"				///
-					15 "E54000024"				///
-					16 "E54000025"				///
-					17 "E54000026"				///
-					18 "E54000027/E54000029"	///
-					19 "E54000033/E54000035"	///
-					20 "E54000036/E54000037"	///	
-					21 "E54000040"				///
-					22 "E54000041"				///
-					23 "E54000042/E54000044"	///
-					24 "E54000043"				///
-					25 "E54000049"
 label values stp stp
 
-
-gen stpname	= ""
-replace stpname = "West Yorkshire"  								if stp==1
-replace stpname = "Humber, Coast and Vale" 	 						if stp==2
-replace stpname = "Manchester/Cheshire/Merseyside"  				if stp==3
-replace stpname = "South Yorkshire and Bassetlaw" 			 		if stp==4
-replace stpname = "Staffordshire/Derbyshire"  						if stp==5
-replace stpname = "Lincolnshire"  									if stp==6
-replace stpname = "Nottinghamshire"  								if stp==7
-replace stpname = "Leicester, Leicestershire and Rutland"  			if stp==8
-replace stpname = "The Black Country"  								if stp==9
-replace stpname = "Birmingham and Solihull"  						if stp==10
-replace stpname = "Northamptonshire"  								if stp==11
-replace stpname = "Cambridgeshire and Peterborough"  				if stp==12
-replace stpname = "Norfolk and Waveney"  							if stp==13
-replace stpname = "Suffolk and North East Essex"  					if stp==14
-replace stpname = "Milton Keynes, Bedfordshire and Luton" 			if stp==15
-replace stpname = "Hertfordshire and West Essex"  					if stp==16
-replace stpname = "Mid and South Essex"  							if stp==17
-replace stpname = "London"  										if stp==18
-replace stpname = "Sussex and Surrey"  								if stp==19
-replace stpname = "Devon/Cornwall"  								if stp==20
-replace stpname = "Bath, Swindon and Wiltshire"  					if stp==21
-replace stpname = "Dorset"  										if stp==22
 replace stpname = "Buckinghams., Oxfords., Berks., Hamps., IoW"  	if stp==23
-replace stpname = "Gloucestershire"  								if stp==24
-replace stpname = "Cumbria and North East"  						if stp==25
-
 
 
 
@@ -507,7 +386,7 @@ forvalues k = 1 (1) 12 {
     replace ln_cr_rate = ln_cr_rate + cr_age[1,`k']  if agegroupfoi==`k' 
 }
 gen cr_rate = exp(ln_cr_rate)
-gen exp_cr_n = cr_rate*popsize
+gen exp_cr_n = cr_rate*pop
 drop ln_cr_rate
 
 
@@ -526,7 +405,7 @@ replace ln_foi_rate = ln_foi_rate + foi_foi[1,4]*foiqd
 replace ln_foi_rate = ln_foi_rate + foi_foi[1,5]*foiqds
 
 gen foi_rate = exp(ln_foi_rate)
-gen exp_foi_n = foi_rate*popsize
+gen exp_foi_n = foi_rate*pop
 drop ln_foi_rate
 
 
@@ -546,7 +425,7 @@ replace ln_ae_rate = ln_ae_rate + ae_ae[1,5]*aeqds
 replace ln_ae_rate = ln_ae_rate + ae_ae[1,6]*aeqds2
 
 gen ae_rate = exp(ln_ae_rate)
-gen exp_ae_n = ae_rate*popsize
+gen exp_ae_n = ae_rate*pop
 drop ln_ae_rate
 
 
@@ -566,24 +445,27 @@ replace ln_susp_rate = ln_susp_rate + susp_susp[1,5]*suspqds
 replace ln_susp_rate = ln_susp_rate + susp_susp[1,6]*suspqds2
 
 gen susp_rate = exp(ln_susp_rate)
-gen exp_susp_n = susp_rate*popsize
+gen exp_susp_n = susp_rate*pop
 drop ln_susp_rate
 
 
-
-
-
-
+		
+		
+		
+		
+		
+		
 *****************************************************
 *  Graph expected numbers by STP:  Agegroup 50-54   *
 *****************************************************
 
-	 
+sort time
+
 * East of England
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==7 & region_7==1, 								///
 		by(stpname, note("") title("East")) 							///
 		subtitle(, size(small))											///
@@ -591,16 +473,18 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg1_age7.svg", as(svg) replace
 
 
 * London
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==7 & region_7==2, 								///
 		by(stpname, note("") title("London")) 							///
 		subtitle(, size(small))											///
@@ -608,31 +492,35 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (5) 15, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg2_age7.svg", as(svg) replace
 
 * Midlands
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==7 & region_7==3, 								///
 		by(stpname, note("") title("Midlands")) 						///
 		subtitle(, size(small))											///
 		xtitle(" ") 													///
 		ytitle("Expected number of cases")								///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 12)) ylabel(0 (3) 12, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg3_age7.svg", as(svg) replace
 
 * North East/Yorkshire
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==7 & region_7==4, 								///
 		by(stpname, note("") title("North East/Yorkshire")) 			///
 		subtitle(, size(small))											///
@@ -640,31 +528,33 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (2) 12, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg4_age7.svg", as(svg) replace
 
 * North West
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==7 & region_7==5, 								///
 		by(stpname, note("") title("North West")) 						///
 		subtitle(, size(small))											///
 		xtitle(" ") 													///
 		ytitle("Expected number of cases")								///
-		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
+		yscale(range(0 12)) ylabel(0 (3) 12, angle(0))					///
 		legend(order(1 2 3 4) 											///
 		label(1 "Crude") label(2 "Force of infection") 					///
 		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
 graph export "output/graphs/tvcmod_reg5_age7.svg", as(svg) replace
 
 * South East
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway  (line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==7 & region_7==6, 								///
 		by(stpname, note("") title("South East")) 						///
 		subtitle(, size(small))											///
@@ -672,15 +562,17 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg6_age7.svg", as(svg) replace
 
 * South West
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==7 & region_7==7, 								///
 		by(stpname, note("") title("South West")) 						///
 		subtitle(, size(small))											///
@@ -688,8 +580,10 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (2) 6, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg7_age7.svg", as(svg) replace
 
 
@@ -703,10 +597,10 @@ graph export "output/graphs/tvcmod_reg7_age7.svg", as(svg) replace
 
 
 * East of England
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==11 & region_7==1, 								///
 		by(stpname, note("") title("East")) 							///
 		subtitle(, size(small))											///
@@ -714,15 +608,17 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (10) 40, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg1_age11.svg", as(svg) replace
 
 * London
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway  (line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==11 & region_7==2, 								///
 		by(stpname, note("") title("London")) 							///
 		subtitle(, size(small))											///
@@ -730,15 +626,17 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (10) 60, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg2_age11.svg", as(svg) replace
 
 * Midlands
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway  (line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==11 & region_7==3, 								///
 		by(stpname, note("") title("Midlands")) 						///
 		subtitle(, size(small))											///
@@ -751,10 +649,10 @@ twoway 	(scatter exp_cr_n   time) 										///
 graph export "output/graphs/tvcmod_reg3_age11.svg", as(svg) replace
 
 * North East/Yorkshire
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==11 & region_7==4, 								///
 		by(stpname, note("") title("North East/Yorkshire")) 			///
 		subtitle(, size(small))											///
@@ -762,15 +660,17 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (10) 60, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg4_age11.svg", as(svg) replace
 
 * North West
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==11 & region_7==5, 								///
 		by(stpname, note("") title("North West")) 						///
 		subtitle(, size(small))											///
@@ -778,15 +678,17 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected number of cases")								///
 		yscale(range(0 6)) ylabel(0 (10) 40, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg5_age11.svg", as(svg) replace
 
 * South East
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==11 & region_7==6, 								///
 		by(stpname, note("") title("South East")) 						///
 		subtitle(, size(small))											///
@@ -799,10 +701,10 @@ twoway 	(scatter exp_cr_n   time) 										///
 graph export "output/graphs/tvcmod_reg6_age11.svg", as(svg) replace
 
 * South West
-twoway 	(scatter exp_cr_n   time) 										///
-		(scatter exp_foi_n  time) 										///
-		(scatter exp_ae_n   time)	 									///
-		(scatter exp_susp_n time) 										///
+twoway 	(line exp_foi_n  			time, lwidth(thick))				///
+		(line exp_ae_n  		 	time, lwidth(thick))				///
+		(line exp_susp_n 			time, lwidth(thick)) 				///
+		(line crude_coviddeath28 	time, lwidth(thick))  				///
 		if agegroupfoi==11 & region_7==7, 								///
 		by(stpname, note("") title("South West")) 						///
 		subtitle(, size(small))											///
@@ -810,18 +712,15 @@ twoway 	(scatter exp_cr_n   time) 										///
 		ytitle("Expected no cases")										///
 		yscale(range(0 6)) ylabel(0 (10) 40, angle(0))					///
 		legend(order(1 2 3 4) 											///
-		label(1 "Crude") label(2 "Force of infection") 					///
-		label(3 "Smoothed A & E rate") label(4 "GP suspected case rate"))
+		label(1 "Force of infection") 									///
+		label(2 "Smoothed A & E rate") 									///
+		label(3 "GP suspected case rate")								///
+		label(4 "Crude numbers"))
 graph export "output/graphs/tvcmod_reg7_age11.svg", as(svg) replace
 		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		
 		
 
+		
+	
