@@ -6,16 +6,24 @@
 *
 *	Data used:			output/
 *							approach_a_validation_28day.out
+*							approach_a_validation_28day_agesex.out
+*							approach_a_validation_28day_intext.out
+*							approach_a_validation_full_period.out
+*							approach_a_validation_full_period_intext.out
 *
 *	Data created:		output/
+*							approach_a_validation_28day_tidy.out
+*							approach_a_validation_28day_agesex_tidy.out
+*							approach_a_validation_28day_intext_tidy.out
 *							approach_a_validation_full_period_tidy.out
+*							approach_a_validation_full_period_intext_tidy.out
 *
-*	Other output:		Dataset left in memory
+*	Other output:		None
 
 ********************************************************************************
 *
-*	Purpose:			This do-file tidies the validation data for approach A
-*						models to copy and paste to Word.
+*	Purpose:			This do-file tidies the validation data for approach A,
+*						B and C models to copy and paste to Word.
 *
 ********************************************************************************
 
@@ -94,9 +102,7 @@ program define model_meas_tidy
 
 
 	* Calibration slope
-	gen calib_slope_p_str = string(round(calib_slope_p, 0.001))
-	replace calib_slope_p_str = "=0"+calib_slope_p_str
-	replace calib_slope_p_str = "<0.001" if calib_slope_p_str=="=00"
+	drop calib_slope_p
 
 	foreach var of varlist calib_slope calib_slope_cl calib_slope_cu {
 		gen `var'_str = string(round(`var', 0.01))
@@ -105,17 +111,21 @@ program define model_meas_tidy
 	}
 	gen calib_slope_all_str = 	calib_slope_str + " (" 			///
 								+ calib_slope_cl_str + ", " 	///
-								+ calib_slope_cu_str + "), p" 	///
-								+ calib_slope_p_str 
+								+ calib_slope_cu_str + ")" 	
 						
-	drop calib_slope_str calib_slope_cl_str calib_slope_cu_str calib_slope_p_str ///
-			calib_slope calib_slope_cl calib_slope_cu calib_slope_p calib_slope_se 
+	drop calib_slope_str calib_slope_cl_str calib_slope_cu_str  ///
+			calib_slope calib_slope_cl calib_slope_cu calib_slope_se 
 
 end
 
 
 
 
+						*****************
+						*  APPROACH A   *
+						*****************
+
+						
 ************************************
 *  Approach A: 28 day validation   *
 ************************************
@@ -184,3 +194,207 @@ order 	approach model			 	///
 		calib_slope_all_str			
 
 outsheet using "output/approach_a_validation_full_period_tidy.out", replace
+
+
+
+
+
+**************************************************
+*  Approach A: 28 day validation by age and sex  *
+**************************************************
+
+
+model_meas_tidy, inputdata("output\approach_a_validation_28day_agesex.out")  
+		
+/*  Tidy dataset  */
+
+gen 	model = 1 if prediction=="pred_a_cox"
+replace model = 2 if prediction=="pred_a_roy"
+replace model = 3 if prediction=="pred_a_weibull"
+replace model = 4 if prediction=="pred_a_gamma"
+label define model 1 "Cox" 2 "Royston-Parmar" 3 "Weibull" 4 "Gamma"
+label values model model
+drop prediction
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+
+encode age, gen(agegp)
+drop age
+
+
+sort age vp model
+order 	approach age sex 			///
+		vp model		 			///
+		brier_str 					///
+		cstat_str					///
+		pc_obs_risk pc_pred_risk 	///
+		hl_str 			 			///
+		calib_inter_all_str			///
+		calib_slope_all_str			
+
+outsheet using "output/approach_a_validation_28day_agesex_tidy.out", replace
+
+
+
+******************************************************
+*  Approach A: 28 day internal-external validation   *
+******************************************************
+
+model_meas_tidy, inputdata("output\approach_a_validation_28day_intext.out")  
+		
+gen calib_no_converge = 1 if regexm(calib_inter_all_str, "9999")
+replace calib_inter_all_str = "(no convergence)" if  calib_no_converge==1
+replace calib_slope_all_str = "(no convergence)" if  calib_no_converge==1
+drop calib_no_converge
+
+
+/*  Tidy dataset  */
+
+gen 	model = 1 if regexm(prediction, "pred_a_cox")
+replace model = 2 if regexm(prediction, "pred_a_roy")
+replace model = 3 if regexm(prediction, "pred_a_weibull")
+replace model = 4 if regexm(prediction, "pred_a_gamma")
+label define model 1 "Cox" 2 "Royston-Parmar" 3 "Weibull" 4 "Gamma"
+label values model model
+drop prediction
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+	  
+gen 	omitted = 1 if loo=="Region 1 omitted"
+replace omitted = 2 if loo=="Region 2 omitted"
+replace omitted = 3 if loo=="Region 3 omitted"
+replace omitted = 4 if loo=="Region 4 omitted"
+replace omitted = 5 if loo=="Region 5 omitted"
+replace omitted = 6 if loo=="Region 6 omitted"
+replace omitted = 7 if loo=="Region 7 omitted"
+replace omitted = 8 if loo=="Later time omitted"
+label define omitted 	1 "Region 1"	///
+						2 "Region 2"	///
+						3 "Region 3"	///
+						4 "Region 4"	///
+						5 "Region 5"	///
+						6 "Region 6"	///
+						7 "Region 7"	///
+						8 "Later time"
+label values omitted omitted
+drop loo
+  
+sort omitted vp model 
+order 	approach vp omitted model 	///
+		brier_str 					///
+		cstat_str					///
+		pc_obs_risk pc_pred_risk 	///
+		hl_str 			 			///
+		calib_inter_all_str			///
+		calib_slope_all_str			
+
+outsheet using "output/approach_a_validation_28day_intext_tidy.out", replace
+
+
+
+
+
+
+
+						*****************
+						*  APPROACH B   *
+						*****************
+
+************************************
+*  Approach B: 28-day validation   *
+************************************
+
+
+model_meas_tidy, inputdata("output\approach_b_validation_28day.out")  
+
+		
+/*  Tidy dataset  */
+
+gen 	model = 1 if regexm(prediction, "pred_b_logit")
+replace model = 2 if regexm(prediction, "pred_b_pois")
+replace model = 3 if regexm(prediction, "pred_b_weib")
+label define model 1 "Logistic" 2 "Poisson" 3 "Weibull" 
+label values model model
+
+gen 	tvc = 1 if regexm(prediction, "foi")
+replace tvc = 2 if regexm(prediction, "ae")
+replace tvc = 3 if regexm(prediction, "susp")
+drop prediction
+
+label define tvc 1 "FOI" 2 "A&E" 3 "Suspected GP" 
+label values tvc tvc
+
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+
+sort tvc vp model
+order 	approach vp model tvc		///
+		brier_str 					///
+		cstat_str					///
+		pc_obs_risk pc_pred_risk 	///
+		hl_str 			 			///
+		calib_inter_all_str			///
+		calib_slope_all_str			
+
+outsheet using "output/approach_b_validation_28day_tidy.out", replace
+
+
+
+***************************************************
+*  Approach B: 28-day validation by age and sex   *
+***************************************************
+
+
+
+
+
+******************************************************
+*  Approach B: 28-day internal external validation   *
+******************************************************
+
+
+model_meas_tidy, inputdata("output\approach_b_validation_28day_intext.out")  
+
+		
+/*  Tidy dataset  */
+
+gen 	model = 1 if regexm(prediction, "pred_b_logit")
+replace model = 2 if regexm(prediction, "pred_b_pois")
+replace model = 3 if regexm(prediction, "pred_b_weib")
+label define model 1 "Logistic" 2 "Poisson" 3 "Weibull" 
+label values model model
+
+gen 	tvc = 1 if regexm(prediction, "foi")
+replace tvc = 2 if regexm(prediction, "ae")
+replace tvc = 3 if regexm(prediction, "susp")
+drop prediction
+
+label define tvc 1 "FOI" 2 "A&E" 3 "Suspected GP" 
+label values tvc tvc
+
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+
+sort tvc vp model
+order 	approach vp model tvc		///
+		brier_str 					///
+		cstat_str					///
+		pc_obs_risk pc_pred_risk 	///
+		hl_str 			 			///
+		calib_inter_all_str			///
+		calib_slope_all_str			
+
+outsheet using "output/approach_b_validation_28day_tidy.out", replace
+
