@@ -135,7 +135,6 @@ forvalues i = 1/3 {
 	* Open the validation data
 	use "data/cr_cohort_vp`i'.dta", clear
 
-	
 	* Pick up list of variables in model
 	qui do "analysis/107_pr_variable_selection_intext_output.do" 
 
