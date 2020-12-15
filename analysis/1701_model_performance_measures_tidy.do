@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:			1701_model_performance_a.do
+*	Do-file:			1701_model_performance_measures_tidy.do
 *
 *	Written by:			Fizz & John
 *
@@ -52,6 +52,9 @@ program define model_meas_tidy
 	replace brier_p_str = ">0.99"  if brier_p_str=="=01"
 
 	gen brier_str = "0" + string(brier) + " (p"+brier_p_str + ")"
+
+	replace brier_str = substr(brier_str, 2, .)	///
+		if regexm(substr(brier_str, 1, 3), "0[0-9].")	
 	drop brier_p_str brier brier_p
 
 
@@ -121,9 +124,9 @@ end
 
 
 
-						*****************
-						*  APPROACH A   *
-						*****************
+						*************************
+						*  INTERNAL VALIDATION  *
+						*************************
 
 						
 ************************************
@@ -197,6 +200,53 @@ outsheet using "output/approach_a_validation_full_period_tidy.out", replace
 
 
 
+************************************
+*  Approach B: 28-day validation   *
+************************************
+
+
+model_meas_tidy, inputdata("output\approach_b_validation_28day.out")  
+
+		
+/*  Tidy dataset  */
+
+gen 	model = 1 if regexm(prediction, "pred_b_logit")
+replace model = 2 if regexm(prediction, "pred_b_pois")
+replace model = 3 if regexm(prediction, "pred_b_weib")
+label define model 1 "Logistic" 2 "Poisson" 3 "Weibull" 
+label values model model
+
+gen 	tvc = 1 if regexm(prediction, "foi")
+replace tvc = 2 if regexm(prediction, "ae")
+replace tvc = 3 if regexm(prediction, "susp")
+drop prediction
+
+label define tvc 1 "FOI" 2 "A&E" 3 "Suspected GP" 
+label values tvc tvc
+
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+
+sort tvc vp model
+order 	approach vp model tvc		///
+		brier_str 					///
+		cstat_str					///
+		pc_obs_risk pc_pred_risk 	///
+		hl_str 			 			///
+		calib_inter_all_str			///
+		calib_slope_all_str			
+
+outsheet using "output/approach_b_validation_28day_tidy.out", replace
+
+
+
+
+					****************************************
+					*  INTERNAL VALIDATION BY AGE AND SEX  *
+					****************************************
 
 
 **************************************************
@@ -204,7 +254,7 @@ outsheet using "output/approach_a_validation_full_period_tidy.out", replace
 **************************************************
 
 
-model_meas_tidy, inputdata("output\approach_a_validation_28day_agesex.out")  
+model_meas_tidy, inputdata("output/approach_a_validation_28day_agesex.out")  
 		
 /*  Tidy dataset  */
 
@@ -224,10 +274,11 @@ drop period
 encode age, gen(agegp)
 drop age
 
+label define sex 1 "Male" 0 "Female"
+label values sex sex
 
-sort age vp model
-order 	approach age sex 			///
-		vp model		 			///
+sort  age sex vp model
+order  approach agegp sex model vp	///
 		brier_str 					///
 		cstat_str					///
 		pc_obs_risk pc_pred_risk 	///
@@ -239,6 +290,62 @@ outsheet using "output/approach_a_validation_28day_agesex_tidy.out", replace
 
 
 
+
+**************************************************
+*  Approach B: 28-day validation by age and sex  *
+**************************************************
+
+
+model_meas_tidy, inputdata("output/approach_b_validation_28day_agesex.out")  
+
+		
+/*  Tidy dataset  */
+
+gen 	model = 1 if regexm(prediction, "pred_b_logit")
+replace model = 2 if regexm(prediction, "pred_b_pois")
+replace model = 3 if regexm(prediction, "pred_b_weib")
+label define model 1 "Logistic" 2 "Poisson" 3 "Weibull" 
+label values model model
+
+gen 	tvc = 1 if regexm(prediction, "foi")
+replace tvc = 2 if regexm(prediction, "ae")
+replace tvc = 3 if regexm(prediction, "susp")
+drop prediction
+
+label define tvc 1 "FOI" 2 "A&E" 3 "Suspected GP" 
+label values tvc tvc
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+
+encode age, gen(agegp)
+drop age
+
+label define sex 1 "Male" 0 "Female"
+label values sex sex
+
+		
+sort  tvc age sex vp model
+order  approach tvc agegp sex model vp	///
+		brier_str 						///
+		cstat_str						///
+		pc_obs_risk pc_pred_risk 		///
+		hl_str 			 				///
+		calib_inter_all_str				///
+		calib_slope_all_str			
+		
+outsheet using "output/approach_b_validation_28day_tidy.out", replace
+
+
+
+
+					***********************************
+					*  INTERNAL-EXTERNAL VALIDATION   *
+					***********************************
+
+					
 ******************************************************
 *  Approach A: 28 day internal-external validation   *
 ******************************************************
@@ -299,80 +406,25 @@ outsheet using "output/approach_a_validation_28day_intext_tidy.out", replace
 
 
 
-
-
-
-						*****************
-						*  APPROACH B   *
-						*****************
-
-************************************
-*  Approach B: 28-day validation   *
-************************************
-
-
-model_meas_tidy, inputdata("output\approach_b_validation_28day.out")  
-
-		
-/*  Tidy dataset  */
-
-gen 	model = 1 if regexm(prediction, "pred_b_logit")
-replace model = 2 if regexm(prediction, "pred_b_pois")
-replace model = 3 if regexm(prediction, "pred_b_weib")
-label define model 1 "Logistic" 2 "Poisson" 3 "Weibull" 
-label values model model
-
-gen 	tvc = 1 if regexm(prediction, "foi")
-replace tvc = 2 if regexm(prediction, "ae")
-replace tvc = 3 if regexm(prediction, "susp")
-drop prediction
-
-label define tvc 1 "FOI" 2 "A&E" 3 "Suspected GP" 
-label values tvc tvc
-
-
-gen 	vp = 1 if period=="vp1"
-replace vp = 2 if period=="vp2"
-replace vp = 3 if period=="vp3"
-drop period
-
-sort tvc vp model
-order 	approach vp model tvc		///
-		brier_str 					///
-		cstat_str					///
-		pc_obs_risk pc_pred_risk 	///
-		hl_str 			 			///
-		calib_inter_all_str			///
-		calib_slope_all_str			
-
-outsheet using "output/approach_b_validation_28day_tidy.out", replace
-
-
-
-***************************************************
-*  Approach B: 28-day validation by age and sex   *
-***************************************************
-
-
-
-
-
 ******************************************************
 *  Approach B: 28-day internal external validation   *
 ******************************************************
 
 
-model_meas_tidy, inputdata("output\approach_b_validation_28day_intext.out")  
+model_meas_tidy, inputdata("output/approach_b_validation_28day_intext.out")  
 
-		
+
 /*  Tidy dataset  */
 
-gen 	model = 1 if regexm(prediction, "pred_b_logit")
-replace model = 2 if regexm(prediction, "pred_b_pois")
-replace model = 3 if regexm(prediction, "pred_b_weib")
+rename model prediction
+gen 	model = 1 if regexm(prediction, "logit")
+replace model = 2 if regexm(prediction, "pois")
+replace model = 3 if regexm(prediction, "weib")
 label define model 1 "Logistic" 2 "Poisson" 3 "Weibull" 
 label values model model
+drop prediction
 
+rename tvc prediction
 gen 	tvc = 1 if regexm(prediction, "foi")
 replace tvc = 2 if regexm(prediction, "ae")
 replace tvc = 3 if regexm(prediction, "susp")
@@ -386,14 +438,34 @@ gen 	vp = 1 if period=="vp1"
 replace vp = 2 if period=="vp2"
 replace vp = 3 if period=="vp3"
 drop period
+	  
+gen 	omitted = 1 if loo=="Region 1 omitted"
+replace omitted = 2 if loo=="Region 2 omitted"
+replace omitted = 3 if loo=="Region 3 omitted"
+replace omitted = 4 if loo=="Region 4 omitted"
+replace omitted = 5 if loo=="Region 5 omitted"
+replace omitted = 6 if loo=="Region 6 omitted"
+replace omitted = 7 if loo=="Region 7 omitted"
+replace omitted = 8 if loo=="Later time omitted"
+label define omitted 	1 "Region 1"	///
+						2 "Region 2"	///
+						3 "Region 3"	///
+						4 "Region 4"	///
+						5 "Region 5"	///
+						6 "Region 6"	///
+						7 "Region 7"	///
+						8 "Later time"
+label values omitted omitted
+drop loo
 
-sort tvc vp model
-order 	approach vp model tvc		///
-		brier_str 					///
-		cstat_str					///
-		pc_obs_risk pc_pred_risk 	///
-		hl_str 			 			///
-		calib_inter_all_str			///
+ 
+sort tvc omitted vp model 
+order 	approach vp omitted model tvc	///
+		brier_str 						///
+		cstat_str						///
+		pc_obs_risk pc_pred_risk	 	///
+		hl_str 			 				///
+		calib_inter_all_str				///
 		calib_slope_all_str			
 
 outsheet using "output/approach_b_validation_28day_tidy.out", replace
