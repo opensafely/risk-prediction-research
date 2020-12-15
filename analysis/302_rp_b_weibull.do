@@ -60,7 +60,7 @@ use "data/cr_landmark.dta", clear
 *   Weibull Model  *
 ********************
 
-capture erase output/models/coefs_b_weib.ster
+capture erase output/models/coefs_b_weib_`tvc'.ster
 
 * Fit model
 timer clear 1
@@ -71,7 +71,7 @@ estat ic
 timer off 1
 timer list 1
 
-estimates save output/models/coefs_b_weib, replace
+estimates save output/models/coefs_b_weib_`tvc', replace
 
 
 

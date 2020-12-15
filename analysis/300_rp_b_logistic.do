@@ -105,7 +105,7 @@ bysort onscoviddeath: summ sf_wts
 *	SEs: Robust to account for patients being in multiple sub-studies
 *	Sampling: Sampling weights
 
-capture erase output/models/coefs_b_logit.ster
+capture erase output/models/coefs_b_logit_`tvc'.ster
 
 * Fit model
 timer clear 1
@@ -117,7 +117,7 @@ timer off 1
 timer list 1
 estat ic
 
-estimates save output/models/coefs_b_logit, replace
+estimates save output/models/coefs_b_logit_`tvc', replace
 
 
 * Pick up coefficient matrix
