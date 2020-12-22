@@ -24,13 +24,8 @@
 *
 ********************************************************************************
 *
-*	Purpose:			This do-file runs a simple Poisson lasso model on a 
-*						random sample of the whole cohort to perform 
-*						variable selection.
-
-*
-*	Note:				Stata do-file called:
-*							analysis/0000_cr_define_covariates.do
+*	Purpose:			This do-file reads in model estimates in Stata format
+*						and formats them nicely for Word tables.
 *
 ********************************************************************************
 
@@ -164,7 +159,7 @@ program define term_to_text, rclass
 	local text_agec 	= "Age"
 	local text_hh_numc 	= "Number in household"
 	local text_hh_num2 	= "Number in household (spl 2)"
-	local text_hh_num3 	= "Number in household (spl 2)"
+	local text_hh_num3 	= "Number in household (spl 3)"
 	local text_age2 	= "Age (spl 2)"
 	local text_age3 	= "Age (spl 3)"
 	
@@ -234,6 +229,8 @@ program define term_to_text, rclass
 
 	forvalues i= 1 (1) 4 {
 		if regexm("`term'", "`i'.bpcat") | regexm("`term'", "`i'bn.bpcat")  {
+			local term = subinstr("`term'", "`i'.bpcat_nomiss", 	"`text_bp_`i''", . )
+			local term = subinstr("`term'", "`i'bn.bpcat_nomiss", "`text_bp_`i''", . )
 			local term = subinstr("`term'", "`i'.bpcat", 	"`text_bp_`i''", . )
 			local term = subinstr("`term'", "`i'bn.bpcat", "`text_bp_`i''", . )
 		}
@@ -301,25 +298,25 @@ program define term_to_text, rclass
 	local term = subinstr("`term'", "_cons",   "Constant", . )
 
 	local term = subinstr("`term'", "logfoi",   	"Log(FOI)", . )
-	local term = subinstr("`term'", "foi_q_day",   	"Qd (unstandardised)", . )
 	local term = subinstr("`term'", "foi_q_daysq", 	"Qds (unstandardised)", . )
-	local term = subinstr("`term'", "foiqd",  		"Qd", . )
-	local term = subinstr("`term'", "foiqds",   	"Qds", . )
+	local term = subinstr("`term'", "foi_q_day",   	"Qd (unstandardised)", . )
 	local term = subinstr("`term'", "foiqds2",   	"Qds x Qds", . )
+	local term = subinstr("`term'", "foiqds",   	"Qds", . )
+	local term = subinstr("`term'", "foiqd",  		"Qd", . )
 
 	local term = subinstr("`term'", "logae",   		"Log(A&E rate)", . )
-	local term = subinstr("`term'", "ae_q_day",   	"Qd (unstandardised)", . )
 	local term = subinstr("`term'", "ae_q_daysq", 	"Qds (unstandardised)", . )
-	local term = subinstr("`term'", "aeqd",  		"Qd", . )
-	local term = subinstr("`term'", "aeqds",   		"Qds", . )
+	local term = subinstr("`term'", "ae_q_day",   	"Qd (unstandardised)", . )
 	local term = subinstr("`term'", "aeqds2",   	"Qds x Qds", . )
+	local term = subinstr("`term'", "aeqds",   		"Qds", . )
+	local term = subinstr("`term'", "aeqd",  		"Qd", . )
 	
 	local term = subinstr("`term'", "logsusp",   	"Log(suspected rate)", . )
-	local term = subinstr("`term'", "susp_q_day",   "Qd (unstandardised)", . )
 	local term = subinstr("`term'", "susp_q_daysq", "Qds (unstandardised)", . )
-	local term = subinstr("`term'", "suspqd",  		"Qd", . )
-	local term = subinstr("`term'", "suspqds",   	"Qds", . )
+	local term = subinstr("`term'", "susp_q_day",   "Qd (unstandardised)", . )
 	local term = subinstr("`term'", "suspqds2",   	"Qds x Qds", . )
+	local term = subinstr("`term'", "suspqds",   	"Qds", . )
+	local term = subinstr("`term'", "suspqd",  		"Qd", . )
 
 
 
@@ -425,7 +422,7 @@ program define term_to_text_roy, rclass
 	* Continuous variables
 	local text_hh_numc 	= "Number in household "
 	local text_hh_num2 	= "Number in household (spl 2) "
-	local text_hh_num3 	= "Number in household (spl 2) "
+	local text_hh_num3 	= "Number in household (spl 3) "
 	local text_age2 	= "Age (spl 2) "
 	local text_age3 	= "Age (spl 3) "
 	
@@ -734,14 +731,16 @@ crtablehr, 	estimates(output/models/coefs_a_gamma)		///
 			
 /*  Approach B  */
 
-* Logistic model
-crtablehr, 	estimates(output/models/coefs_b_logit)		///
-			outputfile(output/table_hr_b_logit.txt)
+foreach tvc in foi ae susp {
+	* Logistic model
+	crtablehr, 	estimates(output/models/coefs_b_logit_`tvc')		///
+				outputfile(output/table_hr_b_logit_`tvc'.txt)
 
-* Royston-Parmar model
-crtablehr, 	estimates(output/models/coefs_b_pois)		///
-			outputfile(output/table_hr_b_pois.txt) 
+	* Royston-Parmar model
+	crtablehr, 	estimates(output/models/coefs_b_pois_`tvc')		///
+				outputfile(output/table_hr_b_pois_`tvc'.txt) 
 
-* Weibull model
-crtablehr, 	estimates(output/models/coefs_b_weib)		///
-			outputfile(output/table_hr_b_weib.txt)
+	* Weibull model
+	crtablehr, 	estimates(output/models/coefs_b_weib_`tvc')		///
+				outputfile(output/table_hr_b_weib_`tvc'.txt)
+}
