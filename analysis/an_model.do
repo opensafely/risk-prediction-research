@@ -134,6 +134,7 @@ do "`c(pwd)'/analysis/603_rp_b_validation_28day_intext.do"
 ***********************************************
  
 
+
 /*  Multiple imputation  */
 
 * 800
@@ -143,22 +144,20 @@ do "`c(pwd)'/analysis/603_rp_b_validation_28day_intext.do"
 
 *** Sensitivity analyses for Approach A ***
 
-* 900  
-* Simpler model
-* COVID-AGE (as written)
-* New COVID-AGE (i.e. COVID-AGE coefs estimated on our case-cohort A) 
+do "`c(pwd)'/analysis/900_rp_a_coxPH_agesex.do"
+do "`c(pwd)'/analysis/901_rp_a_coxPH_comorbid.do"
+do "`c(pwd)'/analysis/902_rp_a_coxPH_all.do"
+do "`c(pwd)'/analysis/903_rp_a_coxPH_all2.do"
+do "`c(pwd)'/analysis/904_rp_a_validation_28day_sens.do"
 
-* 1000
-* More complex model (union of all selected vars/covs?) 
-* Also add one with all full vars?? (i.e. strip off numbers and replace with i.)?
+
 
 * 1100 - How much does region add to predictiveness (for A and B) 
 
 
-*** Sensitivity analyses for Approach B ***
 
-* 1200
-* COVID-AGE variables with TVC
+
+*** Sensitivity analyses for Approach B ***
 
 
 * Combining TVC (all three, or the two objective measures)
@@ -200,12 +199,11 @@ do "`c(pwd)'/analysis/1602_an_plot_baseline_rate.do"
 
 /*  Tables of measures of model performance   */
 
-
 do "`c(pwd)'/analysis/1701_model_performance_measures_tidy.do"
 
 
 
-/*  Extract model coefficients??   */
+/*  Extract model coefficients  */
 
+do "`c(pwd)'/analysis/1801_tablecontent_HRtable.do"
 
-* 18

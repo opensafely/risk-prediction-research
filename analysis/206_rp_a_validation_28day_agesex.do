@@ -31,7 +31,7 @@
 
 * Open a log file
 capture log close
-log using "./output/rp_a_validation_28day_agesex", text replace
+log using "./output/206_rp_a_validation_28day_agesex", text replace
 
 
 * Ensure cc_calib is available

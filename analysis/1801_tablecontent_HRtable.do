@@ -733,7 +733,7 @@ crtablehr, 	estimates(output/models/coefs_a_gamma)		///
 
 foreach tvc in foi ae susp {
 	* Logistic model
-	crtablehr, 	estimates(output/models/coefs_b_logit_`tvc')		///
+	crtablehr, 	estimates(output/models/coefs_b_logit_`tvc')	///
 				outputfile(output/table_hr_b_logit_`tvc'.txt)
 
 	* Royston-Parmar model
