@@ -42,12 +42,17 @@ log using "./output/1301_rp_b_poisson_`tvc'", text replace
 qui do "analysis/104_pr_variable_selection_landmark_output.do" 
 
 global foi_covs 	= "${selected_vars_landmark_foi}"
-global ae_covs 		= "${selected_vars_landmark_foi}"
-global susp_covs 	= "${selected_vars_landmark_foi}"
+global ae_covs 		= "${selected_vars_landmark_ae}"
+global susp_covs 	= "${selected_vars_landmark_susp}"
 
-global all_covs: list global(foi_covs) | global(ae_covs) | global(susp_covs)
+global all_covs: list global(foi_covs) | global(ae_covs) 
+global all_covs: list global(all_covs) | global(susp_covs)
+
 global objective_covs: global(ae_covs) | global(susp_covs)
 
+
+noi di `tvc'
+noi di "${`tvc'_covs}"
 
 
 
