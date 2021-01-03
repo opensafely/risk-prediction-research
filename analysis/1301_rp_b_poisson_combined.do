@@ -48,7 +48,7 @@ global susp_covs 	= "${selected_vars_landmark_susp}"
 global all_covs: list global(foi_covs) | global(ae_covs) 
 global all_covs: list global(all_covs) | global(susp_covs)
 
-global objective_covs: global(ae_covs) | global(susp_covs)
+global objective_covs: list global(ae_covs) | global(susp_covs)
 
 
 noi di `tvc'
