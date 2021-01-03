@@ -53,7 +53,7 @@ global all_covs: list global(all_covs) | global(susp_covs)
 global objective_covs: list global(ae_covs) | global(susp_covs)
 
 
-noi di `tvc'
+noi di "`tvc'"
 noi di "${`tvc'_covs}"
 
 
