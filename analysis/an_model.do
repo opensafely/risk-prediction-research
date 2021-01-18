@@ -144,11 +144,13 @@ do "`c(pwd)'/analysis/603_rp_b_validation_28day_intext.do"
 
 *** Sensitivity analyses for Approach A ***
 
+* Simpler models
 do "`c(pwd)'/analysis/900_rp_a_coxPH_agesex.do"
 do "`c(pwd)'/analysis/901_rp_a_coxPH_comorbid.do"
 do "`c(pwd)'/analysis/902_rp_a_coxPH_all.do"
 do "`c(pwd)'/analysis/903_rp_a_coxPH_all2.do"
 do "`c(pwd)'/analysis/904_rp_a_validation_28day_sens.do"
+do "`c(pwd)'/analysis/905_rp_a_validation_28day_sens_agesex.do"
 
 
 
@@ -158,6 +160,14 @@ do "`c(pwd)'/analysis/904_rp_a_validation_28day_sens.do"
 
 
 *** Sensitivity analyses for Approach B ***
+
+* Simpler models
+do "`c(pwd)'/analysis/1200_rp_b_poisson_agesex.do"
+do "`c(pwd)'/analysis/1201_rp_b_poisson_comorbid.do"
+do "`c(pwd)'/analysis/1202_rp_b_poisson_all.do"
+do "`c(pwd)'/analysis/1203_rp_b_validation_28day_sens.do"
+do "`c(pwd)'/analysis/1204_rp_b_validation_28day_sens_agesex.do"
+
 
 
 * Combining TVC (all three, or the two objective measures)
