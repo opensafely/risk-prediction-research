@@ -51,8 +51,8 @@ foreach tvc in foi ae susp all objective {
 	local t = 	${nt_b_pois_`tvc'_agesex} 
 	forvalues j = 1 (1) `t' {
 		local k = `j' + 1
-		global coef`j'_b_pois_`tvc'_agesex 			= coef[`k']
-		global varexpress`j'_b_pois_`tvc'_agesex 	= varexpress[`k']	
+		global ce`j'_b_pois_`tvc'_agesex 	= coef[`k']
+		global ve`j'_b_pois_`tvc'_agesex 	= varexpress[`k']	
 	}
 }
 
@@ -73,8 +73,8 @@ foreach tvc in foi ae susp all objective {
 	local t = 	${nt_b_pois_`tvc'_comorbid} 
 	forvalues j = 1 (1) `t' {
 		local k = `j' + 1
-		global coef`j'_b_pois_`tvc'_comorbid 		= coef[`k']
-		global varexpress`j'_b_pois_`tvc'_comorbid	= varexpress[`k']	
+		global ce`j'_b_pois_`tvc'_comorbid 	= coef[`k']
+		global ve`j'_b_pois_`tvc'_comorbid	= varexpress[`k']	
 	}
 }
 
@@ -94,8 +94,8 @@ foreach tvc in foi ae susp all objective {
 	local t = 	${nt_b_pois_`tvc'_all} 
 	forvalues j = 1 (1) `t' {
 		local k = `j' + 1
-		global coef`j'_b_pois_`tvc'_all 		= coef[`k']
-		global varexpress`j'_b_pois_`tvc'_all	= varexpress[`k']	
+		global ce`j'_b_pois_`tvc'_all 	= coef[`k']
+		global ve`j'_b_pois_`tvc'_all	= varexpress[`k']	
 	}
 }
 
@@ -191,7 +191,7 @@ forvalues i = 1/3 {
 		gen xb = 0
 		local t = ${nt_b_pois_`tvc'_agesex}
 		forvalues j = 1 (1) `t' {
-			replace xb = xb + ${coef`j'_b_pois_`tvc'_agesex}*${varexpress`j'_b_pois_`tvc'_agesex}
+			replace xb = xb + ${ce`j'_b_pois_`tvc'_agesex}*${ve`j'_b_pois_`tvc'_agesex}
 		}
 		gen pred_b_pois_`tvc'_agesex = 1 -  (${bs_b_pois_`tvc'_agesex})^exp(xb)
 		drop xb
@@ -202,7 +202,7 @@ forvalues i = 1/3 {
 		gen xb = 0
 		local t = ${nt_b_pois_`tvc'_comorbid}
 		forvalues j = 1 (1) `t' {
-			replace xb = xb + ${coef`j'_b_pois_`tvc'_comorbid}*${varexpress`j'_b_pois_`tvc'_comorbid}
+			replace xb = xb + ${ce`j'_b_pois_`tvc'_comorbid}*${ve`j'_b_pois_`tvc'_comorbid}
 		}
 		gen pred_b_pois_`tvc'_comorbid = 1 -  (${bs_b_pois_`tvc'_comorbid})^exp(xb)
 		drop xb
@@ -213,7 +213,7 @@ forvalues i = 1/3 {
 		gen xb = 0
 		local t = ${nt_b_pois_`tvc'all}
 		forvalues j = 1 (1) `t' {
-			replace xb = xb + ${coef`j'_b_pois_`tvc'_all}*${varexpress`j'_b_pois_`tvc'_all}
+			replace xb = xb + ${ce`j'_b_pois_`tvc'_all}*${ve`j'_b_pois_`tvc'_all}
 		}
 		gen pred_b_pois_`tvc'_all = 1 -  (${bs_b_pois_`tvc'_all})^exp(xb)
 		drop xb
