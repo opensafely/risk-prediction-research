@@ -94,7 +94,7 @@ matrix b = e(b)
 
 *  Calculate baseline survival 
 local p = exp(_b[/:ln_p])
-global base_surv28 = exp(-1*(28^(`p'))*exp(_b[_cons]))
+global base_surv28 = exp(-1*(28^(`p'))*exp(_b[_cons])/100)
 
 
 * Add baseline survival to matrix (and add a matrix column name)
