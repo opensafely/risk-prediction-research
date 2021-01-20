@@ -6,7 +6,7 @@
 *
 *	Data used:			data/cr_daily_landmark_covid.dta
 *
-*	Data created:		data/model_cii_poisson_`tvc'.dta
+*	Data created:		data/model_cii_covid_`tvc'.dta
 *							where tvc = foi, ae or susp.
 *
 *	Other output:		Log file:  	401_rp_cii_covid_`tvc'.log
@@ -91,7 +91,7 @@ matrix b = e(b)
 
 qui do "analysis/0000_pick_up_coefficients.do"
 get_coefs, coef_matrix(b) eqname("onscoviddeath:")  ///
-	dataname("data/model_cii_`tvc'")
+	dataname("data/model_cii_covid_`tvc'")
 
 
 

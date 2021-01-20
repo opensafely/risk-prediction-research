@@ -6,11 +6,11 @@
 *
 *	Data used:			data/cr_daily_landmark_noncovid.dta
 *
-*	Data created:		data/model_cii_poisson_`tvc'.dta
+*	Data created:		data/model_cii_allcause_`tvc'.dta
 *							where tvc = foi, ae or susp.
 *
-*	Other output:		Log file:  	402_rp_cii_allcause.log
-*						Estimates:	coefs_cii_allcause.ster
+*	Other output:		Log file:  	402_rp_cii_allcause_`tvc'.log
+*						Estimates:	coefs_cii_allcause_`tvc'.ster
 *
 ********************************************************************************
 *
@@ -22,9 +22,14 @@
 ********************************************************************************
 
 
+* Specify the time-varying measures: foi, ae or susp
+local tvc `1' 
+noi di "`tvc'"
+
+
 * Open a log file
 capture log close
-log using "./output/402_rp_cii_allcause", text replace
+log using "./output/402_rp_cii_allcause_`tvc'", text replace
 
 
 
@@ -36,15 +41,18 @@ qui do "analysis/104_pr_variable_selection_landmark_output.do"
 noi di "${selected_vars_landmark_`tvc'}"
 
 * Remove all variables relating to the burden of COVID-19 infection
-global foivars  = "foi logfoi foi_q_cons foi_q_day foi_q_daysq foiqd foiqds"
-global aevars   = "aerate aepos logae ae_q_cons ae_q_day ae_q_daysq aeqd aeqds aeqint aeqd2 aeqds2"
-global suspvars = "susp_rate_init susppos logsusp susp_q_cons susp_q_day susp_q_daysq suspqd suspqds suspqint suspqd2 suspqds2"
+global tvc_foi  = "c.logfoi c.foi_q_day c.foi_q_daysq c.foiqd c.foiqds" 
+global tvc_ae   = "c.logae c.ae_q_day c.ae_q_daysq c.aeqd c.aeqds c.aeqds2"
+global tvc_susp = "c.logsusp c.susp_q_day c.susp_q_daysq c.suspqd c.suspqds c.suspqds2"
+
 
 global selecvars = "${selected_vars_landmark_`tvc'}"
-global noncovidvars: list global(selecvars)    - global(foivars) 
-global noncovidvars: list global(noncovidvars) - global(aevars) 
-global noncovidvars: list global(noncovidvars) - global(suspvars)
+global noncovidvars: list global(selecvars)    - global(tvc_foi) 
+global noncovidvars: list global(noncovidvars) - global(tvc_ae) 
+global noncovidvars: list global(noncovidvars) - global(tvc_susp)
 
+noi di "Non-COVID-19 variables (TVC: `tvc')"
+noi di "$noncovidvars" 
 
 
 
@@ -62,7 +70,7 @@ use "data/cr_daily_landmark_noncovid.dta", clear
 *   Poisson Model   *
 *********************
 
-capture erase output/models/coefs_cii_allcause.ster
+capture erase output/models/coefs_cii_allcause_`tvc'.ster
 
 * Fit model
 timer clear 1
@@ -74,7 +82,7 @@ estat ic
 timer off 1
 timer list 1
 
-estimates save output/models/coefs_cii_allcause, replace
+estimates save output/models/coefs_cii_allcause_`tvc', replace
 
 
 
@@ -91,7 +99,7 @@ matrix b = e(b)
 
 qui do "analysis/0000_pick_up_coefficients.do"
 get_coefs, coef_matrix(b) eqname("onsotherdeath:")  ///
-	dataname("data/model_cii_allcause")
+	dataname("data/model_cii_allcause_`tvc'")
 
 
 
