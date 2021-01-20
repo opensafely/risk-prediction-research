@@ -183,9 +183,14 @@ do "`c(pwd)'/analysis/1302_rp_b_weibull_combined.do"	objective
 do "`c(pwd)'/analysis/1303_rp_b_validation_28day_combined.do"
 
 
-* 1400 - Approach B (no TVC, no updating, fit model + assess)
-* Not updating TVC or omitting
+* Not updating time-varying predictors (except FOI/AE/SUSP), and
+* omitting FOI/AE/SUSP 
  
+do "`c(pwd)'/analysis/1400_rp_b_poisson_tvcsens.do"	foi
+do "`c(pwd)'/analysis/1400_rp_b_poisson_tvcsens.do"	ae
+do "`c(pwd)'/analysis/1400_rp_b_poisson_tvcsens.do"	susp
+
+do "`c(pwd)'/analysis/1401_rp_b_validation_28day_tvcsens.do"
  
  
  
