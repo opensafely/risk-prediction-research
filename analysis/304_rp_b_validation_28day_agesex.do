@@ -4,7 +4,11 @@
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
-*	Data used:		data/cr_landmark.dta
+*	Data used:		data/
+*						model_b_logistic_`tvc'.dta
+*						model_b_poisson_`tvc'.dta
+*						model_b_weibull_`tvc.dta
+*									where tvc=foi, ae, susp
 *
 *	Data created:	data/approach_b_validation_28day_agesex.dta
 *					output/approach_b_validation_28day_agesex.out
