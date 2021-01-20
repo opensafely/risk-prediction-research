@@ -211,7 +211,7 @@ forvalues i = 1/3 {
 		/*  Full model no variable selection  */
 
 		gen xb = 0
-		local t = ${nt_b_pois_`tvc'all}
+		local t = ${nt_b_pois_`tvc'_all}
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${ce`j'_b_pois_`tvc'_all}*${ve`j'_b_pois_`tvc'_all}
 		}
