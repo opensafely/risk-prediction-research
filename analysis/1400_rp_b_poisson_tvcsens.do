@@ -44,9 +44,9 @@ log using "./output/1400_rp_b_poisson_`tvc'_tvcsens", text replace
 *******************************
 
 * Time varying covariates included in models
-global tvc_foi  = "c.logfoi c.foi_q_day c.foi_q_daysq c.foiqd c.foiqds" 
-global tvc_ae   = "c.logae c.ae_q_day c.ae_q_daysq c.aeqd c.aeqds c.aeqds2"
-global tvc_susp = "c.logsusp c.susp_q_day c.susp_q_daysq c.suspqd c.suspqds c.suspqds2"
+global tvc_foi  = "logfoi foi_q_day foi_q_daysq foiqd foiqds" 
+global tvc_ae   = "logae ae_q_day ae_q_daysq aeqd aeqds aeqds2"
+global tvc_susp = "logsusp susp_q_day susp_q_daysq suspqd suspqds suspqds2"
 
 * Pick up full covariate lists
 qui do "analysis/104_pr_variable_selection_landmark_output.do" 

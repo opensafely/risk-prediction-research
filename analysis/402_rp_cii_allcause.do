@@ -41,15 +41,22 @@ qui do "analysis/104_pr_variable_selection_landmark_output.do"
 noi di "${selected_vars_landmark_`tvc'}"
 
 * Remove all variables relating to the burden of COVID-19 infection
-global tvc_foi  = "c.logfoi c.foi_q_day c.foi_q_daysq c.foiqd c.foiqds" 
-global tvc_ae   = "c.logae c.ae_q_day c.ae_q_daysq c.aeqd c.aeqds c.aeqds2"
-global tvc_susp = "c.logsusp c.susp_q_day c.susp_q_daysq c.suspqd c.suspqds c.suspqds2"
+global tvc_foi  = "logfoi foi_q_day foi_q_daysq foiqd foiqds" 
+global tvc_ae   = "logae ae_q_day ae_q_daysq aeqd aeqds aeqds2"
+global tvc_susp = "logsusp susp_q_day susp_q_daysq suspqd suspqds suspqds2"
 
 
 global selecvars = "${selected_vars_landmark_`tvc'}"
 global noncovidvars: list global(selecvars)    - global(tvc_foi) 
 global noncovidvars: list global(noncovidvars) - global(tvc_ae) 
 global noncovidvars: list global(noncovidvars) - global(tvc_susp)
+
+noi di "Non-COVID-19 variables (TVC: `tvc')"
+noi di "$noncovidvars" 
+
+* Remove some variables which cause convergence problems
+global problemvars = "2bn.cancerExhaem##c.agec 3bn.cancerExhaem##c.agec 4bn.cancerExhaem##c.agec 1bn.smi##c.agec 1bn.dialysis##c.agec"
+global noncovidvars: list global(noncovidvars) - global(problemvars)
 
 noi di "Non-COVID-19 variables (TVC: `tvc')"
 noi di "$noncovidvars" 
