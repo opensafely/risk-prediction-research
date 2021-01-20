@@ -55,6 +55,7 @@ foreach form in fixed none {
 			global ve`j'_b_pois_`tvc'_`form' 	= varexpress[`k']	
 		}
 	}
+}
 
 
 
