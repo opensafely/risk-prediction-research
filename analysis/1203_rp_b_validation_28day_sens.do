@@ -188,7 +188,7 @@ forvalues i = 1/3 {
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${ce`j'_b_pois_`tvc'_agesex}*${ve`j'_b_pois_`tvc'_agesex}
 		}
-		gen pred_b_pois_`tvc'_agesex = 1 -  (${bs_b_pois_`tvc'_agesex})^exp(xb)
+		gen pred_b_pois_`tvc'_agesex = 1 -  ((${bs_b_pois_`tvc'_agesex})^exp(xb))^100
 		drop xb
 
 
@@ -199,7 +199,7 @@ forvalues i = 1/3 {
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${ce`j'_b_pois_`tvc'_comorbid}*${ve`j'_b_pois_`tvc'_comorbid}
 		}
-		gen pred_b_pois_`tvc'_comorbid = 1 -  (${bs_b_pois_`tvc'_comorbid})^exp(xb)
+		gen pred_b_pois_`tvc'_comorbid = 1 -  ((${bs_b_pois_`tvc'_comorbid})^exp(xb))^100
 		drop xb
 		
 		
@@ -210,7 +210,7 @@ forvalues i = 1/3 {
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${ce`j'_b_pois_`tvc'_all}*${ve`j'_b_pois_`tvc'_all}
 		}
-		gen pred_b_pois_`tvc'_all = 1 -  (${bs_b_pois_`tvc'_all})^exp(xb)
+		gen pred_b_pois_`tvc'_all = 1 -  ((${bs_b_pois_`tvc'_all})^exp(xb))^100
 		drop xb
 		
 		

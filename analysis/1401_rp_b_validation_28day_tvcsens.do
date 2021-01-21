@@ -83,7 +83,7 @@ forvalues i = 1/3 {
 			forvalues j = 1 (1) `t' {
 				replace xb = xb + ${ce`j'_b_pois_`tvc'_`form'}*${ve`j'_b_pois_`tvc'_`form'}
 			}
-			gen pred_b_pois_`tvc'_`form' = 1 -  (${bs_b_pois_`tvc'_`form'})^exp(xb)
+			gen pred_b_pois_`tvc'_`form' = 1 -  ((${bs_b_pois_`tvc'_`form'})^exp(xb))^100
 			drop xb
 		}
 	}

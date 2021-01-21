@@ -140,7 +140,7 @@ forvalues i = 1/3 {
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${coef`j'_b_pois_`tvc'}*${varexpress`j'_b_pois_`tvc'}
 		}
-		gen pred_b_pois_`tvc' = 1 -  (${bs_b_pois_`tvc'}^100)^exp(xb)
+		gen pred_b_pois_`tvc' = 1 -  ((${bs_b_pois_`tvc'})^exp(xb))^100
 		drop xb
 
 
@@ -151,7 +151,7 @@ forvalues i = 1/3 {
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${coef`j'_b_weib_`tvc'}*${varexpress`j'_b_weib_`tvc'}
 		}
-		gen pred_b_weib_`tvc' = 1 -  (${bs_b_weib_`tvc'}^100)^exp(xb)
+		gen pred_b_weib_`tvc' = 1 -  ((${bs_b_weib_`tvc'}^100)^exp(xb))^100
 		drop xb
 		
 

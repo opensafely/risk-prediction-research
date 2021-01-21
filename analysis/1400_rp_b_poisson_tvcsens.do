@@ -99,7 +99,7 @@ foreach form in fixed none {
 	matrix b = e(b)
 
 	*  Calculate baseline survival 
-	global base_surv28 = exp(-28*exp(_b[_cons]))
+	global base_surv28 = exp(-28*exp(_b[_cons])/100)
 
 	* Add baseline survival to matrix (and add a matrix column name)
 	matrix b = [$base_surv28, b]
