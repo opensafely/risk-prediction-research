@@ -267,6 +267,12 @@ foreach tvc in foi ae susp  {
 					, by(`matching_vars_`tvc'' date `tvc'_init) clear: 	///
 				regress `tvc'_lag c.lag##c.lag	
 			rename `tvc'_init `tvc'_`pred'
+			
+	
+			*  Days since cohort start date  
+			gen time = date - `start_vp`i'' + 2
+			keep if inrange(time, 1, 28)
+			
 			save "data/quadcoefs_`tvc'_`pred'_vp`i'", replace
 		}
 	}
@@ -289,6 +295,7 @@ foreach tvc in foi ae susp {
 		merge 1:1 `matching_vars_`tvc'' date using 	///
 			"data/quadcoefs_`tvc'_pred_vp`i'", 		///
 			assert(match) nogen
+		drop date
 		save "data/quadmodel_`tvc'_vp`i'", replace
 	}
 }
@@ -313,16 +320,15 @@ foreach tvc in foi ae susp {
 	forvalues i = 1 (1) 3 {	
 		use "data/quadmodel_`tvc'_vp`i'", replace
 
-		foreach pred in actual cons pred {
-			
+		foreach pred in actual cons pred {		
 			gen `tvc'pos_`pred' = `tvc'_`pred'
 			if "`tvc'"=="ae" {
 				* Manual correction factor for zero A&E rates 
-				replace aepos_`pred' = aepos_`pred' + .0299034/2 if aepos_`pred'==0
+				replace aepos_`pred' = .0299034/2 if aepos_`pred'<=0
 			}
 			if "`tvc'"=="susp" {
 				* Manual correction factor for zero A&E rates 
-				replace susppos_`pred' = susppos_`pred' + .0042719/2 if aepos_`pred'==0
+				replace susppos_`pred' = .0042719/2 if susppos_`pred'<=0
 			}
 			if "`tvc'"=="foi" {
 			    * Manual correction factor for FOI negative/zero rates 
@@ -339,10 +345,9 @@ foreach tvc in foi ae susp {
 
 			gen `tvc'qint_`pred' 	= `tvc'qd_`pred'*`tvc'qds_`pred'
 			gen `tvc'qd2_`pred'		= `tvc'qd_`pred'^2
-			gen `tvc'qds2_`pred'	= `tvc'qds_`pred'^2
-			
-			save "data/quadmodel_`tvc'_vp`i'", replace
+			gen `tvc'qds2_`pred'	= `tvc'qds_`pred'^2			
 		}
+		save "data/quadmodel_`tvc'_vp`i'", replace
 	}
 }
 
@@ -352,47 +357,76 @@ foreach tvc in foi ae susp {
 ****************************************************************
 *   Obtain covariate summaries required for prediction models  *
 ****************************************************************
-		
-* Need to merge 	save "data/ci_coefs_`tvc'", replace	
-* with  	save "data/quadmodel_`tvc'_vp`i'", replace
-* (actual / cons / pred) separately
-* for days t=1, 8, 15, etc. 	
-		
-* Need to merge 	save "data/cii_coefs_`tvc'", replace	
-* with  	save "data/quadmodel_`tvc'_vp`i'", replace
-* (actual / cons / pred) separately
-* for days t=1 to 28
 
- 	
-		
-		merge m:1 t using "data/temp_foivars_`tvc'", nogen
-		isid t `matching_vars_`tvc''
-		
-		local tvc = "susp"
-		gen xb = 0
-		local t = "${tvc_`tvc'}"
-		foreach tvcvar in `t'  {
-			replace xb = xb + `tvcvar'*coef_`tvcvar'
+
+/*  Time-split 28-day landmark studies  */
+
+
+foreach tvc in foi ae susp { 
+	forvalues i = 1 (1) 3 {	
+   		use "data/quadmodel_`tvc'_vp`i'", clear
+		rename time t
+		merge m:1 t using "data/ci_coefs_`tvc'", 	///
+			assert(match master) keep(match) nogen
+
+		* If last coefficient doesn't exist set it to zero (for FOI)
+		capture gen coef_`tvc'qds2 = 0
+
+		foreach pred in actual cons pred {
+			gen xb_`pred' =											///
+						coef_log`tvc'*log`tvc'_`pred'			+	///
+						coef_`tvc'_q_day*`tvc'_`pred'_q_day 	+	///
+						coef_`tvc'_q_daysq*`tvc'_`pred'_q_daysq	+	///
+						coef_`tvc'qd*`tvc'qd_`pred'				+ 	///
+						coef_`tvc'qds*`tvc'qds_`pred'			+ 	///
+						coef_`tvc'qds2*`tvc'qds2_`pred'
 		}
-		gen xb2 = xb
-		keep t `matching_vars_`tvc'' xb*
-			
-		* For weekly models: sum days 1, 8, 15, 22
-		* For daily models: sum over days 1-28	
-		replace xb2 = 0 if !inlist(t, 1, 8, 15, 22)
-		collapse (mean) xb xb2, by(`matching_vars_`tvc'')
-		rename xb  daily_sumxb_`tvc'
-		rename xb2 weekly_sumxb_`tvc'
-		isid `matching_vars_`tvc''
-		save "data/temp_sumxb_vp`i'_`tvc'", replace
+		
+		* Sum over four relevant follow-up days
+		collapse (sum) xb_actual xb_cons xb_pred, by(`matching_vars_`tvc'')
+
+		* Save data
+		save "data/sumxb_ci_`tvc'_vp`i'", replace
 	}
 }
 
-* Delete unneeded data
-foreach tvc in foi ae susp {
-	erase "data/temp_foivars_`tvc'.dta"
+
+/*  Daily landmark studies - COVID models */
+
+foreach tvc in foi ae susp { 
+	forvalues i = 1 (1) 3 {	
+   		use "data/quadmodel_`tvc'_vp`i'", clear
+		rename time t
+		merge m:1 t using "data/cii_coefs_`tvc'", 	///
+			assert(match) keep(match) nogen
+
+		* If last coefficient doesn't exist set it to zero (for FOI)
+		capture gen coef_`tvc'qds2 = 0
+
+		foreach pred in actual cons pred {
+			gen xb_`pred' =											///
+						coef_log`tvc'*log`tvc'_`pred'			+	///
+						coef_`tvc'_q_day*`tvc'_`pred'_q_day 	+	///
+						coef_`tvc'_q_daysq*`tvc'_`pred'_q_daysq	+	///
+						coef_`tvc'qd*`tvc'qd_`pred'				+ 	///
+						coef_`tvc'qds*`tvc'qds_`pred'			+ 	///
+						coef_`tvc'qds2*`tvc'qds2_`pred'
+		}
+		
+		* Sum over four relevant follow-up days
+		collapse (sum) xb_actual xb_cons xb_pred, by(`matching_vars_`tvc'')
+
+		* Save data
+		save "data/sumxb_cii_`tvc'_vp`i'", replace
+	}
 }
 
+* Erase unneeded datasets
+foreach tvc in foi ae susp { 
+	forvalues i = 1 (1) 3 {	
+		erase "data/quadmodel_`tvc'_vp`i'.dta"
+	}
+}
 
 
 
