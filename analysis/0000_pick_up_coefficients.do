@@ -300,7 +300,7 @@ program define get_coefs
 	
 	* Save coefficients and variable expressions into a temporary dataset
 	tempname coefs_pf
-	postfile `coefs_pf' str50(term) coef str50(varexpress) ///
+	postfile `coefs_pf' str50(term) double(coef) str50(varexpress) ///
 		using `dataname', replace
 		local max = `j' - 1
 		forvalues k = 1 (1) `max' {
