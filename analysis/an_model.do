@@ -85,10 +85,23 @@ do "`c(pwd)'/analysis/304_rp_b_validation_28day_agesex.do"
 /*  APPROACH C: Landmark models  */
 
    
-* TO BE ADDED
-* 400_rp_c_poisson.do
+do "`c(pwd)'/analysis/400_rp_ci.do" foi
+do "`c(pwd)'/analysis/400_rp_ci.do" ae
+do "`c(pwd)'/analysis/400_rp_ci.do" susp
 
- 
+do "`c(pwd)'/analysis/401_rp_cii_covid.do" foi
+do "`c(pwd)'/analysis/401_rp_cii_covid.do" ae
+do "`c(pwd)'/analysis/401_rp_cii_covid.do" susp
+
+do "`c(pwd)'/analysis/402_rp_cii_allcause.do" foi
+do "`c(pwd)'/analysis/402_rp_cii_allcause.do" ae
+do "`c(pwd)'/analysis/402_rp_cii_allcause.do" susp
+
+do "`c(pwd)'/analysis/403_rp_infection_measures.do" 
+do "`c(pwd)'/analysis/404_rp_c_validation_28day.do" 
+
+
+
 
 ***********************************************
 *       INTERNAL-EXTERNAL VALIDATION          *
