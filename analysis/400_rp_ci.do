@@ -135,7 +135,7 @@ estimates save output/models/coefs_ci_`tvc', replace
 matrix b = e(b)
 
 *  Calculate baseline survival 
-global base_surv28 = exp(-28*exp(_b[_cons])/10000)
+global base_surv28 = exp(-7*exp(_b[_cons]))
 
 * Add baseline survival to matrix (and add a matrix column name)
 matrix b = [$base_surv28, b]

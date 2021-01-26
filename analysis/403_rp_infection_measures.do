@@ -380,10 +380,12 @@ foreach tvc in foi ae susp {
 						coef_`tvc'qd*`tvc'qd_`pred'				+ 	///
 						coef_`tvc'qds*`tvc'qds_`pred'			+ 	///
 						coef_`tvc'qds2*`tvc'qds2_`pred'
+			gen exp_`pred' = exp(xb_`pred')
+			drop xb_`pred'
 		}
 		
 		* Sum over four relevant follow-up days
-		collapse (sum) xb_actual xb_cons xb_pred, by(`matching_vars_`tvc'')
+		collapse (sum) exp_actual exp_cons exp_pred, by(`matching_vars_`tvc'')
 
 		* Save data
 		save "data/sumxb_ci_`tvc'_vp`i'", replace
@@ -411,10 +413,12 @@ foreach tvc in foi ae susp {
 						coef_`tvc'qd*`tvc'qd_`pred'				+ 	///
 						coef_`tvc'qds*`tvc'qds_`pred'			+ 	///
 						coef_`tvc'qds2*`tvc'qds2_`pred'
+			gen exp_`pred' = exp(xb_`pred')
+			drop xb_`pred'
 		}
 		
 		* Sum over four relevant follow-up days
-		collapse (sum) xb_actual xb_cons xb_pred, by(`matching_vars_`tvc'')
+		collapse (sum) exp_actual exp_cons exp_pred, by(`matching_vars_`tvc'')
 
 		* Save data
 		save "data/sumxb_cii_`tvc'_vp`i'", replace

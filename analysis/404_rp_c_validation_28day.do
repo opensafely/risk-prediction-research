@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		403_rp_c_validation_28day.do
+*	Do-file:		404_rp_c_validation_28day.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
@@ -26,7 +26,7 @@
 
 * Open a log file
 capture log close
-log using "./output/403_rp_c_validation_28day", text replace
+log using "./output/404_rp_c_validation_28day", text replace
 
 * Ensure program cc_calib is available
 qui do "./analysis/ado/cc_calib.ado"
@@ -115,7 +115,7 @@ foreach tvc in foi ae susp {
 
 foreach tvc in foi ae susp {
 
-	use "data/model_cii_noncovid_`tvc'.dta", clear
+	use "data/model_cii_allcause_`tvc'.dta", clear
 
 	* Pick up baseline survival
 	qui summ coef if term=="_cons"
@@ -181,37 +181,41 @@ forvalues i = 1/3 {
 		* Make predictions under actual, constant-estimation, and best-guess 
 		* predictions of burden of infection 
 		foreach pred in actual cons pred {
-			gen pred_ci_`tvc'_`pred' = 1 - (((${bs_c_pois_`tvc'})^exp(xb))^exp(xb_`pred'))^10000
+			gen pred_ci_`tvc'_`pred' = 1 - ((${bs_c_pois_`tvc'})^exp(xb))^(exp_`pred')
 		}	
 		drop xb*		
-		
+	
 
 		/*  Daily landmark studies - non-COVID deaths  */
 
-		gen xb_noncovid = 0
+		gen xb_noncovid = ${cons_noncovid_`tvc'}
 		local t = ${nt_noncovid_`tvc'}
 		forvalues j = 1 (1) `t' {
 			replace xb_noncovid = xb_noncovid + ///
 					${ce`j'_noncovid_`tvc'}*${ve`j'_noncovid_`tvc'}
 		}
-	
+		gen exp_noncovid = exp(xb_noncovid)
+		drop xb_noncovid
+		
 		* Add in summaries of time-varying covariates
 		merge m:1 `matching_vars_`tvc'' using "data/sumxb_cii_`tvc'_vp`i'", nogen
 
-		gen xb = 0
+		gen xb = ${cons_covid_`tvc'}
 		local t = ${nt_covid_`tvc'}
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${ce`j'_covid_`tvc'}*${ve`j'_covid_`tvc'}
 		}
+		gen exp = exp(xb)
+		drop xb
+		
 		* Make predictions under actual, constant-estimation, and best-guess 
 		* predictions of burden of infection 
 		foreach pred in actual cons pred {
-			gen pred_cii_`tvc'_`pred' = 1 - (((exp(-${cons_noncovid_`tvc'}))^exp(xb_noncovid))^exp(xb_`pred'))
+			gen pred_cii_`tvc'_`pred' = 1 - exp(-28*exp_noncovid)*(exp(exp)^(exp_`pred'))
 		}	
-		drop xb*	
+		drop exp*	
 	}
 
-	
 	
 	**************************
 	*   Validation measures  *

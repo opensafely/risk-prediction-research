@@ -82,9 +82,8 @@ capture erase output/models/coefs_cii_allcause_`tvc'.ster
 * Fit model
 timer clear 1
 timer on 1
-poisson onsotherdeath c.agec##c.agec##c.agec	///
-	$noncovidvars								///
-	[pweight=sf_wts], 							///
+poisson onsotherdeath c.agec##c.agec##c.agec $noncovidvars			///
+	[pweight=sf_wts], 						///
 	robust cluster(patient_id) 
 estat ic
 timer off 1
