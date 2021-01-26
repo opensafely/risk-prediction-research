@@ -55,7 +55,7 @@ noi di "Non-COVID-19 variables (TVC: `tvc')"
 noi di "$noncovidvars" 
 
 * Remove some variables which cause convergence problems
-global problemvars = "2bn.cancerExhaem##c.agec 3bn.cancerExhaem##c.agec 4bn.cancerExhaem##c.agec 1bn.smi##c.agec 1bn.dialysis##c.agec"
+global problemvars = "2bn.cancerExhaem#c.agec 3bn.cancerExhaem#c.agec 4bn.cancerExhaem#c.agec 1bn.smi#c.agec 1bn.dialysis#c.agec"
 global noncovidvars: list global(noncovidvars) - global(problemvars)
 
 noi di "Non-COVID-19 variables (TVC: `tvc')"
@@ -82,8 +82,9 @@ capture erase output/models/coefs_cii_allcause_`tvc'.ster
 * Fit model
 timer clear 1
 timer on 1
-poisson onsotherdeath $noncovidvars			///
-	[pweight=sf_wts], 						///
+poisson onsotherdeath c.agec##c.agec##c.agec	///
+	$noncovidvars								///
+	[pweight=sf_wts], 							///
 	robust cluster(patient_id) 
 estat ic
 timer off 1
