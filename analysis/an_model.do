@@ -99,7 +99,7 @@ do "`c(pwd)'/analysis/402_rp_cii_allcause.do" susp
 
 do "`c(pwd)'/analysis/403_rp_infection_measures.do" 
 do "`c(pwd)'/analysis/404_rp_c_validation_28day.do" 
-
+do "`c(pwd)'/analysis/405_rp_c_validation_28day_agesex.do" 
 
 
 
@@ -137,7 +137,20 @@ do "`c(pwd)'/analysis/603_rp_b_validation_28day_intext.do"
 
 /*  APPROACH C: Landmark models  */
 
-* 700 
+do "`c(pwd)'/analysis/700_rp_ci_validation_intext.do" foi
+do "`c(pwd)'/analysis/700_rp_ci_validation_intext.do" ae
+do "`c(pwd)'/analysis/700_rp_ci_validation_intext.do" susp
+
+do "`c(pwd)'/analysis/701_rp_cii_covid_validation_intext.do" foi
+do "`c(pwd)'/analysis/701_rp_cii_covid_validation_intext.do" ae
+do "`c(pwd)'/analysis/701_rp_cii_covid_validation_intext.do" susp
+
+do "`c(pwd)'/analysis/702_rp_cii_allcause_validation_intext.do" foi
+do "`c(pwd)'/analysis/702_rp_cii_allcause_validation_intext.do" ae
+do "`c(pwd)'/analysis/702_rp_cii_allcause_validation_intext.do" susp
+
+do "`c(pwd)'/analysis/703_rp_c_validation_28day_intext.do"
+
  
  
  
