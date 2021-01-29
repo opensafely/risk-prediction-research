@@ -787,7 +787,7 @@ drop age
 label define sex 1 "Male" 0 "Female"
 label values sex sex
 	  
-sort tvc vp model
+sort tvc agegp sex  model vp 
 order 	approach vp model tvc agegp sex 			///
 		brier_str 					///
 		cstat_str					///
