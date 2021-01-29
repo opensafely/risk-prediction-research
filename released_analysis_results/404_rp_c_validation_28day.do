@@ -157,7 +157,6 @@ forvalues i = 1/3 {
 
 	use "data/cr_cohort_vp`i'.dta", clear
 	
-	
 	* Age grouping used in FOI data
 	recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 	50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 			///
@@ -167,7 +166,7 @@ forvalues i = 1/3 {
 	/*  Obtain predicted risks from each model  */
 	
 	foreach tvc in foi ae susp {		
-		
+
 		/*  Time-split 28-day landmark studies  */
 
 		* Add in summaries of time-varying covariates
@@ -209,16 +208,17 @@ forvalues i = 1/3 {
 		drop xb
 		
 		* Make predictions under actual, constant-estimation, and best-guess 
-		* predictions of burden of infection 
+		* predictions of burden of infection
 		foreach pred in actual cons pred {
-			gen pred_cii_`tvc'_`pred' = 1 - exp(-28*exp)*exp(-28*exp_noncovid)*exp(-exp_`pred')
+			gen pred_cii_`tvc'_`pred' = 0
+			forvalues t = 1 (1) 28 {
+				replace pred_cii_`tvc'_`pred' = pred_cii_`tvc'_`pred'  + ///
+					exp*exp_actual`t'*exp(-`t'*exp_noncovid)*(exp(-exp)^cumsum_exp_actual`t')   
+			}
 		}	
-		drop exp*	
+		drop exp* cumsum*
 	}
 
-	if `i'==1 {
-		save temp, replace
-	}
 	
 	**************************
 	*   Validation measures  *
@@ -233,6 +233,16 @@ forvalues i = 1/3 {
 		using "data/approach_c_`i'", replace
 
 		foreach var of varlist pred* {
+			
+			* Set negative probabilities to zero
+			noi count if `var'<0
+			noi summ `var' if `var' < 0, detail
+			qui replace `var' = 0 if `var' < 0
+			
+			* Set probabilities over 1 to 1
+			noi count if `var'>1
+			noi summ `var' if `var' >1, detail
+			qui replace `var' = 1 if `var' > 1		
 			
 			* Overall performance: Brier score
 			noi brier onscoviddeath28 `var', group(10)

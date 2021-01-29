@@ -327,12 +327,12 @@ foreach tvc in foi ae susp {
 				replace aepos_`pred' = .0299034/2 if aepos_`pred'<=0
 			}
 			if "`tvc'"=="susp" {
-				* Manual correction factor for zero A&E rates 
+				* Manual correction factor for zero primary care rates 
 				replace susppos_`pred' = .0042719/2 if susppos_`pred'<=0
 			}
 			if "`tvc'"=="foi" {
 			    * Manual correction factor for FOI negative/zero rates 
-				replace `tvc'pos_`pred' = 0.00001 if `tvc'pos_`pred'<=0
+				replace `tvc'pos_`pred' = 0.0000000001 if `tvc'pos_`pred'<=0
 			}
 			assert `tvc'pos_`pred'>0
 			
@@ -360,7 +360,6 @@ foreach tvc in foi ae susp {
 
 
 /*  Time-split 28-day landmark studies  */
-
 
 foreach tvc in foi ae susp { 
 	forvalues i = 1 (1) 3 {	
@@ -394,13 +393,15 @@ foreach tvc in foi ae susp {
 
 
 /*  Daily landmark studies - COVID models */
+ 
 
 foreach tvc in foi ae susp { 
 	forvalues i = 1 (1) 3 {	
-   		use "data/quadmodel_`tvc'_vp`i'", clear
+
+	use "data/quadmodel_`tvc'_vp`i'", clear
 		rename time t
 		merge m:1 t using "data/cii_coefs_`tvc'", 	///
-			assert(match) keep(match) nogen
+			assert(match master) keep(match) nogen
 
 		* If last coefficient doesn't exist set it to zero (for FOI)
 		capture gen coef_`tvc'qds2 = 0
@@ -417,13 +418,24 @@ foreach tvc in foi ae susp {
 			drop xb_`pred'
 		}
 		
-		* Sum over four relevant follow-up days
-		collapse (sum) exp_actual exp_cons exp_pred, by(`matching_vars_`tvc'')
+		* Create cumulative sums
+		keep t `matching_vars_`tvc'' exp_actual exp_cons exp_pred
+		foreach pred in actual cons pred {
+			bysort `matching_vars_`tvc'' (t): gen cumsum_exp_`pred' = sum(exp_`pred')
+		}
+		reshape wide 	exp_actual exp_cons exp_pred 						///
+						cumsum_exp_actual cumsum_exp_cons cumsum_exp_pred, 	///
+						i(`matching_vars_`tvc'') j(t)
+		
+		isid `matching_vars_`tvc''
 
 		* Save data
 		save "data/sumxb_cii_`tvc'_vp`i'", replace
 	}
 }
+
+
+
 
 * Erase unneeded datasets
 foreach tvc in foi ae susp { 
@@ -431,8 +443,6 @@ foreach tvc in foi ae susp {
 		erase "data/quadmodel_`tvc'_vp`i'.dta"
 	}
 }
-
-
 
 
 
