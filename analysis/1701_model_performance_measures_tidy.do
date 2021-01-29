@@ -10,6 +10,10 @@
 *							approach_a_validation_28day_intext.out
 *							approach_a_validation_full_period.out
 *							approach_a_validation_full_period_intext.out
+*							approach_b_validation_28day.out
+*							approach_b_validation_28day_agesex.out
+*							approach_b_validation_28day_intext.out
+*							approach_c_validation_28day.out
 *
 *	Data created:		output/
 *							approach_a_validation_28day_tidy.out
@@ -17,6 +21,10 @@
 *							approach_a_validation_28day_intext_tidy.out
 *							approach_a_validation_full_period_tidy.out
 *							approach_a_validation_full_period_intext_tidy.out
+*							approach_b_validation_28day_tidy.out
+*							approach_b_validation_28day_agesex_tidy.out
+*							approach_b_validation_28day_intext_tidy.out
+*							approach_c_validation_28day.out_tidy
 *
 *	Other output:		None
 
@@ -71,7 +79,13 @@ program define model_meas_tidy
 
 	/*  Calibration  */
 
-	* Hosmer=Lemeshow
+	gen nocalib = 1 if calib_inter==9999
+	foreach var of varlist calib* hl* {
+		replace `var' = . if nocalib==1
+	}
+	drop nocalib
+	
+	* Hosmer-Lemeshow
 	gen hl_p_str = string(round(hl_p, 0.001))
 	replace hl_p_str = "=0"+hl_p_str
 	replace hl_p_str = "<0.001" if hl_p_str=="=00"
@@ -118,6 +132,11 @@ program define model_meas_tidy
 						
 	drop calib_slope_str calib_slope_cl_str calib_slope_cu_str  ///
 			calib_slope calib_slope_cl calib_slope_cu calib_slope_se 
+			
+	* Tidy missing variables
+	replace hl_str 				= "" if hl_str				== ". (p=0.)"
+ 	replace calib_inter_all_str = "" if calib_inter_all_str	=="0. (0., 0.), p=0."
+	replace calib_slope_all_str = "" if calib_slope_all_str	=="0. (0., 0.)"
 
 end
 
