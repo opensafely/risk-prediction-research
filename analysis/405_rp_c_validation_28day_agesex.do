@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		404_rp_c_validation_28day.do
+*	Do-file:		405_rp_c_validation_28day_agesex.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
@@ -10,10 +10,10 @@
 *						model_cii_allcause_`tvc'.dta
 *									where tvc=foi, ae, susp
 *
-*	Data created:	data/approach_c_1
-*					output/approach_c_validation_28day.out
+*	Data created:	data/approach_c_validation_28day_agesex.dta
+*					output/approach_c_validation_28day_agesex.out
 *
-*	Other output:	Log file:  	output/403_rp_c_validation_28day.log
+*	Other output:	Log file:  	output/405_rp_c_validation_28day_agesex.log
 *
 ********************************************************************************
 *
@@ -26,7 +26,7 @@
 
 * Open a log file
 capture log close
-log using "./output/404_rp_c_validation_28day", text replace
+log using "./output/405_rp_c_validation_28day_agesex", text replace
 
 * Ensure program cc_calib is available
 qui do "./analysis/ado/cc_calib.ado"
@@ -157,6 +157,13 @@ forvalues i = 1/3 {
 
 	use "data/cr_cohort_vp`i'.dta", clear
 	
+	
+	/*  Re-group age  */
+	
+	recode agegroup 1/4=1 5=2 6=3, gen(agegroup_small)
+	label define agegroup_small 1 "<70" 2 "70-<80" 3 "80+"
+	label values agegroup_small agegroup_small
+	
 	* Age grouping used in FOI data
 	recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 	50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 			///
@@ -227,70 +234,79 @@ forvalues i = 1/3 {
 
 	tempname measures
 	postfile `measures' str5(approach) str30(prediction) str3(period)			///
+		age sex 																///
 		brier brier_p c_stat c_stat_p hl hl_p mean_obs mean_pred 				///
 		calib_inter calib_inter_se calib_inter_cl calib_inter_cu calib_inter_p 	///
 		calib_slope calib_slope_se calib_slope_cl calib_slope_cu calib_slope_p 	///
-		using "data/approach_c_`i'", replace
+		using "data/approach_c_`i'_agesex", replace
 
-		foreach var of varlist pred* {
-			
-			* Set negative probabilities to zero
-			noi count if `var'<0
-			noi summ `var' if `var' < 0, detail
-			qui replace `var' = 0 if `var' < 0
-			
-			* Set probabilities over 1 to 1
-			noi count if `var'>1
-			noi summ `var' if `var' >1, detail
-			qui replace `var' = 1 if `var' > 1		
-			
-			* Overall performance: Brier score
-			noi brier onscoviddeath28 `var', group(10)
-			local brier 	= r(brier) 
-			local brier_p 	= r(p) 
 
-			* Discrimination: C-statistic
-			local cstat 	= r(roc_area) 
-			local cstat_p 	= r(p_roc)
-			 
-			* Calibration
-			noi cc_calib onscoviddeath28  `var', data(internal) 
+		forvalues j = 0 (1) 1 {		// Sex
+			forvalues k = 1 (1) 3 { 	// Age-group
+				foreach var of varlist pred* {
+			
+					* Set negative probabilities to zero
+					noi count if `var'<0
+					noi summ `var' if `var' < 0, detail
+					qui replace `var' = 0 if `var' < 0
+					
+					* Set probabilities over 1 to 1
+					noi count if `var'>1
+					noi summ `var' if `var' >1, detail
+					qui replace `var' = 1 if `var' > 1		
+					
+					* Overall performance: Brier score
+					noi brier onscoviddeath28 `var' ///
+						if agegroup_small==`k' & male==`j', group(10)
+					local brier 	= r(brier) 
+					local brier_p 	= r(p) 
 
-			* Hosmer-Lemeshow
-			local hl 		= r(chi)  
-			local hl_p 		= r(p_chi)
-			
-			* Mean calibration
-			local mean_obs  = r(mean_obs)
-			local mean_pred = r(mean_pred)
-			
-			* Calibration intercept and slope
-			local calib_inter 		= r(calib_inter)
-			local calib_inter_se 	= r(calib_inter_se)
-			local calib_inter_cl 	= r(calib_inter_cl)
-			local calib_inter_cu 	= r(calib_inter_cu)
-			local calib_inter_p  	= r(calib_inter_p)
-			
-			local calib_slope 		= r(calib_slope)
-			local calib_slope_se 	= r(calib_slope_se)
-			local calib_slope_cl 	= r(calib_slope_cl)
-			local calib_slope_cu 	= r(calib_slope_cu)
-			local calib_slope_p  	= r(calib_slope_p)
-			
-			
-			* Save measures
-			post `measures' ("C") ("`var'") ("vp`i'") 						///
-							(`brier') (`brier_p') 							///
-							(`cstat') (`cstat_p') 							///
-							(`hl') (`hl_p') 								///
-							(`mean_obs') (`mean_pred') 						///
-							(`calib_inter') (`calib_inter_se') 				///
-							(`calib_inter_cl') 								/// 
-							(`calib_inter_cu') (`calib_inter_p') 			///
-							(`calib_slope') (`calib_slope_se') 				///
-							(`calib_slope_cl') 								///
-							(`calib_slope_cu') (`calib_slope_p')
+					* Discrimination: C-statistic
+					local cstat 	= r(roc_area) 
+					local cstat_p 	= r(p_roc)
+					 
+					* Calibration
+					noi cc_calib onscoviddeath28  `var' ///
+						if agegroup_small==`k' & male==`j', data(internal) 
 
+					* Hosmer-Lemeshow
+					local hl 		= r(chi)  
+					local hl_p 		= r(p_chi)
+					
+					* Mean calibration
+					local mean_obs  = r(mean_obs)
+					local mean_pred = r(mean_pred)
+					
+					* Calibration intercept and slope
+					local calib_inter 		= r(calib_inter)
+					local calib_inter_se 	= r(calib_inter_se)
+					local calib_inter_cl 	= r(calib_inter_cl)
+					local calib_inter_cu 	= r(calib_inter_cu)
+					local calib_inter_p  	= r(calib_inter_p)
+					
+					local calib_slope 		= r(calib_slope)
+					local calib_slope_se 	= r(calib_slope_se)
+					local calib_slope_cl 	= r(calib_slope_cl)
+					local calib_slope_cu 	= r(calib_slope_cu)
+					local calib_slope_p  	= r(calib_slope_p)
+					
+					
+					* Save measures
+					post `measures' ("C") ("`var'") ("vp`i'") 						///
+									(`k') (`j') 									///
+									(`brier') (`brier_p') 							///
+									(`cstat') (`cstat_p') 							///
+									(`hl') (`hl_p') 								///
+									(`mean_obs') (`mean_pred') 						///
+									(`calib_inter') (`calib_inter_se') 				///
+									(`calib_inter_cl') 								/// 
+									(`calib_inter_cu') (`calib_inter_p') 			///
+									(`calib_slope') (`calib_slope_se') 				///
+									(`calib_slope_cl') 								///
+									(`calib_slope_cu') (`calib_slope_p')
+
+				}
+			}
 		}
 	postclose `measures'
 }
@@ -299,20 +315,20 @@ forvalues i = 1/3 {
 
 
 * Clean up
-use "data/approach_c_1", clear
+use "data/approach_c_1_agesex", clear
 forvalues i = 2(1)3 { 
-	append using "data/approach_c_`i'" 
-	erase "data/approach_c_`i'.dta" 
+	append using "data/approach_c_`i'_agesex" 
+	erase "data/approach_c_`i'_agesex.dta" 
 }
-erase "data/approach_c_1.dta" 
-save "data/approach_c_validation_28day.dta", replace 
+erase "data/approach_c_1_agesex.dta" 
+save "data/approach_c_validation_28day_agesex.dta", replace 
 
 
 
 
 * Export a text version of the output
-use "data/approach_c_validation_28day.dta", clear
-outsheet using "output/approach_c_validation_28day.out", replace
+use "data/approach_c_validation_28day_agesex.dta", clear
+outsheet using "output/approach_c_validation_28day_agesex.out", replace
 
 
 
