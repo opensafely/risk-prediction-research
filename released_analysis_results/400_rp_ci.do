@@ -135,12 +135,12 @@ estimates save output/models/coefs_ci_`tvc', replace
 matrix b = e(b)
 
 *  Calculate baseline survival 
-global base_surv28 = exp(-7*exp(_b[_cons]))
+global base_surv7 = exp(-7*exp(_b[_cons]))
 
 * Add baseline survival to matrix (and add a matrix column name)
-matrix b = [$base_surv28, b]
+matrix b = [$base_surv7, b]
 local names: colfullnames b
-local names: subinstr local names "c1" "_t:base_surv28"
+local names: subinstr local names "c1" "_t:base_surv7"
 mat colnames b = `names'
 
 
