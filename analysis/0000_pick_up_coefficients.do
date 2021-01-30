@@ -245,8 +245,11 @@ program define get_coefs
 		}	
 			
 		* Save the value of coefficient
-		if "`term_`j''"!="base_surv28" & "`term_`j''"!="base_surv100"  ///
-			& "`term_`j''"!="sigma" & "`term_`j''"!="kappa" {
+		if  "`term_`j''"!="base_surv7" 	 & 	///
+			"`term_`j''"!="base_surv28"  & 	///
+			"`term_`j''"!="base_surv100" & 	///
+			"`term_`j''"!="sigma" 		 &	///
+			"`term_`j''"!="kappa" {
 			
 			local coef_`j' = _b["`term_`j''"]
 		
@@ -283,6 +286,10 @@ program define get_coefs
 				local coef_`j' = `coef_matrix'[1,2]
 				local varexpress_`j' = ""
 				}	
+			if "`term_`j''" == "base_surv7" {
+				local coef_`j' = `coef_matrix'[1,1]
+				local varexpress_`j' = ""
+				}
 			if "`term_`j''" == "base_surv28" {
 				local coef_`j' = `coef_matrix'[1,1]
 				local varexpress_`j' = ""
