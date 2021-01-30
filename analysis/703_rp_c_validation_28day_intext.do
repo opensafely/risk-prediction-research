@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		704_rp_c_validation_28day_intext.do
+*	Do-file:		703_rp_c_validation_28day_intext.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
@@ -13,7 +13,7 @@
 *	Data created:	data/approach_c_validation_28day_intext
 *					output/approach_c_validation_28day_intext.out
 *
-*	Other output:	Log file:  	output/704_rp_c_validation_28day_intext.log
+*	Other output:	Log file:  	output/703_rp_c_validation_28day_intext.log
 *
 ********************************************************************************
 *
@@ -27,7 +27,7 @@
 
 * Open a log file
 capture log close
-log using "./output/704_rp_c_validation_28day_intext", text replace
+log using "./output/703_rp_c_validation_28day_intext", text replace
 
 * Ensure program cc_calib is available
 qui do "./analysis/ado/cc_calib.ado"
@@ -188,7 +188,7 @@ forvalues i = 1/3 {
 				* Make predictions under actual, constant-estimation, and best-guess 
 				* predictions of burden of infection 
 				foreach pred in actual cons pred {
-					gen pred_ci_`tvc'_`pred'_`r' = 1 - ((${bs_c_pois_`tvc'})^exp(xb))^(exp_`pred')
+					gen pred_ci_`tvc'_`pred'_`r' = 1 - ((${bs_c_pois_`tvc'_`r'})^exp(xb))^(exp_`pred')
 				}	
 				drop xb*		
 			
