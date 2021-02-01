@@ -7,7 +7,7 @@
 *	Data used:		data/
 *						model_ci_`tvc'_`r'.dta
 *						model_cii_covid_`tvc'_`r'.dta
-*						model_cii_allcause_`tvc'_`r'.dta
+*						model_cii_allcause_`tvc'.dta
 *									where tvc=foi, ae, susp, r=1,..,8
 *
 *	Data created:	data/approach_c_validation_28day_intext
@@ -97,7 +97,7 @@ forvalues r = 1 (1) 8 {
 		
 		* Pick up baseline survival
 		qui summ coef if term=="_cons"
-		global cons_covid_`tvc' = r(mean)
+		global cons_covid_`tvc'_`r' = r(mean)
 		drop if term=="_cons"
 		
 		* Pick up IRRs
@@ -121,7 +121,7 @@ forvalues r = 1 (1) 8 {
 
 		* Pick up baseline survival
 		qui summ coef if term=="_cons"
-		global cons_noncovid_`tvc' = r(mean)
+		global cons_noncovid_`tvc'_`r' = r(mean)
 		drop if term=="_cons"
 		
 		* Pick up IRRs
