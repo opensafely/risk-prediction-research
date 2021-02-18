@@ -1,0 +1,3 @@
+wave	outcome	exposure	expcat	category	events	pyr_10000	rate_per_10000	rate_cl	rate_cu	hr_conf	hr_conf_imd	hr_conf_resid	hr_conf_comorb
+1	"COVID-19 death"	"Cerebral Palsy"	0	"No"	13886	7.2e+02	19.369	19.050	19.694	""	""	""	""
+1	"COVID-19 death"	"Cerebral Palsy"	1	"Yes"	30	0.91591	32.754	22.901	46.846	"5.86 (4.14, 8.29)"	"5.46 (3.85, 7.73)"	"5.9 (4.17, 8.35)"	"5.64 (3.96, 8.02)"

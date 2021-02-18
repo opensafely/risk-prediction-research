@@ -1,0 +1,4 @@
+wave	outcome	exposure	expcat	category	events	pyr_10000	rate_per_10000	rate_cl	rate_cu	hr_conf	hr_conf_imd	hr_conf_resid	hr_conf_comorb
+1	"COVID-19 death"	"LDR Severe vs mild"	"Not on LDR"	"No"	13695	7.1e+02	19.199	18.880	19.524	""	""	""	""
+1	"COVID-19 death"	"LDR Severe vs mild"	"LDR, mild"	"LDR, mild"	158	3.71086	42.578	36.430	49.762	"7.09 (6.07, 8.29)"	"6.28 (5.36, 7.36)"	"7.3 (6.26, 8.51)"	"5.75 (4.9, 6.75)"
+1	"COVID-19 death"	"LDR Severe vs mild"	"LDR, profound"	"LDR, profound"	63	0.80480	78.280	61.152	100.206	"13.23 (10, 17.51)"	"12.11 (9.16, 16.02)"	"14.23 (10.73, 18.87)"	"11.07 (8.34, 14.7)"
