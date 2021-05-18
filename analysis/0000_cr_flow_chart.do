@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		000_cr_flow_chart.do
+*	Do-file:		0000_cr_flow_chart.do
 *
 *	Programmed by:	Fizz & Krishnan & John
 *
@@ -8,7 +8,7 @@
 *
 *	Data created:   data/cr_base_cohort.dta (full base cohort dataset)
 *
-*	Other output:	Log file:  000_cr_flow_chart.log
+*	Other output:	Log file:  0000_cr_flow_chart.log
 *
 ********************************************************************************
 *
@@ -27,7 +27,7 @@ set more off
 
 * Open a log file
 cap log close
-log using "output/000_cr_flow_chart", replace t
+log using "output/0000_cr_flow_chart", replace t
 
 
 
@@ -57,12 +57,13 @@ noi di "Registered at index date: "  _col(60) r(N)
 * Dead prior to index date (late de-registrations)
 qui confirm string variable died_date_ons
 qui gen temp = date(died_date_ons, "YMD")
-qui count if temp < `index'
-noi di _col(10) "- Not alive at index date:" _col(65) r(N)
-qui drop if temp < `index'
+qui count if temp < d(1/03/2020)
+noi di _col(10) "- Not alive at index date (1 Mar 2020):" _col(65) r(N)
+qui drop if temp < d(1/03/2020)
 qui count
 noi di "Alive at index date: "  _col(60) r(N)
-	
+drop temp
+
 * Households >= 10 people
 qui count if hh_num >=10
 noi di _col(10) "- Household size 10+:" _col(65) r(N)
