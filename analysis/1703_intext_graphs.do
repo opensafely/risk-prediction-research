@@ -192,13 +192,16 @@ local ta2 = "B (FOI)"
 local ta3 = "B (A&E)"
 local ta4 = "B (GP)"
 
+* Put C-statistic on 0-1 scale
+replace cstat = cstat/100
+
 
 forvalues a = 1 (1) 4 {
 	twoway 	(scatter cstat model if vp==1, msize(small) msymbol(square)   mcolor(navy))	///
 			(scatter cstat model if vp==2, msize(small) msymbol(triangle)   mcolor(orange))	///
 			(scatter cstat model if vp==3, msize(small) msymbol(diamond)   mcolor(maroon))	///
 			if app==`a', ///
-			yscale(range(80 100)) ylabel(80 (10) 100, angle(0)) 							///
+			yscale(range(0.8 1)) ylabel(0.8 (0.1) 1, angle(0)) 							///
 				ytitle("") xtitle("") subtitle("`ta`a''")	///
 				xlabel(1 (1) 9, value) ///
 			legend(label(1 "Period 1") label(2 "Period 2") label(3 "Period 3") col(3))

@@ -212,6 +212,9 @@ local tage3 = "Age 80+"
 * 4 Selected
 * 5 All
 
+* Put C-statistic on 0-1 scale
+replace cstat = cstat/100
+
 
 forvalues i = 1 (1) 3 {
     forvalues j = 0 (1) 1 {
@@ -234,7 +237,7 @@ forvalues i = 1 (1) 3 {
 			, legend(order(1 2 3 4 5) label(1 "Age and sex") label(2 "Comorbidities") label(3 "COVID-AGE")						/// 
 			label(4 "Selected") label(5 "All variables") col(5) size(small))													///
 			xlabel(3 "A" 12.5 "B (FOI)" 22.5 "B (AE)" 32.5 "B (GP)")															///
-			yscale(range(50 100)) ylabel(50 (10) 100, angle(0)) 																///
+			yscale(range(0.50 1)) ylabel(0.5 (0.1) 1, angle(0)) 																///
 			ytitle("") xtitle("") subtitle("`title'")
 	graph save output/graph_cstat_`i'_`j'.gph, replace
 	}
