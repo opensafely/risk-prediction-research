@@ -15,3 +15,11 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_flow_chart.csv
+
+  generate_flowchart:
+    run: stata-mp:latest analysis/000_cr_flow_chart.do
+    needs: [flow_chart]
+    outputs:
+      moderately_sensitive:
+        cohort: output/000_flow_chart.log
+        
