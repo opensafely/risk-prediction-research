@@ -790,13 +790,15 @@ drop if hh_num >=10
 ********************************************************
 		
 * Centre age and then create splines of centred age
-qui summ age
+noi summ age
 gen agec = (age - r(mean))/r(sd)
 mkspline age = agec, cubic nknots(4)
 order age1 age2 age3, after(agec)
 
+
+
 * Centre number of people in household to create splines
-qui summ hh_num
+noi summ hh_num
 gen hh_numc = (hh_num - r(mean))/r(sd)
 mkspline hh_num = hh_numc, cubic nknots(4)
 order hh_num1 hh_num2 hh_num3, after(hh_numc)
