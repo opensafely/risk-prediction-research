@@ -795,6 +795,9 @@ gen agec = (age - r(mean))/r(sd)
 mkspline age = agec, cubic nknots(4)
 order age1 age2 age3, after(agec)
 
+* List percentiles required to recreate splines
+noi centile age, c(5 35 65 95)
+
 
 
 * Centre number of people in household to create splines
@@ -803,6 +806,8 @@ gen hh_numc = (hh_num - r(mean))/r(sd)
 mkspline hh_num = hh_numc, cubic nknots(4)
 order hh_num1 hh_num2 hh_num3, after(hh_numc)
 
+* List percentiles required to recreate splines
+centile hh_num, c(5 35 65 95)
 
 
 
