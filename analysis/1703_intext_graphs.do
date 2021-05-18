@@ -228,8 +228,8 @@ graph save output/graph_intext_cstat, replace
 
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 forvalues i = 1 (1) 3 {
