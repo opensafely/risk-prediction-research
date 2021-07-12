@@ -1,0 +1,4 @@
+approach	prediction	period	brier	brier_p	c_stat	c_stat_p	hl	hl_p	mean_obs	mean_pred	calib_inter	calib_inter_se	calib_inter_cl	calib_inter_cu	calib_inter_p	calib_slope	calib_slope_se	calib_slope_cl	calib_slope_cu	calib_slope_p
+"A"	"pred_a_cox_nos"	"vp1"	.000045	1	.9238223	0	7133.326	0	.000038	.0006671	-2.877216	.0469012	-2.969141	-2.785292	0	.9546288	.163775	.8627041	1.046554	0
+"A"	"pred_a_cox_nos"	"vp2"	.0003741	1	.9337803	0	1525.344	0	.0003738	.0006621	-.5766999	.0150064	-.6061118	-.5472879	0	1.016538	.0532062	.9871262	1.04595	0
+"A"	"pred_a_cox_nos"	"vp3"	.0001096	1	.9412424	0	5536.205	0	.0001043	.0006532	-1.844285	.028358	-1.899865	-1.788704	0	1.051958	.0998931	.9963769	1.107538	0
