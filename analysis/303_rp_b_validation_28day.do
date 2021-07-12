@@ -10,7 +10,7 @@
 *						model_b_weibull_`tvc.dta
 *									where tvc=foi, ae, susp
 *
-*	Data created:	data/approach_b_1
+*	Data created:	data/approach_b_validation_28day.dta
 *					output/approach_b_validation_28day.out
 *
 *	Other output:	Log file:  	output/303_rp_b_validation_28day.log
