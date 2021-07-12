@@ -64,7 +64,7 @@ define_covs, dateno(`start')
 /*  Survival settings  */
 
 * Declare as survival data 
-stset stime, fail(onscoviddeath) scale(365.25)  
+stset stime, fail(onscoviddeath) 
 
 
 
