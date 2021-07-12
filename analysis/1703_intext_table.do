@@ -240,8 +240,8 @@ label define region 1 "East"				///
 label values region region
 
 order approach vp region cstat mean_obs mean_pred calib_inter calib_slope
+sort app vp region
 drop model_offset model_offset2 app
-sort approach vp region
 
 
 erase temp.dta

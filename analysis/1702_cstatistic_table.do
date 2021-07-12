@@ -192,7 +192,7 @@ erase "data/cstat_bsimple_agesex.dta"
 *  Tidy data to put in table  *
 *******************************
 
-keep if inlist(approach, "A", "B (FOI)")
+*keep if inlist(approach, "A", "B (FOI)")
 reshape wide cstat, i(approach vp model age) j(sex)
 
 rename cstat0 cstatfem
@@ -208,7 +208,7 @@ label define model  1 "Age-sex"			///
 					5 "Full"
 label values model model
 
-order approach vpmodel cstat*
+order approach vp model cstat*
 
 
 format cstat* %3.2f

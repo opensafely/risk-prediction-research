@@ -119,7 +119,7 @@ save "data/intextstat_a_intext", replace
 
 model_intextstat, inputdata("output\approach_b_validation_28day.out")
 keep if regexm(prediction, "pois")
-replace approach = "B (FOI)" if regexm(prediction, "foi")
+replace approach = "B (ME)" if regexm(prediction, "foi")
 replace approach = "B (AE)"  if regexm(prediction, "ae")
 replace approach = "B (GP)"  if regexm(prediction, "susp")
 drop prediction
@@ -131,7 +131,7 @@ save "data/intextstat_b_all", replace
 model_intextstat, inputdata("output\approach_b_validation_28day_intext.out")  
 rename model prediction
 keep if regexm(prediction, "pois")
-replace approach = "B (FOI)" if regexm(tvc, "foi")
+replace approach = "B (ME)" if regexm(tvc, "foi")
 replace approach = "B (AE)"  if regexm(tvc, "ae")
 replace approach = "B (GP)"  if regexm(tvc, "susp")
 drop prediction tvc
@@ -175,7 +175,7 @@ label define model 	1 "Main"			///
 label values model model
 
 gen 	app = 1 if approach=="A"
-replace app = 2 if approach=="B (FOI)"
+replace app = 2 if approach=="B (ME)"
 replace app = 3 if approach=="B (AE)"
 replace app = 4 if approach=="B (GP)"
 
@@ -206,8 +206,8 @@ label values model_offset2 model
 /*  Graph C-statistics  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 forvalues a = 1 (1) 4 {
@@ -273,8 +273,8 @@ graph save output/graph_intext_meanpred, replace
 /*  Graph calibration intercept  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 forvalues a = 1 (1) 4 {
@@ -304,17 +304,16 @@ graph save output/graph_intext_calibi, replace
 /*  Graph calibration slope  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 
 forvalues a = 1 (1) 4 {
-	twoway 	(function y = 1, lcolor(navy) lpattern(dot) range(0.75 3.25))						///
-			(scatter calib_slope vp if vp==1, msize(medium)    msymbol(square)   mcolor(navy))	///
-			(scatter calib_slope vp if vp==2, msize(medlarge) msymbol(triangle) mcolor(orange))	///
+	twoway 	(function y = 1, lcolor(navy) lpattern(dot) range(0.75 3.25))							///
+			(scatter calib_slope vp if vp==1, msize(medium)    msymbol(square)   mcolor(navy))		///
+			(scatter calib_slope vp if vp==2, msize(medlarge) msymbol(triangle) mcolor(orange))		///
 			(scatter calib_slope vp if vp==3, msize(medium)    msymbol(diamond)  mcolor(maroon))	///
-			(function y = 1, lcolor(navy) lpattern(dot) range(0.75 3.25))						///
 			if app==`a' & model==1, ///
 				yscale(range(0.5 1.5)) ylabel(0.5 (0.5) 1.5, angle(0) labsize(large)) /// 	 
 				ytick(0.5 (0.25) 1.5, grid) 	///
@@ -350,9 +349,6 @@ graph save output/graph_internal_validation, replace
 
 
 
-
-
-
 *************************
 *  Temporal validation  *
 *************************
@@ -363,8 +359,8 @@ capture recode model 9=2 1=1 2/8=., gen(temp)
 /*  Graph C-statistics  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 forvalues a = 1 (1) 4 {
@@ -427,8 +423,8 @@ graph save output/graph_intext_meanpred, replace
 /*  Graph calibration intercept  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 forvalues a = 1 (1) 4 {
@@ -457,8 +453,8 @@ graph save output/graph_intext_calibi, replace
 /*  Graph calibration slope  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 
@@ -515,8 +511,8 @@ graph save output/graph_temporal_validation, replace
 /*  Graph C-statistics  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 forvalues a = 1 (1) 4 {
@@ -582,8 +578,8 @@ graph save output/graph_intext_meanpred, replace
 /*  Graph calibration intercept  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 forvalues a = 1 (1) 4 {
@@ -613,8 +609,8 @@ graph save output/graph_intext_calibi, replace
 /*  Graph calibration slope  */
 
 local ta1 = "A"
-local ta2 = "B (FOI)"
-local ta3 = "B (A&E)"
+local ta2 = "B (ME)"
+local ta3 = "B (AE)"
 local ta4 = "B (GP)"
 
 
