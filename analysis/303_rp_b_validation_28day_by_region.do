@@ -26,7 +26,7 @@
 
 * Open a log file
 capture log close
-log using "./output/303_rp_b_validation_28day", text replace
+log using "./output/303_rp_b_validation_28day_by_region", text replace
 
 
 
