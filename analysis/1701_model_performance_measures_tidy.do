@@ -219,6 +219,40 @@ outsheet using "output/approach_a_validation_full_period_tidy.out", replace
 
 
 
+						
+*************************************************
+*  Approach A: Whole cohort 28 day validation   *
+*************************************************
+
+
+model_meas_tidy, inputdata("output\approach_a_validation_28day_whole_cohort.out")  
+
+
+/*  Tidy dataset  */
+
+drop prediction
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+	  
+	  
+sort vp 
+order 	approach vp 			 	///
+		brier_str 					///
+		cstat_str					///
+		pc_obs_risk pc_pred_risk 	///
+		hl_str 			 			///
+		calib_inter_all_str			///
+		calib_slope_all_str			
+
+outsheet using "output/approach_a_validation_28day_tidy_whole_cohort.out", replace
+
+
+
+
+
 ************************************
 *  Approach B: 28-day validation   *
 ************************************
@@ -409,6 +443,44 @@ order  approach tvc agegp sex model vp	///
 		calib_slope_all_str			
 		
 outsheet using "output/approach_b_validation_28day_tidy.out", replace
+
+
+
+
+
+					***********************************
+					*  INTERNAL VALIDATION BY REGION  *
+					***********************************
+
+					
+***********************************************************
+*  Approach A: Whole cohort 28 day validation by region   *
+***********************************************************
+
+
+model_meas_tidy, inputdata("output\approach_a_validation_28day_by_region.out")  
+		
+/*  Tidy dataset  */
+
+drop prediction
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+	  
+	  
+sort vp region
+order 	approach vp region		 	///
+		brier_str 					///
+		cstat_str					///
+		pc_obs_risk pc_pred_risk 	///
+		hl_str 			 			///
+		calib_inter_all_str			///
+		calib_slope_all_str			
+
+outsheet using "output/approach_a_validation_28day_by_region.out", replace
+
 
 
 
