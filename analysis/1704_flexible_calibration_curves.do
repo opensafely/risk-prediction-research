@@ -6,24 +6,25 @@
 *
 *	Data used:		data/
 *						model_a_coxPH.dta
-*						model_a_roy.dta
-*						model_a_weibull.dta
-*						model_a_ggamma.dta
+*						model_b_poisson_foi.dta
+*						model_b_poisson_ae.dta
+*						model_b_poisson_susp.dta
 *
-*	Data created:	data/approach_a_validation.dta
-*					output/approach_a_validation_28day.out
+*	Data created:	None
 *
 *	Other output:	Log file:  	output/1704_flexible_calibration_curves.log
-*					
+*					Graphs:		output/calibration_a.svg
+*								output/calibration_b_foi.svg
+*								output/calibration_b_ae.svg
+*								output/calibration_b_gp.svg
+*
 ********************************************************************************
 *
-*	Purpose:		This do-file compares Design A models.
+*	Purpose:		This do-file obtains flexible calibration plots and decile
+*					plots to graphically assess moderate calibration.
 *  
 ********************************************************************************
-*	
-*	Stata routines needed:	 stpm2 (which needs rcsgen)	  
-*
-********************************************************************************
+
 
 
 * Read in output from each model
@@ -90,8 +91,8 @@ foreach tvc in foi ae susp {
 ******************************
 
 
-*forvalues i = 1/3 {
-local i = 1
+forvalues i = 1/3 {
+
 	use "data/cr_cohort_vp`i'.dta", clear
 	
 
@@ -138,7 +139,7 @@ local i = 1
 		
 		* Flexible modelling
 		gen logitrp = log(pred_model`k'/(1-pred_model`k'))
-		mkspline logitrp = logitrp, cubic nknots(7)
+		mkspline logitrp = logitrp, cubic nknots(6)
 		logit onscoviddeath28 logitrp?
 		
 		predict xbhat, xb
@@ -156,51 +157,63 @@ local i = 1
 		sort flex_pred_obs_`k'
 		gen rowuse_`k' = mod(_n, 200000)
 		recode rowuse_`k' 0=1 1/max=0
-		
-		
+				
 		* Percentiles
 		egen ptile_`k' = cut(pred_model`k'), group(20)
 		bysort ptile_`k': egen obsptile_`k'=mean(onscoviddeath28)
 		bysort ptile_`k': egen predmedptile_`k'=median(pred_model`k')
 		bysort ptile_`k': egen predq25ptile_`k'=pctile(pred_model`k'), p(25)
 		bysort ptile_`k': egen predq75ptile_`k'=pctile(pred_model`k'), p(75)
-		
+
+		egen tag_`k' = tag(ptile_`k')
+
 	}
 		
 	
 	/*  Graph: Approach A - Cox model  */
 	
 	* Flexible curve
+	qui sum pred_model1
+	local max = r(max)
 	sort pred_model1
 	twoway 	(rarea flex_pred_obs_cl_1 flex_pred_obs_cu_1 pred_model1, 	///
 			fcolor(gs13) lcolor(gs8)) 									///
 			(line flex_pred_obs_1 pred_model1, lcolor(gs3))				///
+			(function y=x, lcolor(black) lpattern(dot) range(0 `max'))	///
 			if rowuse_1==1,												///
-			xtitle("Predicted")											///
-			ytitle("Observed")											///
-			legend(off) title("Approach A (Cox)")
+			xtitle("")													///
+			ytitle("")													///
+			legend(off) subtitle("VP `i'")
+	graph save output/flex1_`i', replace
 	
 	* Boxplot
 	sort ptile_1
 	twoway 	(rcap predq25ptile_1 predq75ptile_1 ptile_1, lcolor(navy))		///
 			(scatter predmedptile_1 ptile_1, mcolor(navy) mlcolor(navy))	///
 			(scatter obsptile_1 ptile_1, mcolor(green) msymbol(triangle))	///
-			, legend(order(2 1 3)  label(2 "Predicted (median)") 			///
-			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)
-	
+			if tag_1==1, legend(order(2 1 3)  label(2 "Predicted (median)") ///
+			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
+			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
+			subtitle("VP `i'")
+	graph save output/box1_`i', replace
+
 	
 	
 	/*  Graph: Approach B - FOI model  */
 	
 	* Flexible curve
+	qui sum pred_model2
+	local max = r(max)
 	sort pred_model2
 	twoway 	(rarea flex_pred_obs_cl_2 flex_pred_obs_cu_2 pred_model2, 	///
 			fcolor(gs13) lcolor(gs8)) 									///
 			(line flex_pred_obs_2 pred_model2, lcolor(gs3))				///
+			(function y=x, lcolor(black) lpattern(dot) range(0 `max'))	///
 			if rowuse_2==1,												///
-			xtitle("Predicted")											///
-			ytitle("Observed")											///
-			legend(off) title("Approach B (FOI, Poisson)")
+			xtitle("")													///
+			ytitle("")													///
+			legend(off) subtitle("VP `i'")
+	graph save output/flex2_`i', replace
 	
 	* Boxplot
 	sort ptile_4
@@ -209,20 +222,26 @@ local i = 1
 			(scatter obsptile_2 ptile_2, mcolor(green) msymbol(triangle))	///
 			, legend(order(2 1 3)  label(2 "Predicted (median)") 			///
 			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
-			title("Approach B (FOI, Poisson)")	
+			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
+			subtitle("VP `i'")
+	graph save output/box2_`i', replace
 	
 	
-	/*  Graph: Approach B - FOI model  */
+	/*  Graph: Approach B - A&E model  */
 	
 	* Flexible curve
+	qui sum pred_model3
+	local max = r(max)	
 	sort pred_model3
 	twoway 	(rarea flex_pred_obs_cl_3 flex_pred_obs_cu_3 pred_model3, 	///
 			fcolor(gs13) lcolor(gs8)) 									///
 			(line flex_pred_obs_3 pred_model3, lcolor(gs3))				///
+			(function y=x, lcolor(black) lpattern(dot) range(0 `max'))	///
 			if rowuse_3==1,												///
-			xtitle("Predicted")											///
-			ytitle("Observed")											///
-			legend(off) title("Approach B (A&E, Poisson)")
+			xtitle("")													///
+			ytitle("")													///
+			legend(off) subtitle("VP `i'")
+	graph save output/flex3_`i', replace
 		
 	* Boxplot
 	sort ptile_3
@@ -231,21 +250,27 @@ local i = 1
 			(scatter obsptile_3 ptile_3, mcolor(green) msymbol(triangle))	///
 			, legend(order(2 1 3)  label(2 "Predicted (median)") 			///
 			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
-			title("Approach B (A&E, Poisson)")
+			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
+			subtitle("VP `i'")
+	graph save output/box3_`i', replace
+
 	
 	
-	
-	/*  Graph: Approach B - FOI model  */
+	/*  Graph: Approach B - GP cases model  */
 	
 	* Flexible curve
+	qui sum pred_model4
+	local max = r(max)
 	sort pred_model4
 	twoway 	(rarea flex_pred_obs_cl_4 flex_pred_obs_cu_4 pred_model4, 	///
 			fcolor(gs13) lcolor(gs8)) 									///
 			(line flex_pred_obs_4 pred_model4, lcolor(gs3))				///
+			(function y=x, lcolor(black) lpattern(dot) range(0 `max'))	///
 			if rowuse_4==1,												///
-			xtitle("Predicted")											///
-			ytitle("Observed")											///
-			legend(off) title("Approach B (GP, Poisson)")
+			xtitle("")													///
+			ytitle("")													///
+			legend(off) subtitle("VP `i'")
+	graph save output/flex4_`i', replace
 
 	* Boxplot
 	sort ptile_4
@@ -254,10 +279,112 @@ local i = 1
 			(scatter obsptile_4 ptile_4, mcolor(green) msymbol(triangle))	///
 			, legend(order(2 1 3)  label(2 "Predicted (median)") 			///
 			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
-			title("Approach B (GP, Poisson)")
+			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
+			subtitle("VP `i'")
+	graph save output/box4_`i', replace
+
 	
-	
-*}
+}
+
+
+/*  Combine graphs across validation periods  */
+
+
+* Approach A
+grc1leg output/box1_1.gph  output/box1_2.gph  output/box1_3.gph, 		///
+	col(3) b1title("Predicted risk (20 groups)")						///
+	l1title("Observed risk") ring(100)
+graph save output/box1, replace 
+
+graph combine output/flex1_1.gph output/flex1_2.gph output/flex1_3.gph, ///
+	col(3) b1title("Predicted risk")									///
+	l1title("Observed risk")
+graph save output/flex1, replace 
+
+graph combine output/flex1.gph output/box1.gph, col(1)
+graph export output/calibration_a.svg, replace as(svg)
+
+
+
+
+
+
+/*  Combine graphs across validation periods  */
+
+
+* Approach A
+grc1leg output/box1_1.gph  output/box1_2.gph  output/box1_3.gph, 		///
+	col(3) b1title("Predicted risk (20 groups)")						///
+	l1title("Observed risk") ring(100)
+graph save output/box1, replace 
+
+graph combine output/flex1_1.gph output/flex1_2.gph output/flex1_3.gph, ///
+	col(3) b1title("Predicted risk")									///
+	l1title("Observed risk")
+graph save output/flex1, replace 
+
+graph combine output/flex1.gph output/box1.gph, col(1)
+graph export output/calibration_a.svg, replace as(svg)
+
+
+
+
+* Approach B (FOI)
+grc1leg output/box2_1.gph  output/box2_2.gph  output/box2_3.gph, 		///
+	col(3) b1title("Predicted risk (20 groups)")						///
+	l1title("Observed risk") ring(100)
+graph save output/box2, replace 
+
+graph combine output/flex2_1.gph output/flex2_2.gph output/flex2_3.gph, ///
+	col(3) b1title("Predicted risk")									///
+	l1title("Observed risk")
+graph save output/flex2, replace 
+
+graph combine output/flex2.gph output/box2.gph, col(1)
+graph export output/calibration_b_foi.svg, replace as(svg)
+
+
+* Approach B (AE)
+grc1leg output/box3_1.gph  output/box3_2.gph  output/box3_3.gph, 		///
+	col(3) b1title("Predicted risk (20 groups)")						///
+	l1title("Observed risk") ring(100)
+graph save output/box3, replace 
+
+graph combine output/flex3_1.gph output/flex3_2.gph output/flex3_3.gph, ///
+	col(3) b1title("Predicted risk")									///
+	l1title("Observed risk")
+graph save output/flex3, replace 
+
+graph combine output/flex3.gph output/box3.gph, col(1)
+graph export output/calibration_b_ae.svg, replace as(svg)
+
+
+* Approach B (GP)
+grc1leg output/box2_1.gph  output/box4_2.gph  output/box4_3.gph, 		///
+	col(3) b1title("Predicted risk (20 groups)")						///
+	l1title("Observed risk") ring(100)
+graph save output/box4, replace 
+
+graph combine output/flex4_1.gph output/flex4_2.gph output/flex4_3.gph, ///
+	col(3) b1title("Predicted risk")									///
+	l1title("Observed risk")
+graph save output/flex4, replace 
+
+graph combine output/flex4.gph output/box4.gph, col(1)
+graph export output/calibration_b_gp.svg, replace as(svg)
+
+
+
+/*  Erase unneeded graphs  */
+
+forvalues k = 1/4 {
+	forvalues i = 1/3 {
+		erase output/box`k'_`i'.gph 
+		erase output/flex`k'_`i'.gph 
+	}
+	erase output/box`k'.gph 
+	erase output/flex`k'.gph 
+}
 
 
 
@@ -265,7 +392,6 @@ local i = 1
 
 * Close log file
 log close
-
 
 
 
