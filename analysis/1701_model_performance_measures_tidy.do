@@ -484,6 +484,52 @@ outsheet using "output/approach_a_validation_28day_by_region.out", replace
 
 
 
+**************************************************
+*  Approach B: 28-day validation by age and sex  *
+**************************************************
+
+
+model_meas_tidy, inputdata("output/approach_b_validation_28day_by_region.out")  
+
+		
+/*  Tidy dataset  */
+
+gen 	model = 1 if regexm(prediction, "pred_b_logit")
+replace model = 2 if regexm(prediction, "pred_b_pois")
+replace model = 3 if regexm(prediction, "pred_b_weib")
+label define model 1 "Logistic" 2 "Poisson" 3 "Weibull" 
+label values model model
+
+gen 	tvc = 1 if regexm(prediction, "foi")
+replace tvc = 2 if regexm(prediction, "ae")
+replace tvc = 3 if regexm(prediction, "susp")
+drop prediction
+
+label define tvc 1 "FOI" 2 "A&E" 3 "Suspected GP" 
+label values tvc tvc
+
+gen 	vp = 1 if period=="vp1"
+replace vp = 2 if period=="vp2"
+replace vp = 3 if period=="vp3"
+drop period
+
+		
+sort  tvc vp region model
+order  approach tvc region vp		 	///
+		brier_str 						///
+		cstat_str						///
+		pc_obs_risk pc_pred_risk 		///
+		hl_str 			 				///
+		calib_inter_all_str				///
+		calib_slope_all_str			
+		
+outsheet using "output/approach_b_validation_28day_by_region.out", replace
+
+
+
+
+
+
 
 					***********************************
 					*  INTERNAL-EXTERNAL VALIDATION   *

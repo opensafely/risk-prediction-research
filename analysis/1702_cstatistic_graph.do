@@ -48,7 +48,6 @@ program define model_cstat
 	* C-statistic
 	drop c_stat_p
 	rename c_stat cstat
-	replace cstat = 100*cstat
 	
 
 	/*  Calibration  */
@@ -113,7 +112,7 @@ save "data/cstat_a_agesex", replace
 model_cstat, inputdata("output/approach_b_validation_28day_agesex.out")  
 
 keep if regexm(prediction, "pois")
-replace approach = "B (FOI)" if regexm(prediction, "foi")
+replace approach = "B (ME)" if regexm(prediction, "foi")
 replace approach = "B (AE)"  if regexm(prediction, "ae")
 replace approach = "B (GP)"  if regexm(prediction, "susp")
 drop prediction
@@ -153,7 +152,7 @@ save "data/cstat_asimple_agesex", replace
 model_cstat, inputdata("output/approach_b_validation_28day_sens_agesex.out")  
 
 keep if regexm(prediction, "pois")
-replace approach = "B (FOI)" if regexm(prediction, "foi")
+replace approach = "B (ME)" if regexm(prediction, "foi")
 replace approach = "B (AE)"  if regexm(prediction, "ae")
 replace approach = "B (GP)"  if regexm(prediction, "susp")
 drop if regexm(prediction, "objective")
@@ -194,9 +193,9 @@ erase "data/cstat_bsimple_agesex.dta"
 ****************
 
 gen xaxis = model
-replace xaxis = xaxis + 10 if approach == "B (FOI)"
-replace xaxis = xaxis + 20 if approach == "B (AE)"
-replace xaxis = xaxis + 30 if approach == "B (GP)"
+replace xaxis = xaxis + 8  if approach == "B (ME)"
+replace xaxis = xaxis + 16 if approach == "B (AE)"
+replace xaxis = xaxis + 24 if approach == "B (GP)"
 
 local tsex0 = "Females, "
 local tsex1 = "Males, "
@@ -212,31 +211,28 @@ local tage3 = "Age 80+"
 * 4 Selected
 * 5 All
 
-* Put C-statistic on 0-1 scale
-replace cstat = cstat/100
-
 
 forvalues i = 1 (1) 3 {
     forvalues j = 0 (1) 1 {
 	    local title = "`tsex`j''" + "`tage`i''" 
-	twoway 	(scatter cstat xaxis if model==1 & age==`i' & sex==`j' & vp==1, msize(small) msymbol(square)   mcolor(navy))		///
-			(scatter cstat xaxis if model==2 & age==`i' & sex==`j' & vp==1, msize(small) msymbol(circle)   mcolor(maroon))		///
-			(scatter cstat xaxis if model==3 & age==`i' & sex==`j' & vp==1, msize(small) msymbol(X)        mcolor(gold))		///
-			(scatter cstat xaxis if model==4 & age==`i' & sex==`j' & vp==1, msize(small) msymbol(triangle) mcolor(green))		///
-			(scatter cstat xaxis if model==5 & age==`i' & sex==`j' & vp==1, msize(small) msymbol(diamond)  mcolor(gs8))			///
-			(scatter cstat xaxis if model==1 & age==`i' & sex==`j' & vp==2, msize(small) msymbol(square)   mcolor(navy*0.6))	///
-			(scatter cstat xaxis if model==2 & age==`i' & sex==`j' & vp==2, msize(small) msymbol(circle)   mcolor(maroon*0.6))	///
-			(scatter cstat xaxis if model==3 & age==`i' & sex==`j' & vp==2, msize(small) msymbol(X)        mcolor(gold*0.6))	///
-			(scatter cstat xaxis if model==4 & age==`i' & sex==`j' & vp==2, msize(small) msymbol(triangle) mcolor(green*0.6))	///
-			(scatter cstat xaxis if model==5 & age==`i' & sex==`j' & vp==2, msize(small) msymbol(diamond)  mcolor(gs8*0.6))		///
-			(scatter cstat xaxis if model==1 & age==`i' & sex==`j' & vp==3, msize(small) msymbol(square)   mcolor(navy*0.2))	///
-			(scatter cstat xaxis if model==2 & age==`i' & sex==`j' & vp==3, msize(small) msymbol(circle)   mcolor(maroon*0.2))	///
-			(scatter cstat xaxis if model==3 & age==`i' & sex==`j' & vp==3, msize(small) msymbol(X)        mcolor(gold*0.2))	///
-			(scatter cstat xaxis if model==4 & age==`i' & sex==`j' & vp==3, msize(small) msymbol(triangle) mcolor(green*0.2))	///
-			(scatter cstat xaxis if model==5 & age==`i' & sex==`j' & vp==3, msize(small) msymbol(diamond)  mcolor(gs8*0.2))		///
-			, legend(order(1 2 3 4 5) label(1 "Age and sex") label(2 "Comorbidities") label(3 "COVID-AGE")						/// 
-			label(4 "Selected") label(5 "All variables") col(5) size(small))													///
-			xlabel(3 "A" 12.5 "B (FOI)" 22.5 "B (AE)" 32.5 "B (GP)")															///
+	twoway 	(scatter cstat xaxis if model==1 & age==`i' & sex==`j' & vp==1, msize(small) 	msymbol(square)   mcolor(navy))		///
+			(scatter cstat xaxis if model==2 & age==`i' & sex==`j' & vp==1, msize(small) 	msymbol(circle)   mcolor(maroon))		///
+			(scatter cstat xaxis if model==3 & age==`i' & sex==`j' & vp==1, msize(medlarge) msymbol(X)        mcolor(orange))		///
+			(scatter cstat xaxis if model==4 & age==`i' & sex==`j' & vp==1, msize(small) 	msymbol(triangle) mcolor(green))		///
+			(scatter cstat xaxis if model==5 & age==`i' & sex==`j' & vp==1, msize(small) 	msymbol(diamond)  mcolor(gs8))			///
+			(scatter cstat xaxis if model==1 & age==`i' & sex==`j' & vp==2, msize(small) 	msymbol(square)   mcolor(navy))	///
+			(scatter cstat xaxis if model==2 & age==`i' & sex==`j' & vp==2, msize(small) 	msymbol(circle)   mcolor(maroon))	///
+			(scatter cstat xaxis if model==3 & age==`i' & sex==`j' & vp==2, msize(medlarge) msymbol(X)        mcolor(orange))	///
+			(scatter cstat xaxis if model==4 & age==`i' & sex==`j' & vp==2, msize(small) 	msymbol(triangle) mcolor(green))	///
+			(scatter cstat xaxis if model==5 & age==`i' & sex==`j' & vp==2, msize(small) 	msymbol(diamond)  mcolor(gs8))		///
+			(scatter cstat xaxis if model==1 & age==`i' & sex==`j' & vp==3, msize(small) 	msymbol(square)   mcolor(navy))	///
+			(scatter cstat xaxis if model==2 & age==`i' & sex==`j' & vp==3, msize(small) 	msymbol(circle)   mcolor(maroon))	///
+			(scatter cstat xaxis if model==3 & age==`i' & sex==`j' & vp==3, msize(medlarge) msymbol(X)        mcolor(orange))	///
+			(scatter cstat xaxis if model==4 & age==`i' & sex==`j' & vp==3, msize(small) 	msymbol(triangle) mcolor(green))	///
+			(scatter cstat xaxis if model==5 & age==`i' & sex==`j' & vp==3, msize(small) 	msymbol(diamond)  mcolor(gs8))		///
+			, legend(order(1 2 3 4 5) label(1 "Age-sex") label(2 "Comorbidities") label(3 "COVID-AGE")							/// 
+			label(4 "Selected") label(5 "Full") col(5) size(small))																///
+			xlabel(3 "A" 10.5 "B (ME)" 18.5 "B (AE)" 26.5 "B (GP)")																///
 			yscale(range(0.50 1)) ylabel(0.5 (0.1) 1, angle(0)) 																///
 			ytitle("") xtitle("") subtitle("`title'")
 	graph save output/graph_cstat_`i'_`j'.gph, replace

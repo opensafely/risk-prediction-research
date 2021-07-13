@@ -550,10 +550,7 @@ forvalues i = 1 (1) 3 {
 }
 
 forvalues a = 1 (1) 4 {
-	twoway 	(function y = `mp1', lcolor(navy*0.75) lpattern(dash)   range(0.75 30.25))	///
-			(function y = `mp2', lcolor(orange*0.75) lpattern(dash) range(0.75 30.25))	///
-			(function y = `mp3', lcolor(maroon*0.75) lpattern(dash) range(0.75 30.25))	///
-			(scatter mean_pred model_offset2 if vp==1, msize(medium)    msymbol(square)   mcolor(navy))		///
+	twoway  (scatter mean_pred model_offset2 if vp==1, msize(medium)    msymbol(square)   mcolor(navy))		///
 			(scatter mean_pred model_offset2 if vp==2, msize(medlarge)  msymbol(triangle) mcolor(orange))	///
 			(scatter mean_pred model_offset2 if vp==3, msize(medium)    msymbol(diamond)  mcolor(maroon))	///
 	if app==`a'  & inrange(model, 2, 8), ///
@@ -561,7 +558,7 @@ forvalues a = 1 (1) 4 {
 				ytick(0 (0.01) 0.06, grid) 	///
 				ytitle("") xtitle("") subtitle("`ta`a''", size(large))	///
 				xlabel(none) xscale(range(0.75 3.25)) 		///
-			legend(order(4 5 6) label(4 "Period 1") label(5 "Period 2") label(6 "Period 3") col(3))
+			legend(order(1 2 3) label(4 "Period 1") label(5 "Period 2") label(6 "Period 3") col(3))
 	graph save "output/graph_intext_meanpred_`a'", replace
 }
 
