@@ -139,7 +139,18 @@ forvalues i = 1/3 {
 		
 		* Flexible modelling
 		gen logitrp = log(pred_model`k'/(1-pred_model`k'))
-		mkspline logitrp = logitrp, cubic nknots(6)
+		
+		* Use as many knots as allows models to converge
+		*   (problems encountered in validation period 3)
+		local knots = 6
+		if `i'==3 & inlist(`k', 2, 3) {
+			local knots = 4
+		}
+		if `i'==3 & inlist(`k', 4) {
+			local knots = 3
+		}		
+		
+		mkspline logitrp = logitrp, cubic nknots(`knots')
 		logit onscoviddeath28 logitrp?
 		
 		predict xbhat, xb
@@ -160,6 +171,7 @@ forvalues i = 1/3 {
 				
 		* Percentiles
 		egen ptile_`k' = cut(pred_model`k'), group(20)
+		replace ptile_`k' = ptile_`k' + 1
 		bysort ptile_`k': egen obsptile_`k'=mean(onscoviddeath28)
 		bysort ptile_`k': egen predmedptile_`k'=median(pred_model`k')
 		bysort ptile_`k': egen predq25ptile_`k'=pctile(pred_model`k'), p(25)
