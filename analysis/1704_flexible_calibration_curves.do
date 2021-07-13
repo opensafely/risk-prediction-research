@@ -172,20 +172,27 @@ forvalues i = 1/3 {
 		* Percentiles
 		egen ptile_`k' = cut(pred_model`k'), group(20)
 		replace ptile_`k' = ptile_`k' + 1
-		bysort ptile_`k': egen obsptile_`k'=mean(onscoviddeath28)
-		bysort ptile_`k': egen predmedptile_`k'=median(pred_model`k')
-		bysort ptile_`k': egen predq25ptile_`k'=pctile(pred_model`k'), p(25)
-		bysort ptile_`k': egen predq75ptile_`k'=pctile(pred_model`k'), p(75)
+		bysort ptile_`k': egen obsptile_`k'		= mean(onscoviddeath28)
+		bysort ptile_`k': egen predmeanptile_`k'= mean(pred_model`k')
 
 		egen tag_`k' = tag(ptile_`k')
-
+		
+		* Put all risks on % scale (for consistency with rest of paper)
+		replace obsptile_`k' 		= 100*obsptile_`k'
+		replace predmeanptile_`k' 	= 100*predmeanptile_`k'
+		
+		replace flex_pred_obs_`k'		= 100*flex_pred_obs_`k'
+		replace flex_pred_obs_cl_`k' 	= 100*flex_pred_obs_cl_`k' 
+		replace flex_pred_obs_cu_`k' 	= 100*flex_pred_obs_cu_`k' 
+ 
+		replace pred_model`k' = 100*pred_model`k'
 	}
 		
 	
 	/*  Graph: Approach A - Cox model  */
 	
 	* Flexible curve
-	qui sum pred_model1
+	qui sum pred_model1 if rowuse_1==1
 	local max = r(max)
 	sort pred_model1
 	twoway 	(rarea flex_pred_obs_cl_1 flex_pred_obs_cu_1 pred_model1, 	///
@@ -195,16 +202,18 @@ forvalues i = 1/3 {
 			if rowuse_1==1,												///
 			xtitle("")													///
 			ytitle("")													///
-			legend(off) subtitle("VP `i'")
+			legend(order(2 1 3) label(2 "Flexible curve (splines)") 	///
+			label(1 "Pointwise 95% CI") label(3 "Line of equality") 	///
+			colfirst)													///
+			subtitle("VP `i'")
 	graph save output/flex1_`i', replace
 	
 	* Boxplot
 	sort ptile_1
-	twoway 	(rcap predq25ptile_1 predq75ptile_1 ptile_1, lcolor(navy))		///
-			(scatter predmedptile_1 ptile_1, mcolor(navy) mlcolor(navy))	///
+	twoway 	(scatter predmeanptile_1 ptile_1, mcolor(navy) mlcolor(navy))	///
 			(scatter obsptile_1 ptile_1, mcolor(green) msymbol(triangle))	///
-			if tag_1==1, legend(order(2 1 3)  label(2 "Predicted (median)") ///
-			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
+			if tag_1==1, legend(order(1 2)  label(1 "Predicted (mean)") 	///
+			label(2 "Observed") colfirst)									///
 			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
 			subtitle("VP `i'")
 	graph save output/box1_`i', replace
@@ -214,7 +223,7 @@ forvalues i = 1/3 {
 	/*  Graph: Approach B - FOI model  */
 	
 	* Flexible curve
-	qui sum pred_model2
+	qui sum pred_model2 if rowuse_2==1
 	local max = r(max)
 	sort pred_model2
 	twoway 	(rarea flex_pred_obs_cl_2 flex_pred_obs_cu_2 pred_model2, 	///
@@ -224,16 +233,18 @@ forvalues i = 1/3 {
 			if rowuse_2==1,												///
 			xtitle("")													///
 			ytitle("")													///
-			legend(off) subtitle("VP `i'")
+			legend(order(2 1 3) label(2 "Flexible curve (splines)") 	///
+			label(1 "Pointwise 95% CI") label(3 "Line of equality") 	///
+			colfirst)													///
+			subtitle("VP `i'")	
 	graph save output/flex2_`i', replace
 	
 	* Boxplot
-	sort ptile_4
-	twoway 	(rcap predq25ptile_2 predq75ptile_2 ptile_2, lcolor(navy))		///
-			(scatter predmedptile_2 ptile_2, mcolor(navy) mlcolor(navy))	///
+	sort ptile_2
+	twoway 	(scatter predmeanptile_2 ptile_2, mcolor(navy) mlcolor(navy))	///
 			(scatter obsptile_2 ptile_2, mcolor(green) msymbol(triangle))	///
-			, legend(order(2 1 3)  label(2 "Predicted (median)") 			///
-			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
+			if tag_2==1, legend(order(1 2)  label(1 "Predicted (mean)") 	///
+			label(2 "Observed") colfirst)									///
 			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
 			subtitle("VP `i'")
 	graph save output/box2_`i', replace
@@ -242,7 +253,7 @@ forvalues i = 1/3 {
 	/*  Graph: Approach B - A&E model  */
 	
 	* Flexible curve
-	qui sum pred_model3
+	qui sum pred_model3 if rowuse_3==1
 	local max = r(max)	
 	sort pred_model3
 	twoway 	(rarea flex_pred_obs_cl_3 flex_pred_obs_cu_3 pred_model3, 	///
@@ -252,16 +263,18 @@ forvalues i = 1/3 {
 			if rowuse_3==1,												///
 			xtitle("")													///
 			ytitle("")													///
-			legend(off) subtitle("VP `i'")
+			legend(order(2 1 3) label(2 "Flexible curve (splines)") 	///
+			label(1 "Pointwise 95% CI") label(3 "Line of equality") 	///
+			colfirst)													///
+			subtitle("VP `i'")
 	graph save output/flex3_`i', replace
 		
 	* Boxplot
 	sort ptile_3
-	twoway 	(rcap predq25ptile_3 predq75ptile_3 ptile_3, lcolor(navy))		///
-			(scatter predmedptile_3 ptile_3, mcolor(navy) mlcolor(navy))	///
+	twoway 	(scatter predmeanptile_3 ptile_3, mcolor(navy) mlcolor(navy))	///
 			(scatter obsptile_3 ptile_3, mcolor(green) msymbol(triangle))	///
-			, legend(order(2 1 3)  label(2 "Predicted (median)") 			///
-			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
+			if tag_3==1, legend(order(1 2)  label(1 "Predicted (mean)") 	///
+			label(2 "Observed") colfirst)									///
 			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
 			subtitle("VP `i'")
 	graph save output/box3_`i', replace
@@ -271,7 +284,7 @@ forvalues i = 1/3 {
 	/*  Graph: Approach B - GP cases model  */
 	
 	* Flexible curve
-	qui sum pred_model4
+	qui sum pred_model4 if rowuse_4==1
 	local max = r(max)
 	sort pred_model4
 	twoway 	(rarea flex_pred_obs_cl_4 flex_pred_obs_cu_4 pred_model4, 	///
@@ -281,16 +294,18 @@ forvalues i = 1/3 {
 			if rowuse_4==1,												///
 			xtitle("")													///
 			ytitle("")													///
-			legend(off) subtitle("VP `i'")
+			legend(order(2 1 3) label(2 "Flexible curve (splines)") 	///
+			label(1 "Pointwise 95% CI") label(3 "Line of equality") 	///
+			colfirst)													///
+			subtitle("VP `i'")
 	graph save output/flex4_`i', replace
 
 	* Boxplot
 	sort ptile_4
-	twoway 	(rcap predq25ptile_4 predq75ptile_4 ptile_4, lcolor(navy))		///
-			(scatter predmedptile_4 ptile_4, mcolor(navy) mlcolor(navy))	///
+	twoway 	(scatter predmeanptile_4 ptile_4, mcolor(navy) mlcolor(navy))	///
 			(scatter obsptile_4 ptile_4, mcolor(green) msymbol(triangle))	///
-			, legend(order(2 1 3)  label(2 "Predicted (median)") 			///
-			label(1 "(25th-75th percentile)") label(3 "Observed") colfirst)	///
+			if tag_4==1, legend(order(1 2)  label(1 "Predicted (mean)") 	///
+			label(2 "Observed") colfirst)									///
 			xtitle("") xlabel(5 (5) 20)	xmtick(1 (1) 20)					///
 			subtitle("VP `i'")
 	graph save output/box4_`i', replace
@@ -301,27 +316,7 @@ forvalues i = 1/3 {
 
 /*  Combine graphs across validation periods  */
 
-
-* Approach A
-grc1leg output/box1_1.gph  output/box1_2.gph  output/box1_3.gph, 		///
-	col(3) b1title("Predicted risk (20 groups)")						///
-	l1title("Observed risk") ring(100)
-graph save output/box1, replace 
-
-graph combine output/flex1_1.gph output/flex1_2.gph output/flex1_3.gph, ///
-	col(3) b1title("Predicted risk")									///
-	l1title("Observed risk")
-graph save output/flex1, replace 
-
-graph combine output/flex1.gph output/box1.gph, col(1)
-graph export output/calibration_a.svg, replace as(svg)
-
-
-
-
-
-
-/*  Combine graphs across validation periods  */
+adopath ++ analysis/ado
 
 
 * Approach A
@@ -330,9 +325,9 @@ grc1leg output/box1_1.gph  output/box1_2.gph  output/box1_3.gph, 		///
 	l1title("Observed risk") ring(100)
 graph save output/box1, replace 
 
-graph combine output/flex1_1.gph output/flex1_2.gph output/flex1_3.gph, ///
+grc1leg  output/flex1_1.gph output/flex1_2.gph output/flex1_3.gph, ///
 	col(3) b1title("Predicted risk")									///
-	l1title("Observed risk")
+	l1title("Observed risk") ring(100)
 graph save output/flex1, replace 
 
 graph combine output/flex1.gph output/box1.gph, col(1)
