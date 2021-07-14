@@ -325,7 +325,7 @@ grc1leg output/box1_1.gph  output/box1_2.gph  output/box1_3.gph, 		///
 	l1title("Observed risk") ring(100)
 graph save output/box1, replace 
 
-grc1leg  output/flex1_1.gph output/flex1_2.gph output/flex1_3.gph, ///
+grc1leg  output/flex1_1.gph output/flex1_2.gph output/flex1_3.gph, 		///
 	col(3) b1title("Predicted risk")									///
 	l1title("Observed risk") ring(100)
 graph save output/flex1, replace 
@@ -342,9 +342,9 @@ grc1leg output/box2_1.gph  output/box2_2.gph  output/box2_3.gph, 		///
 	l1title("Observed risk") ring(100)
 graph save output/box2, replace 
 
-graph combine output/flex2_1.gph output/flex2_2.gph output/flex2_3.gph, ///
+grc1leg output/flex2_1.gph output/flex2_2.gph output/flex2_3.gph, 		///
 	col(3) b1title("Predicted risk")									///
-	l1title("Observed risk")
+	l1title("Observed risk") ring(100)
 graph save output/flex2, replace 
 
 graph combine output/flex2.gph output/box2.gph, col(1)
@@ -357,9 +357,9 @@ grc1leg output/box3_1.gph  output/box3_2.gph  output/box3_3.gph, 		///
 	l1title("Observed risk") ring(100)
 graph save output/box3, replace 
 
-graph combine output/flex3_1.gph output/flex3_2.gph output/flex3_3.gph, ///
+grc1leg output/flex3_1.gph output/flex3_2.gph output/flex3_3.gph,	 	///
 	col(3) b1title("Predicted risk")									///
-	l1title("Observed risk")
+	l1title("Observed risk") ring(100)
 graph save output/flex3, replace 
 
 graph combine output/flex3.gph output/box3.gph, col(1)
@@ -372,9 +372,9 @@ grc1leg output/box2_1.gph  output/box4_2.gph  output/box4_3.gph, 		///
 	l1title("Observed risk") ring(100)
 graph save output/box4, replace 
 
-graph combine output/flex4_1.gph output/flex4_2.gph output/flex4_3.gph, ///
+grc1leg output/flex4_1.gph output/flex4_2.gph output/flex4_3.gph, 		///
 	col(3) b1title("Predicted risk")									///
-	l1title("Observed risk")
+	l1title("Observed risk") ring(100)
 graph save output/flex4, replace 
 
 graph combine output/flex4.gph output/box4.gph, col(1)
