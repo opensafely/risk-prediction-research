@@ -1,0 +1,3 @@
+wave	outcome	exposure	expcat	category	events	pyr_10000	rate_per_10000	rate_cl	rate_cu	hr_conf	hr_conf_imd	hr_conf_resid	hr_conf_comorb
+1	"COVID-19 death"	"Learning disability register"	0	"No"	13695	713.3064	19.199	18.880	19.524	""	""	""	""
+1	"COVID-19 death"	"Learning disability register"	1	"Yes"	221	4.5157	48.941	42.896	55.838	"8.17 (7.12, 9.39)"	"7.28 (6.33, 8.37)"	"8.47 (7.38, 9.73)"	"6.66 (5.78, 7.68)"

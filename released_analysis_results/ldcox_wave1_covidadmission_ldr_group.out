@@ -1,0 +1,7 @@
+wave	outcome	exposure	expcat	category	events	pyr_10000	rate_per_10000	rate_cl	rate_cu	hr_conf	hr_conf_imd	hr_conf_resid	hr_conf_comorb
+1	"COVID-19 admission"	"Combined grouping"	"No DS, no CP, no LDR"	"No"	29409	7.1e+02	41.306	40.836	41.781	""	""	""	""
+1	"COVID-19 admission"	"Combined grouping"	"DS but not LDR"	"DS but not LDR"	[REDACTED]	0.045992	65.229	21.038	202.248	"3.87 (1.21, 12.39)"	"3.76 (1.17, 12.05)"	"3.89 (1.22, 12.45)"	"3.58 (1.1, 11.63)"
+1	"COVID-19 admission"	"Combined grouping"	"DS and LDR"	"DS and LDR"	71	0.351459	202.015	160.090	254.919	"11.68 (9.28, 14.7)"	"11.28 (8.96, 14.19)"	"11.93 (9.48, 15)"	"7.87 (6.24, 9.92)"
+1	"COVID-19 admission"	"Combined grouping"	"CP but not LDR"	"CP but not LDR"	42	0.568634	73.861	54.585	99.945	"3.33 (2.37, 4.69)"	"3.14 (2.24, 4.4)"	"3.32 (2.35, 4.69)"	"3.26 (2.31, 4.59)"
+1	"COVID-19 admission"	"Combined grouping"	"CP and LDR"	"CP and LDR"	54	0.344773	156.625	119.957	204.501	"8.28 (6.04, 11.35)"	"7.77 (5.69, 10.61)"	"8.47 (6.16, 11.65)"	"8.17 (5.99, 11.13)"
+1	"COVID-19 admission"	"Combined grouping"	"LD with no DS or CP"	"LDR with no DS or CP"	412	3.806337	108.241	98.278	119.214	"4.71 (4.28, 5.2)"	"4.26 (3.86, 4.7)"	"4.77 (4.33, 5.26)"	"4.26 (3.87, 4.7)"

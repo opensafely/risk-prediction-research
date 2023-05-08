@@ -1,0 +1,109 @@
+wave	outcome	exposure	category	hr_conf	hr_conf_imd	hr_conf_resid	hr_conf_comorb	expcat
+1	"COVID-19 death"	"Learning disability register"	"No"	""	""	""	""	0
+1	"COVID-19 death"	"Learning disability register"	"Yes"	". (., .)"	". (., .)"	". (., .)"	". (., .)"	1
+1	"COVID-19 death"	"LDR Severe vs mild"	"No"	""	""	""	""	0
+1	"COVID-19 death"	"LDR Severe vs mild"	"LDR, mild"	".99 (.99, .99)"	"1 (1, 1)"	".99 (.99, .99)"	"1.52 (1.52, 1.52)"	1
+1	"COVID-19 death"	"LDR Severe vs mild"	"LDR, profound"	". (., .)"	". (., .)"	". (., .)"	". (., .)"	2
+1	"COVID-19 death"	"LDR by residential care"	"No"	""	""	""	""	0
+1	"COVID-19 death"	"LDR by residential care"	"LDR, community"	". (., .)"	". (., .)"	". (., .)"	". (., .)"	1
+1	"COVID-19 death"	"LDR by residential care"	"LDR, residential care"	".55 (.55, .55)"	".57 (.57, .57)"	".63 (.63, .63)"	"1 (1, 1)"	2
+1	"COVID-19 death"	"Down's syndrome"	"No"	""	""	""	""	0
+1	"COVID-19 death"	"Down's syndrome"	"Yes"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	1
+1	"COVID-19 death"	"Cerebral Palsy"	"No"	""	""	""	""	0
+1	"COVID-19 death"	"Cerebral Palsy"	"Yes"	"672.17 (80.13, 5638.63)"	"671.3 (83.88, 5372.21)"	"659.94 (88.81, 4903.69)"	"761.75 (82.93, 6997)"	1
+1	"COVID-19 death"	"Combined grouping"	"No"	""	""	""	""	0
+1	"COVID-19 death"	"Combined grouping"	"DS but not LDR"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	1
+1	"COVID-19 death"	"Combined grouping"	"DS and LDR"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	2
+1	"COVID-19 death"	"Combined grouping"	"CP but not LDR"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	3
+1	"COVID-19 death"	"Combined grouping"	"CP and LDR"	"8.52e+13 (8.52e+13, 8.52e+13)"	"9.16e+13 (9.16e+13, 9.16e+13)"	"4.32e+13 (4.32e+13, 4.32e+13)"	"2.11e+14 (2.11e+14, 2.11e+14)"	4
+1	"COVID-19 death"	"Combined grouping"	"LDR with no DS or CP"	"7.43e+12 (1.89e+11, 2.92e+14)"	"7.81e+12 (2.03e+11, 3.01e+14)"	"4.27e+12 (1.42e+11, 1.28e+14)"	"2.01e+13 (5.77e+11, 7.01e+14)"	5
+1	"COVID-19 admission"	"Learning disability register"	"No"	""	""	""	""	0
+1	"COVID-19 admission"	"Learning disability register"	"Yes"	"5.1 (1.86, 13.95)"	"5.03 (1.84, 13.76)"	"5.1 (1.87, 13.95)"	"2.96 (.92, 9.51)"	1
+1	"COVID-19 admission"	"LDR Severe vs mild"	"No"	""	""	""	""	0
+1	"COVID-19 admission"	"LDR Severe vs mild"	"LDR, mild"	"3.08 (.76, 12.53)"	"3.04 (.75, 12.35)"	"3.09 (.76, 12.56)"	"1.62 (.34, 7.69)"	1
+1	"COVID-19 admission"	"LDR Severe vs mild"	"LDR, profound"	"14.82 (3.6, 61.06)"	"14.67 (3.56, 60.43)"	"14.7 (3.57, 60.61)"	"12.09 (2.8, 52.17)"	2
+1	"COVID-19 admission"	"LDR by residential care"	"No"	""	""	""	""	0
+1	"COVID-19 admission"	"LDR by residential care"	"LDR, community"	"5.59 (2.09, 14.98)"	"5.51 (2.06, 14.78)"	"5.81 (2.16, 15.59)"	"3.15 (.98, 10.15)"	1
+1	"COVID-19 admission"	"LDR by residential care"	"LDR, residential care"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	2
+1	"COVID-19 admission"	"Down's syndrome"	"No"	""	""	""	""	0
+1	"COVID-19 admission"	"Down's syndrome"	"Yes"	"6.83 (1.69, 27.63)"	"6.81 (1.68, 27.53)"	"6.88 (1.7, 27.8)"	"2.25 (.38, 13.18)"	1
+1	"COVID-19 admission"	"Cerebral Palsy"	"No"	""	""	""	""	0
+1	"COVID-19 admission"	"Cerebral Palsy"	"Yes"	"10.69 (4.24, 26.96)"	"10.65 (4.22, 26.87)"	"10.8 (4.25, 27.44)"	"8.82 (3.4, 22.83)"	1
+1	"COVID-19 admission"	"Combined grouping"	"No"	""	""	""	""	0
+1	"COVID-19 admission"	"Combined grouping"	"DS but not LDR"	"4.8 (.67, 34.36)"	"4.79 (.67, 34.27)"	"4.84 (.68, 34.62)"	"2.31 (.25, 21.49)"	1
+1	"COVID-19 admission"	"Combined grouping"	"DS and LDR"	"12.6 (1.77, 89.55)"	"12.54 (1.77, 89.08)"	"12.67 (1.78, 90)"	"2.39 (.2, 28.69)"	2
+1	"COVID-19 admission"	"Combined grouping"	"CP but not LDR"	"9.15 (3.18, 26.37)"	"9.12 (3.16, 26.29)"	"9.24 (3.18, 26.85)"	"7.88 (2.87, 21.65)"	3
+1	"COVID-19 admission"	"Combined grouping"	"CP and LDR"	"24.61 (3.46, 175.03)"	"24.43 (3.44, 173.68)"	"24.95 (3.51, 177.13)"	"16.96 (1.83, 157.61)"	4
+1	"COVID-19 admission"	"Combined grouping"	"LDR with no DS or CP"	"3.06 (.75, 12.53)"	"3.02 (.74, 12.36)"	"3.06 (.75, 12.52)"	"2.42 (.54, 10.95)"	5
+1	"Composite"	"Learning disability register"	"No"	""	""	""	""	0
+1	"Composite"	"Learning disability register"	"Yes"	"6.38 (2.57, 15.86)"	"6.3 (2.54, 15.66)"	"6.39 (2.58, 15.86)"	"3.81 (1.31, 11.15)"	1
+1	"Composite"	"LDR Severe vs mild"	"No"	""	""	""	""	0
+1	"Composite"	"LDR Severe vs mild"	"LDR, mild"	"3.09 (.76, 12.57)"	"3.05 (.75, 12.4)"	"3.1 (.76, 12.6)"	"1.64 (.35, 7.78)"	1
+1	"Composite"	"LDR Severe vs mild"	"LDR, profound"	"22.24 (6.9, 71.66)"	"22.02 (6.83, 70.98)"	"22.06 (6.84, 71.18)"	"18.22 (5.38, 61.74)"	2
+1	"Composite"	"LDR by residential care"	"No"	""	""	""	""	0
+1	"Composite"	"LDR by residential care"	"LDR, community"	"7 (2.88, 16.99)"	"6.91 (2.84, 16.78)"	"7.28 (2.99, 17.68)"	"4.07 (1.4, 11.89)"	1
+1	"Composite"	"LDR by residential care"	"LDR, residential care"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	2
+1	"Composite"	"Down's syndrome"	"No"	""	""	""	""	0
+1	"Composite"	"Down's syndrome"	"Yes"	"6.8 (1.68, 27.52)"	"6.78 (1.68, 27.43)"	"6.85 (1.7, 27.69)"	"2.26 (.39, 13.17)"	1
+1	"Composite"	"Cerebral Palsy"	"No"	""	""	""	""	0
+1	"Composite"	"Cerebral Palsy"	"Yes"	"10.66 (4.23, 26.87)"	"10.62 (4.21, 26.78)"	"10.76 (4.24, 27.34)"	"8.79 (3.39, 22.75)"	1
+1	"Composite"	"Combined grouping"	"No"	""	""	""	""	0
+1	"Composite"	"Combined grouping"	"DS but not LDR"	"4.8 (.67, 34.33)"	"4.79 (.67, 34.24)"	"4.84 (.68, 34.58)"	"2.35 (.25, 21.79)"	1
+1	"Composite"	"Combined grouping"	"DS and LDR"	"12.62 (1.78, 89.71)"	"12.56 (1.77, 89.26)"	"12.69 (1.79, 90.16)"	"2.42 (.2, 29.24)"	2
+1	"Composite"	"Combined grouping"	"CP but not LDR"	"9.17 (3.18, 26.41)"	"9.14 (3.17, 26.34)"	"9.26 (3.19, 26.89)"	"7.92 (2.88, 21.77)"	3
+1	"Composite"	"Combined grouping"	"CP and LDR"	"24.66 (3.47, 175.39)"	"24.49 (3.45, 174.08)"	"25 (3.52, 177.5)"	"17.21 (1.87, 158.56)"	4
+1	"Composite"	"Combined grouping"	"LDR with no DS or CP"	"4.61 (1.44, 14.74)"	"4.54 (1.42, 14.55)"	"4.61 (1.44, 14.73)"	"3.72 (1.05, 13.14)"	5
+2	"COVID-19 death"	"Learning disability register"	"No"	""	""	""	""	0
+2	"COVID-19 death"	"Learning disability register"	"Yes"	"160.68 (9.29, 2779.84)"	"164.89 (15.65, 1737.68)"	"160.98 (9.61, 2695.65)"	""	1
+2	"COVID-19 death"	"LDR Severe vs mild"	"No"	""	""	""	""	0
+2	"COVID-19 death"	"LDR Severe vs mild"	"LDR, mild"	""	"0 (0, 0)"	""	""	1
+2	"COVID-19 death"	"LDR Severe vs mild"	"LDR, profound"	""	"1.37e+18 (1.30e+16, 1.43e+20)"	""	""	2
+2	"COVID-19 death"	"LDR by residential care"	"No"	""	""	""	""	0
+2	"COVID-19 death"	"LDR by residential care"	"LDR, community"	"191.1 (12.47, 2929.7)"	"214.29 (31.16, 1473.58)"	"160.98 (9.61, 2695.65)"	""	1
+2	"COVID-19 death"	"LDR by residential care"	"LDR, residential care"	"0 (0, 0)"	"0 (0, 0)"	".29 (.29, .29)"	""	2
+2	"COVID-19 death"	"Down's syndrome"	"No"	""	""	""	""	0
+2	"COVID-19 death"	"Down's syndrome"	"Yes"	"978.26 (88.29, 10839.49)"	"941.74 (84.49, 10496.38)"	"894.98 (97.83, 8187.48)"	""	1
+2	"COVID-19 death"	"Cerebral Palsy"	"No"	""	""	""	""	0
+2	"COVID-19 death"	"Cerebral Palsy"	"Yes"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	""	1
+2	"COVID-19 death"	"Combined grouping"	"No"	""	""	""	""	0
+2	"COVID-19 death"	"Combined grouping"	"DS but not LDR"	"1.24e+21 (1.99e+20, 7.68e+21)"	"1.26e+21 (1.26e+21, 1.26e+21)"	"9.59e+20 (1.67e+20, 5.50e+21)"	""	1
+2	"COVID-19 death"	"Combined grouping"	"DS and LDR"	"12.78 (12.78, 12.78)"	".07 (.07, .07)"	"13.81 (13.81, 13.81)"	""	2
+2	"COVID-19 death"	"Combined grouping"	"CP but not LDR"	"26.74 (26.74, 26.74)"	".05 (.05, .05)"	"27.07 (27.07, 27.07)"	""	3
+2	"COVID-19 death"	"Combined grouping"	"CP and LDR"	"168.79 (168.79, 168.79)"	".23 (.23, .23)"	"2.15e+07 (2.15e+07, 2.15e+07)"	""	4
+2	"COVID-19 death"	"Combined grouping"	"LDR with no DS or CP"	"1.20e+20 (1.20e+20, 1.20e+20)"	"1.24e+20 (2.49e+19, 6.21e+20)"	"1.09e+20 (1.09e+20, 1.09e+20)"	""	5
+2	"COVID-19 admission"	"Learning disability register"	"No"	""	""	""	""	0
+2	"COVID-19 admission"	"Learning disability register"	"Yes"	"8.06 (3.7, 17.56)"	"7.87 (3.62, 17.1)"	"8.07 (3.7, 17.61)"	"7 (3.08, 15.94)"	1
+2	"COVID-19 admission"	"LDR Severe vs mild"	"No"	""	""	""	""	0
+2	"COVID-19 admission"	"LDR Severe vs mild"	"LDR, mild"	"8.05 (3.44, 18.84)"	"7.86 (3.37, 18.34)"	"8.07 (3.45, 18.9)"	"7.14 (2.93, 17.43)"	1
+2	"COVID-19 admission"	"LDR Severe vs mild"	"LDR, profound"	"8.07 (1.12, 58.26)"	"7.9 (1.09, 57.05)"	"8.07 (1.12, 58.25)"	"6.38 (.83, 48.74)"	2
+2	"COVID-19 admission"	"LDR by residential care"	"No"	""	""	""	""	0
+2	"COVID-19 admission"	"LDR by residential care"	"LDR, community"	"7.42 (3.01, 18.3)"	"7.25 (2.94, 17.87)"	"7.53 (3.04, 18.64)"	"6.39 (2.47, 16.49)"	1
+2	"COVID-19 admission"	"LDR by residential care"	"LDR, residential care"	"14.17 (10.99, 18.26)"	"13.74 (10.72, 17.62)"	"12.64 (9.76, 16.37)"	"13.28 (10.04, 17.58)"	2
+2	"COVID-19 admission"	"Down's syndrome"	"No"	""	""	""	""	0
+2	"COVID-19 admission"	"Down's syndrome"	"Yes"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	1
+2	"COVID-19 admission"	"Cerebral Palsy"	"No"	""	""	""	""	0
+2	"COVID-19 admission"	"Cerebral Palsy"	"Yes"	"10.08 (3.17, 32.13)"	"9.98 (3.13, 31.79)"	"10.12 (3.18, 32.23)"	"6.72 (1.35, 33.56)"	1
+2	"COVID-19 admission"	"Combined grouping"	"No"	""	""	""	""	0
+2	"COVID-19 admission"	"Combined grouping"	"DS but not LDR"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	1
+2	"COVID-19 admission"	"Combined grouping"	"DS and LDR"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	2
+2	"COVID-19 admission"	"Combined grouping"	"CP but not LDR"	"4.11 (.57, 29.68)"	"4.06 (.56, 29.33)"	"4.12 (.57, 29.79)"	"2.59 (.22, 29.86)"	3
+2	"COVID-19 admission"	"Combined grouping"	"CP and LDR"	"43.47 (10.48, 180.34)"	"43.18 (10.42, 178.97)"	"43.55 (10.5, 180.57)"	"30.59 (5.33, 175.6)"	4
+2	"COVID-19 admission"	"Combined grouping"	"LDR with no DS or CP"	"6.34 (2.49, 16.13)"	"6.17 (2.44, 15.61)"	"6.35 (2.49, 16.17)"	"5.72 (2.17, 15.08)"	5
+2	"Composite"	"Learning disability register"	"No"	""	""	""	""	0
+2	"Composite"	"Learning disability register"	"Yes"	"8.06 (3.7, 17.56)"	"7.87 (3.62, 17.1)"	"8.07 (3.7, 17.61)"	"7 (3.08, 15.94)"	1
+2	"Composite"	"LDR Severe vs mild"	"No"	""	""	""	""	0
+2	"Composite"	"LDR Severe vs mild"	"LDR, mild"	"8.05 (3.44, 18.84)"	"7.86 (3.37, 18.34)"	"8.07 (3.45, 18.9)"	"7.14 (2.93, 17.43)"	1
+2	"Composite"	"LDR Severe vs mild"	"LDR, profound"	"8.07 (1.12, 58.26)"	"7.9 (1.09, 57.05)"	"8.07 (1.12, 58.25)"	"6.38 (.83, 48.74)"	2
+2	"Composite"	"LDR by residential care"	"No"	""	""	""	""	0
+2	"Composite"	"LDR by residential care"	"LDR, community"	"7.42 (3.01, 18.3)"	"7.25 (2.94, 17.87)"	"7.53 (3.04, 18.64)"	"6.39 (2.47, 16.49)"	1
+2	"Composite"	"LDR by residential care"	"LDR, residential care"	"14.17 (10.99, 18.26)"	"13.74 (10.72, 17.62)"	"12.64 (9.76, 16.37)"	"13.28 (10.04, 17.58)"	2
+2	"Composite"	"Down's syndrome"	"No"	""	""	""	""	0
+2	"Composite"	"Down's syndrome"	"Yes"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	1
+2	"Composite"	"Cerebral Palsy"	"No"	""	""	""	""	0
+2	"Composite"	"Cerebral Palsy"	"Yes"	"10.08 (3.17, 32.13)"	"9.98 (3.13, 31.79)"	"10.12 (3.18, 32.23)"	"6.72 (1.35, 33.56)"	1
+2	"Composite"	"Combined grouping"	"No"	""	""	""	""	0
+2	"Composite"	"Combined grouping"	"DS but not LDR"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	1
+2	"Composite"	"Combined grouping"	"DS and LDR"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	"0 (0, 0)"	2
+2	"Composite"	"Combined grouping"	"CP but not LDR"	"4.11 (.57, 29.68)"	"4.06 (.56, 29.33)"	"4.12 (.57, 29.79)"	"2.59 (.22, 29.86)"	3
+2	"Composite"	"Combined grouping"	"CP and LDR"	"43.47 (10.48, 180.34)"	"43.18 (10.42, 178.97)"	"43.55 (10.5, 180.57)"	"30.59 (5.33, 175.6)"	4
+2	"Composite"	"Combined grouping"	"LDR with no DS or CP"	"6.34 (2.49, 16.13)"	"6.17 (2.44, 15.61)"	"6.35 (2.49, 16.17)"	"5.72 (2.17, 15.08)"	5

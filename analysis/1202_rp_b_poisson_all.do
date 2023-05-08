@@ -45,6 +45,15 @@ global tvc_objective = "c.logae c.ae_q_day c.ae_q_daysq c.aeqd c.aeqds c.aeqds2 
 
 
 
+***************
+*  Open data  *
+***************
+
+* Open landmark data
+use "data/cr_landmark.dta", clear
+
+
+
 
 
 *********************

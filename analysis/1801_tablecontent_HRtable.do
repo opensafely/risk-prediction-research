@@ -726,7 +726,7 @@ crtablehr, 	estimates(output/models/coefs_a_weib)		///
 crtablehr, 	estimates(output/models/coefs_a_gamma)		///
 			outputfile(output/table_hr_a_gamma.txt)
 
-			
+		
 			
 			
 /*  Approach B  */
@@ -744,3 +744,19 @@ foreach tvc in foi ae susp {
 	crtablehr, 	estimates(output/models/coefs_b_weib_`tvc')		///
 				outputfile(output/table_hr_b_weib_`tvc'.txt)
 }
+
+
+
+
+
+
+
+**************************
+*  Sensitivity analyses  *
+**************************
+
+/*  Approach A - full cohort  */
+
+* Cox model
+crtablehr, 	estimates(output/models/coefs_a_cox_whole_cohort)		///
+			outputfile(output/table_hr_a_cox_whole_cohort.txt)

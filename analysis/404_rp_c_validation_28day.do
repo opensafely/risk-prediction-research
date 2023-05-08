@@ -1,6 +1,6 @@
 ********************************************************************************
 *
-*	Do-file:		403_rp_c_validation_28day.do
+*	Do-file:		404_rp_c_validation_28day.do
 *
 *	Programmed by:	Fizz & John & Krishnan
 *
@@ -26,7 +26,7 @@
 
 * Open a log file
 capture log close
-log using "./output/403_rp_c_validation_28day", text replace
+log using "./output/404_rp_c_validation_28day", text replace
 
 * Ensure program cc_calib is available
 qui do "./analysis/ado/cc_calib.ado"
@@ -115,7 +115,7 @@ foreach tvc in foi ae susp {
 
 foreach tvc in foi ae susp {
 
-	use "data/model_cii_noncovid_`tvc'.dta", clear
+	use "data/model_cii_allcause_`tvc'.dta", clear
 
 	* Pick up baseline survival
 	qui summ coef if term=="_cons"
@@ -157,7 +157,6 @@ forvalues i = 1/3 {
 
 	use "data/cr_cohort_vp`i'.dta", clear
 	
-	
 	* Age grouping used in FOI data
 	recode age 18/24=1 25/29=2 30/34=3 35/39=4 40/44=5 45/49=6 		///
 	50/54=7 55/59=8 60/64=9 65/69=10 70/74=11 75/max=12, 			///
@@ -167,7 +166,7 @@ forvalues i = 1/3 {
 	/*  Obtain predicted risks from each model  */
 	
 	foreach tvc in foi ae susp {		
-		
+
 		/*  Time-split 28-day landmark studies  */
 
 		* Add in summaries of time-varying covariates
@@ -181,37 +180,45 @@ forvalues i = 1/3 {
 		* Make predictions under actual, constant-estimation, and best-guess 
 		* predictions of burden of infection 
 		foreach pred in actual cons pred {
-			gen pred_ci_`tvc'_`pred' = 1 - (((${bs_c_pois_`tvc'})^exp(xb))^exp(xb_`pred'))^10000
+			gen pred_ci_`tvc'_`pred' = 1 - ((${bs_c_pois_`tvc'})^exp(xb))^(exp_`pred')
 		}	
 		drop xb*		
-		
+	
 
 		/*  Daily landmark studies - non-COVID deaths  */
 
-		gen xb_noncovid = 0
+		gen xb_noncovid = ${cons_noncovid_`tvc'}
 		local t = ${nt_noncovid_`tvc'}
 		forvalues j = 1 (1) `t' {
 			replace xb_noncovid = xb_noncovid + ///
 					${ce`j'_noncovid_`tvc'}*${ve`j'_noncovid_`tvc'}
 		}
-	
+		gen exp_noncovid = exp(xb_noncovid)
+		drop xb_noncovid
+		
 		* Add in summaries of time-varying covariates
 		merge m:1 `matching_vars_`tvc'' using "data/sumxb_cii_`tvc'_vp`i'", nogen
 
-		gen xb = 0
+		gen xb = ${cons_covid_`tvc'}
 		local t = ${nt_covid_`tvc'}
 		forvalues j = 1 (1) `t' {
 			replace xb = xb + ${ce`j'_covid_`tvc'}*${ve`j'_covid_`tvc'}
 		}
+		gen exp = exp(xb)
+		drop xb
+		
 		* Make predictions under actual, constant-estimation, and best-guess 
-		* predictions of burden of infection 
+		* predictions of burden of infection
 		foreach pred in actual cons pred {
-			gen pred_cii_`tvc'_`pred' = 1 - (((exp(-${cons_noncovid_`tvc'}))^exp(xb_noncovid))^exp(xb_`pred'))
+			gen pred_cii_`tvc'_`pred' = 0
+			forvalues t = 1 (1) 28 {
+				replace pred_cii_`tvc'_`pred' = pred_cii_`tvc'_`pred'  + ///
+					exp*exp_`pred'`t'*exp(-`t'*exp_noncovid)*(exp(-exp)^cumsum_exp_`pred'`t')   
+			}
 		}	
-		drop xb*	
+		drop exp* cumsum*
 	}
 
-	
 	
 	**************************
 	*   Validation measures  *
@@ -226,6 +233,16 @@ forvalues i = 1/3 {
 		using "data/approach_c_`i'", replace
 
 		foreach var of varlist pred* {
+			
+			* Set negative probabilities to zero
+			noi count if `var'<0
+			noi summ `var' if `var' < 0, detail
+			qui replace `var' = 0 if `var' < 0
+			
+			* Set probabilities over 1 to 1
+			noi count if `var'>1
+			noi summ `var' if `var' >1, detail
+			qui replace `var' = 1 if `var' > 1		
 			
 			* Overall performance: Brier score
 			noi brier onscoviddeath28 `var', group(10)
@@ -262,7 +279,8 @@ forvalues i = 1/3 {
 			
 			
 			* Save measures
-			post `measures' ("C") ("`var'") ("vp`i'") (`brier') (`brier_p') ///
+			post `measures' ("C") ("`var'") ("vp`i'") 						///
+							(`brier') (`brier_p') 							///
 							(`cstat') (`cstat_p') 							///
 							(`hl') (`hl_p') 								///
 							(`mean_obs') (`mean_pred') 						///

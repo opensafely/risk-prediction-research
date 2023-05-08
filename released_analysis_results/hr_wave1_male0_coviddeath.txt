@@ -1,0 +1,81 @@
+Age (spline 1)	1.10 (0.99,1.23)
+Age (spline 2)	0.94 (0.50,1.77)
+Age (spline 3)	0.58 (0.00,356.24)
+BMI: Underweight	2.15 (0.77, 6.05)
+BMI: Normal/overweight (Ref)	1.00
+BMI: Obese I 	0.98 (0.53, 1.78)
+BMI: Obese II	1.87 (1.04, 3.37)
+BMI: Obese III	3.10 (1.77, 5.44)
+Never smoker (Ref)	1.00
+Former smoker	1.03 (0.64, 1.64)
+Current smoker	0.58 (0.31, 1.07)
+Ethnicity: White (Ref)	1.00
+Ethnicity: Mixed	1.85 (0.55, 6.21)
+Ethnicity: South Asian	2.54 (1.44, 4.46)
+Ethnicity: Black	2.20 (0.95, 5.11)
+Ethnicity: Other	1.43 (0.44, 4.67)
+IMD 1 (Ref)	1.00
+IMD 2	2.08 (0.72, 6.03)
+IMD 3	3.67 (1.37, 9.85)
+IMD 4	4.42 (1.69, 11.60)
+IMD 5	4.22 (1.60, 11.13)
+No respiratory (Ref)	1.00
+Respiratory	2.62 (1.18, 5.80)
+No cystic fibrosis (Ref)	1.00
+Cystic Fibrosis	0.00 (   .,    .)
+Asthma: None (Ref)	1.00
+Asthma: Without OCS	2.40 (1.56, 3.68)
+Asthma: With OCS	4.64 (1.99, 10.83)
+No cardiac disease (Ref)	1.00
+Cardiac disease	1.51 (0.66, 3.45)
+No hypertension (Ref)	1.00
+Hypertension	1.59 (0.94, 2.70)
+Diabetes: None (Ref)	1.00
+Diabetes: Controlled	1.79 (0.88, 3.65)
+Diabetes: Uncontrolled	4.28 (2.29, 8.01)
+Diabetes: Control unknown	2.98 (1.15, 7.73)
+No atrial fibrillation (Ref)	1.00
+Atrial Fibrillation	0.00 (   .,    .)
+No dvt/pe (Ref)	1.00
+DVT/PE	1.97 (0.92, 4.25)
+No surgery for pad (Ref)	1.00
+Surgery for PAD	5.24 (1.20, 22.86)
+Cancer (ex haem): Never (Ref)	1.00
+Cancer (ex haem): Last year	10.72 (3.28, 35.07)
+Cancer (ex haem): 2-5 years ago	8.81 (3.78, 20.55)
+Cancer (ex haem): 5+ years ago	3.81 (1.33, 10.91)
+Cancer (haem): Never (Ref)	1.00
+Cancer (haem): Last year	74.65 (17.11, 325.62)
+Cancer (haem): 2-5 years ago	12.59 (1.71, 92.50)
+Cancer (haem): 5+ years ago	0.00 (   .,    .)
+No liver disease (Ref)	1.00
+Liver disease	6.17 (2.39, 15.92)
+No stroke (Ref)	1.00
+Stroke	0.45 (0.08, 2.42)
+No dementia (Ref)	1.00
+Dementia	0.00 (   .,    .)
+No tia (Ref)	1.00
+TIA	3.19 (0.70, 14.60)
+No other neurological (Ref)	1.00
+Other neurological	9.49 (4.79, 18.79)
+Renal impairment: None (Ref)	1.00
+Renal impairment: Stage 3a/3b	7.69 (3.39, 17.43)
+Renal impairment: Stage 4/5	3.93 (0.41, 37.61)
+No organ transplant (Ref)	1.00
+Organ transplant	0.34 (0.03, 4.39)
+No dialysis (Ref)	1.00
+Dialysis	3.33 (0.26, 42.47)
+No asplenia (Ref)	1.00
+Asplenia	3.71 (0.50, 27.52)
+No ra/sle/psoriasis (Ref)	1.00
+RA/SLE/Psoriasis	0.99 (0.45, 2.18)
+No ibd (Ref)	1.00
+IBD	0.63 (0.09, 4.62)
+No immunosuppression (Ref)	1.00
+Immunosuppression	5.42 (1.21, 24.36)
+No serious mental illness (Ref)	1.00
+Serious mental illness	2.75 (1.28, 5.89)
+No down's syndrome (Ref)	1.00
+Down's syndrome	6.30 (1.54, 25.84)
+No learning disability register (Ref)	1.00
+Learning disability register	4.37 (1.92, 9.92)

@@ -235,7 +235,6 @@ forvalues i = 1/3 {
 		calib_slope calib_slope_se calib_slope_cl calib_slope_cu calib_slope_p 	///
 		using "data/approach_b_`i'_sens_agesex", replace
 
-
 		forvalues j = 0 (1) 1 {		// Sex
 			forvalues k = 1 (1) 3 { 	// Age-group
 				foreach var of varlist pred* {
