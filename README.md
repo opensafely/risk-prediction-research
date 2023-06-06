@@ -1,16 +1,19 @@
 # OpenSAFELY Risk Prediction Repository
 
-This is a repository for the OpenSAFELY risk prediction modelling and contains the code and configuration for our papers on this topic (details and links will be added). 
+[View on OpenSAFELY](https://jobs.opensafely.org/lshtm/risk-prediction/)
 
-* Raw model outputs, including charts, crosstabs, etc, are in `released_analysis_results/`
-* If you are interested in how we defined our covarates, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
+This is a repository for the OpenSAFELY risk prediction modelling. Details of the purpose of this project can be found at the link above. The repository contains the code and configuration for the published output from this project, which can be found [here](https://diagnprognres.biomedcentral.com/articles/10.1186/s41512-022-00120-2). 
+
+A quick summary of the contents of the repository:
+* Model outputs, including charts, crosstabs, etc, are in `released_analysis_results/`
+* If you are interested in how we defined our covariates, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
 * If you are interested in how we defined our code lists, look in the [codelists folder](./codelists/).
 * Developers and epidemiologists interested in the code should review
 [DEVELOPERS.md](./DEVELOPERS.md).
 
-# About the OpenSAFELY framework
+## About the OpenSAFELY framework
 
-The OpenSAFELY framework is a new secure analytics platform for
+The OpenSAFELY framework is a secure analytics platform for
 electronic health records research in the NHS.
 
 Instead of requesting access for slices of patient data and
@@ -19,7 +22,7 @@ developing analytics against dummy data, and then running against the
 real data *within the same infrastructure that the data is stored*.
 Read more at [OpenSAFELY.org](https://opensafely.org).
 
-The framework is under fast, active development to support rapid
-analytics relating to COVID19; we're currently seeking funding to make
-it easier for outside collaborators to work with our system.  You can
-read our current roadmap [here](ROADMAP.md).
+
+## Licences
+
+As standard, research projects have a MIT license.
